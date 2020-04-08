@@ -83,7 +83,6 @@ void Controller::setConnection(Connection* c)
     refresh(true);
 
     // Create Sietch zdust addr at startup.
-    
     for(uint8_t i = 0; i < 10; i++)
     {
         zrpc->createNewSietchZaddr( [=] (json reply) {
@@ -96,16 +95,17 @@ void Controller::setConnection(Connection* c)
 
             QFile file(path);
             QString zdust = QString::fromStdString(reply.get<json::array_t>()[0]);   
-            if(!file.open(QIODevice::WriteOnly)){
+            if(!file.open(QIODevice::WriteOnly))
+            {
                     file.close();
-                } else {
-                    QTextStream out(&file); out << zdust.toUtf8();
-                    file.close();
-                }
+            } 
+            else 
+            {
+                QTextStream out(&file); out << zdust.toUtf8();
+                file.close();
+            }
         });
     }
- 
-    
 }
 
 // Build the RPC JSON Parameters for this tx
@@ -116,7 +116,7 @@ void Controller::fillTxJsonParams(json& allRecepients, Tx tx)
     // Construct the JSON params
     json rec = json::object();
 
-    //creating the JSON parameter in a std::vector to iterate over there during tx
+    //creating the JSON dust parameters in a std::vector to iterate over there during tx
     std::vector<json> dust(10);
     dust.resize(10, json::object());
 
@@ -146,7 +146,7 @@ void Controller::fillTxJsonParams(json& allRecepients, Tx tx)
 
     
 
-// Set sietch zdust addr to json.
+    // Set sietch zdust addr to json.
     for(uint8_t i = 0; i < 10; i++)
     {
         QString path = "";
@@ -172,7 +172,7 @@ void Controller::fillTxJsonParams(json& allRecepients, Tx tx)
 
     
 
-// Dust amt/memo, construct the JSON 
+    // Dust amt/memo, construct the JSON 
     for(uint8_t i = 0; i < 10; i++)
     {
         printf("Setting amount and memo to 0 for dust%i \n", i);
@@ -182,8 +182,7 @@ void Controller::fillTxJsonParams(json& allRecepients, Tx tx)
     }
         
 
-// For each addr/amt/memo, construct the JSON and also build the confirm dialog box   
-
+    // For each addr/amt/memo, construct the JSON and also build the confirm dialog box   
     for (int i=0; i < tx.toAddrs.size(); i++) 
     {
         auto toAddr = tx.toAddrs[i];
@@ -196,16 +195,35 @@ void Controller::fillTxJsonParams(json& allRecepients, Tx tx)
     }
 
     int decider = qrand() % ((100 + 1)-1)+ 1;// random int between 1 and 100
-               
-      //50% chance of adding another zdust, shuffle.
-       
+    //50% chance of adding another zdust, shuffle.   
             
     if(decider % 4 == 3) 
-        allRecepients.insert(std::begin(allRecepients), dust);//{dust,dust1,dust2,dust3,dust4,dust5,dust6,dust7,dust8}) ;
+        allRecepients.insert(std::begin(allRecepients), {
+            dust.at(0),
+            dust.at(1),
+            dust.at(2),
+            dust.at(3),
+            dust.at(4),
+            dust.at(5),
+            dust.at(6),
+            dust.at(7),
+            dust.at(8)
+        }) ;
     //   std::shuffle(allRecepients.begin(),allRecepients.end(),std::random_device());         
     else
-        allRecepients.insert(std::begin(allRecepients), dust);//{dust,dust1,dust2,dust3,dust4,dust5,dust6,dust7,dust8,dust9}) ;
-      //  std::shuffle(allRecepients.begin(),allRecepients.end(),std::random_device());
+        allRecepients.insert(std::begin(allRecepients), {
+            dust.at(0),
+            dust.at(1),
+            dust.at(2),
+            dust.at(3),
+            dust.at(4),
+            dust.at(5),
+            dust.at(6),
+            dust.at(7),
+            dust.at(8),
+            dust.at(9)
+        });
+    //  std::shuffle(allRecepients.begin(),allRecepients.end(),std::random_device());
 }
 
 void Controller::noConnection() 
