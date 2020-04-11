@@ -130,7 +130,6 @@ void Controller::fillTxJsonParams(json& allRecepients, Tx tx)
     // Dust amt/memo, construct the JSON 
     for(uint8_t i = 0; i < 10; i++)
     {
-        printf("Setting amount and memo to 0 for dust%i \n", i);
         dust.at(i)["amount"] = 0;
         dust.at(i)["memo"] = "";
         
