@@ -1756,7 +1756,7 @@ Möchten Sie die Release Seite besuchen?</translation>
     <message>
         <location filename="../src/settings.ui" line="27"/>
         <source>Connection</source>
-        <translation>Verbidnung</translation>
+        <translation>Verbindung</translation>
     </message>
     <message>
         <source>Server</source>
