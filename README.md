@@ -15,7 +15,17 @@ This means your IP address is known to these servers. Enable Tor setting in Sile
 
 Go to the releases page and grab the latest installers or binary. https://github.com/MyHush/SilentDragonLite/releases
 
-### Note Management
+## Install Torsocks (or any other Socks service for TOR) on Ubuntu 18.04
+```
+sudo apt update
+sudo apt install torsocks
+```
+## Connection to our TOR onion service Server
+```
+* Open SDL  Edit->Settings->LightwalletServer->rnhk4pwlsbaqzx7wcqfy47lijf2opklstaukq35reiz5rn76crfqpjqd.onion:9067
+* Open the folder of SDL in a Terminal -> Enter: TORSOCKS_LOG_LEVEL=1 torsocks -i ./SilentDragonLite
+```
+## Note Management
 SilentDragonLite does automatic note and utxo management, which means it doesn't allow you to manually select which address to send outgoing transactions from. It follows these principles:
 * Defaults to sending shielded transactions, even if you're sending to a transparent address
 * Sapling funds need at least 2 confirmations before they can be spent
