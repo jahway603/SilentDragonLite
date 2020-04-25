@@ -1356,7 +1356,7 @@
          <rect>
           <x>340</x>
           <y>80</y>
-          <width>871</width>
+          <width>908</width>
           <height>361</height>
          </rect>
         </property>
@@ -1379,7 +1379,7 @@
          <rect>
           <x>357</x>
           <y>483</y>
-          <width>851</width>
+          <width>891</width>
           <height>128</height>
          </rect>
         </property>
@@ -1416,7 +1416,7 @@
        <widget class="QLabel" name="memoSizeChat">
         <property name="geometry">
          <rect>
-          <x>1110</x>
+          <x>1150</x>
           <y>460</y>
           <width>91</width>
           <height>17</height>
@@ -1614,6 +1614,11 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
+   <class>MemoEdit</class>
+   <extends>QPlainTextEdit</extends>
+   <header>memoedit.h</header>
+  </customwidget>
+  <customwidget>
    <class>AddressCombo</class>
    <extends>QComboBox</extends>
    <header>addresscombo.h</header>
@@ -1627,11 +1632,6 @@
    <class>FilledIconLabel</class>
    <extends>QLabel</extends>
    <header>fillediconlabel.h</header>
-  </customwidget>
-  <customwidget>
-   <class>MemoEdit</class>
-   <extends>QPlainTextEdit</extends>
-   <header>memoedit.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

@@ -65,7 +65,9 @@ SOURCES += \
     src/datamodel.cpp \
     src/controller.cpp \
     src/liteinterface.cpp \
-    src/camount.cpp
+    src/camount.cpp \
+    src/chatbubbleme.cpp \
+    src/chatbubblepartner.cpp
 
 HEADERS += \
     src/firsttimewizard.h \
@@ -94,7 +96,9 @@ HEADERS += \
     src/controller.h \
     src/liteinterface.h \
     src/camount.h \
-    lib/silentdragonlitelib.h 
+    lib/silentdragonlitelib.h \ 
+    src/chatbubbleme.h \
+    src/chatbubblepartner.h
 
 FORMS += \
     src/encryption.ui \
@@ -117,7 +121,9 @@ FORMS += \
     src/recurringdialog.ui \
     src/newrecurring.ui \
     src/requestdialog.ui \
-    src/recurringmultiple.ui 
+    src/recurringmultiple.ui \ 
+    src/chatbubbleme.ui \
+    src/chatbubblepartner.ui
 
 
 TRANSLATIONS = res/silentdragonlite_es.ts \
