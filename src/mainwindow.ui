@@ -22,7 +22,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>5</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -1324,6 +1324,125 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="tab_6">
+       <attribute name="title">
+        <string>HushChat</string>
+       </attribute>
+       <widget class="QListWidget" name="listWidget">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>80</y>
+          <width>341</width>
+          <height>561</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_39">
+        <property name="geometry">
+         <rect>
+          <x>6</x>
+          <y>40</y>
+          <width>311</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Contact&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+       <widget class="QListView" name="listChatMemo">
+        <property name="geometry">
+         <rect>
+          <x>340</x>
+          <y>80</y>
+          <width>871</width>
+          <height>361</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_40">
+        <property name="geometry">
+         <rect>
+          <x>357</x>
+          <y>460</y>
+          <width>329</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Memo</string>
+        </property>
+       </widget>
+       <widget class="MemoEdit" name="memoTxtChat">
+        <property name="geometry">
+         <rect>
+          <x>357</x>
+          <y>483</y>
+          <width>851</width>
+          <height>128</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btnInsertFrom">
+        <property name="geometry">
+         <rect>
+          <x>360</x>
+          <y>620</y>
+          <width>158</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Include Reply Address</string>
+        </property>
+       </widget>
+       <widget class="QDialogButtonBox" name="buttonBox">
+        <property name="geometry">
+         <rect>
+          <x>692</x>
+          <y>618</y>
+          <width>189</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="standardButtons">
+         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+        </property>
+       </widget>
+       <widget class="QLabel" name="memoSizeChat">
+        <property name="geometry">
+         <rect>
+          <x>1110</x>
+          <y>460</y>
+          <width>91</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string notr="true">0 / 512</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_41">
+        <property name="geometry">
+         <rect>
+          <x>340</x>
+          <y>50</y>
+          <width>861</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Messages&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -1508,6 +1627,11 @@
    <class>FilledIconLabel</class>
    <extends>QLabel</extends>
    <header>fillediconlabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MemoEdit</class>
+   <extends>QPlainTextEdit</extends>
+   <header>memoedit.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
