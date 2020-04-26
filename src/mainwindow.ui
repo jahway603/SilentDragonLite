@@ -1360,6 +1360,9 @@
           <height>361</height>
          </rect>
         </property>
+        <property name="resizeMode">
+         <enum>QListView::Adjust</enum>
+        </property>
        </widget>
        <widget class="QLabel" name="label_40">
         <property name="geometry">
