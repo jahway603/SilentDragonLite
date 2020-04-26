@@ -28,22 +28,45 @@ void ChatModel::setItems(std::vector<ChatItem> items)
     }
 }
 
+void ChatModel::clear()
+{
+    this->chatItems.clear();
+}
+
+void ChatModel::addMessage(ChatItem item)
+{
+    this->chatItems[item.getTimestamp()] = item;
+}
+
+void ChatModel::addMessage(long timestamp, ChatItem item)
+{
+    this->chatItems[timestamp] = item;
+}
+
+void ChatModel::showMessages()
+{
+    for(auto &c : this->chatItems)
+    {
+        qDebug() << "[" << c.second.getTimestamp() << "] " << "<" << c.second.getAddress() << "> :" << c.second.getMemo(); 
+    }
+}
+
 void ChatModel::renderChatBox(QListView &view)
 {
-    for(ChatItem c : items)
+    /*for(auto &c : this->chatItems)
     {
-        view.getItems().add(QString("[Timestamp] <Contactname|Me>: lorem ipsum ...."));
-    }
-    
+        //view.getItems().add(QString("[Timestamp] <Contactname|Me>: lorem ipsum ...."));
+    }*/
+    qDebug() << "not implemented yet";
     //todo render items to view
 }
 
 void ChatModel::renderChatBox(QListView *view)
 {
-    for(ChatItem c : items)
+    /*for(auto &c : this->chatItems)
     {
-        view->getItems().add(QString("[Timestamp] <Contactname|Me>: lorem ipsum ...."));
-    }
-    
+        //view->getItems().add(QString("[Timestamp] <Contactname|Me>: lorem ipsum ...."));
+    }*/
+    qDebug() << "not implemented yet blyat";
     //todo render items to view
 }

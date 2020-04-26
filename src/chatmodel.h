@@ -1,4 +1,4 @@
-#include <string>
+#include <QString>
 #include <map>
 #include <vector>
 #include <QListView>
@@ -7,32 +7,32 @@ class ChatItem
 {
     private:
         long timestamp;
-        std::string address;
-        std::string contact;
-        std::string memo; 
+        QString address;
+        QString contact;
+        QString memo; 
         bool outgoing = false;
 
     public:
         ChatItem() {}
-        ChatItem(long timestamp, std::string address, std::string contact, std::string memo);
-        ChatItem(long timestamp, std::string address, std::string contact, std::string memo, bool outgoing = false);
+        ChatItem(long timestamp, QString address, QString contact, QString memo);
+        ChatItem(long timestamp, QString address, QString contact, QString memo, bool outgoing = false);
 
         long getTimestamp()
         {
             return this->timestamp;
         }
 
-        std::string getAddress()
+        QString getAddress()
         {
             return this->address;
         }
 
-        std::string getContact()
+        QString getContact()
         {
             return this->contact;
         }
 
-        std::string getMemo()
+        QString getMemo()
         {
             return this->memo;
         }
@@ -47,17 +47,17 @@ class ChatItem
             this->timestamp = timestamp;
         }
 
-        void setAddress(std::string address)
+        void setAddress(QString address)
         {
             this->address = address;
         }
 
-        void setContact(std::string contact)
+        void setContact(QString contact)
         {
             this->contact = contact;
         }
 
-        void setMemo(std::string memo)
+        void setMemo(QString memo)
         {
             this->memo = memo;
         }
@@ -69,11 +69,11 @@ class ChatItem
 
         ~ChatItem()
         {
-            delete timestamp;
+            /*delete timestamp;
             delete address;
             delete contact;
             delete memo;
-            delete outgoing;
+            delete outgoing;*/
         }
 };
 
@@ -91,4 +91,8 @@ class ChatModel
         void setItems(std::vector<ChatItem> items);
         void renderChatBox(QListView &view);
         void renderChatBox(QListView *view);
+        void showMessages();
+        void clear();
+        void addMessage(ChatItem item);
+        void addMessage(long timestamp, ChatItem item);
 };

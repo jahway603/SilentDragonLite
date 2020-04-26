@@ -11,8 +11,11 @@
 #include "mainwindow.h"
 #include "liteinterface.h"
 #include "connection.h"
+#include "chatmodel.h"
 
 using json = nlohmann::json;
+
+ChatModel *chatModel = new ChatModel();
 
 struct WatchedTx {
     QString opid;
