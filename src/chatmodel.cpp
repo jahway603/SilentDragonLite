@@ -150,7 +150,7 @@ Tx MainWindow::createTxFromChatPage() {
         // Remove label if it exists
         addr = AddressBook::addressFromAddressLabel(addr);
         
-        QString amtStr = "0.00001";
+        QString amtStr = "0";
       
       //  bool ok;
         CAmount amt;  
