@@ -85,6 +85,7 @@ private:
 
     void setupSendTab();
     void setupTransactionsTab();
+    void updateChat();
     void setupReceiveTab();
     void setupBalancesTab();
     void setuphushdTab();

@@ -51,7 +51,7 @@ void ChatModel::showMessages()
     }
 }
 
-void ChatModel::renderChatBox(QListView &view)
+void ChatModel::renderChatBox(QListWidget &view)
 {
     /*for(auto &c : this->chatItems)
     {
@@ -61,12 +61,25 @@ void ChatModel::renderChatBox(QListView &view)
     //todo render items to view
 }
 
-void ChatModel::renderChatBox(QListView *view)
+void ChatModel::renderChatBox(QListWidget *view)
 {
-    /*for(auto &c : this->chatItems)
+    qDebug() << "called ChatModel::renderChatBox(QListWidget *view)";
+    QString line = "";
+    while(view->count() > 0)
     {
-        //view->getItems().add(QString("[Timestamp] <Contactname|Me>: lorem ipsum ...."));
-    }*/
-    qDebug() << "not implemented yet blyat";
-    //todo render items to view
+        view->takeItem(0);
+    }
+
+    for(auto &c : this->chatItems)
+    {
+        QDateTime myDateTime;
+ 
+        myDateTime.setTime_t(c.second.getTimestamp());
+        qDebug() << "[" << myDateTime.toString("dd.MM.yyyy hh:mm:ss ") << "] " << "<" << c.second.getAddress() << "> :" << c.second.getMemo(); 
+        line += QString("[") + myDateTime.toString("dd.MM.yyyy hh:mm:ss ") +  QString("] ");
+        line += QString("<") + QString(c.second.getAddress()) + QString("> :");
+        line += QString(c.second.getMemo());
+        view->addItem(line);
+        line ="";
+    }
 }
