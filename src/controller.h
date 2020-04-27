@@ -71,6 +71,7 @@ public:
     void refreshGBPCAP();
     void refreshAUDCAP();
     
+    void refreshChat(QListWidget *listWidget);
     
     void executeStandardUITransaction(Tx tx); 
 

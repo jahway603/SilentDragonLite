@@ -900,7 +900,6 @@ void MainWindow::setupTransactionsTab() {
 
     // Set up context menu on transactions tab
     ui->transactionsTable->setContextMenuPolicy(Qt::CustomContextMenu);
-
     // Table right click
     QObject::connect(ui->transactionsTable, &QTableView::customContextMenuRequested, [=] (QPoint pos) {
         QModelIndex index = ui->transactionsTable->indexAt(pos);
@@ -981,6 +980,12 @@ void MainWindow::setupTransactionsTab() {
 
         menu.exec(ui->transactionsTable->viewport()->mapToGlobal(pos));        
     });
+}
+
+void MainWindow::updateChat()
+{
+    qDebug() << "Called MainWindow::updateChat()";
+    rpc->refreshChat(ui->listChatMemo);
 }
 
 void MainWindow::addNewZaddr(bool sapling) {

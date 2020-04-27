@@ -3,7 +3,7 @@
 #include <QString>
 #include <map>
 #include <vector>
-#include <QListView>
+#include <QListWidget>
 
 class ChatItem
 {
@@ -109,8 +109,8 @@ class ChatModel
         std::map<long, ChatItem> getItems();
         void setItems(std::map<long, ChatItem> items);
         void setItems(std::vector<ChatItem> items);
-        void renderChatBox(QListView &view);
-        void renderChatBox(QListView *view);
+        void renderChatBox(QListWidget &view);
+        void renderChatBox(QListWidget *view);
         void showMessages();
         void clear();
         void addMessage(ChatItem item);
