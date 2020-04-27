@@ -47,6 +47,7 @@ public:
     QRegExpValidator*   getAmountValidator() { return amtValidator; }
 
     QString doSendTxValidations(Tx tx);
+    QString doSendChatTxValidations(Tx tx);
 
     void replaceWormholeClient(WormholeClient* newClient);
     bool isWebsocketListening();
@@ -85,10 +86,11 @@ private:
 
     void setupSendTab();
     void setupTransactionsTab();
-    void updateChat();
     void setupReceiveTab();
     void setupBalancesTab();
     void setuphushdTab();
+    void setupchatTab();
+    void updateChat();
 
     void setupSettingsModal();
     void setupStatusBar();
@@ -98,11 +100,14 @@ private:
     Tx   createTxFromSendPage();
     bool confirmTx(Tx tx, RecurringPaymentInfo* rpi);
 
+    Tx   createTxFromChatPage();
+
     void encryptWallet();
     void removeWalletEncryption();
 
     void cancelButton();
     void sendButton();
+    void sendChatButton();
     void addAddressSection();
     void maxAmountChecked(int checked);
 
