@@ -876,7 +876,18 @@ void Controller::refreshTransactions()
                    
                     QString memo;
                     if (!o["memo"].is_null()) 
+                    {
+                        ChatItem item = ChatItem(
+                                datetime,
+                                address,
+                                QString(""),
+                                memo,
+                                true // is an outgoing message
+                            );
+                        chatModel->addMessage(item);
                         memo = QString::fromStdString(o["memo"]);
+                    }
+                        
                     
                     items.push_back(TransactionItemDetail{address, amount, memo});
                     total_amount = total_amount + amount;
@@ -913,6 +924,15 @@ void Controller::refreshTransactions()
                 model->markAddressUsed(address);
                 QString memo;
                 if (!it["memo"].is_null())
+                {
+                    ChatItem item = ChatItem(
+                                datetime,
+                                address,
+                                QString(""),
+                                memo
+                            );
+                    chatModel->addMessage(item);
+                }
                     memo = QString::fromStdString(it["memo"]);
 
                 items.push_back(
@@ -958,7 +978,9 @@ void Controller::refreshTransactions()
         updateUIBalances();
 
         // Update model data, which updates the table view
-        transactionsTableModel->replaceData(txdata);        
+        transactionsTableModel->replaceData(txdata);    
+        //chatModel->renderChatBox();    
+        chatModel->showMessages();
     });
 }
 
