@@ -11,6 +11,7 @@
 #include "mainwindow.h"
 #include "liteinterface.h"
 #include "connection.h"
+#include "chatmodel.h"
 
 using json = nlohmann::json;
 
