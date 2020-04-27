@@ -15,8 +15,6 @@
 
 using json = nlohmann::json;
 
-ChatModel *chatModel = new ChatModel();
-
 struct WatchedTx {
     QString opid;
     Tx tx;

@@ -1,3 +1,5 @@
+#ifndef CHATMODEL_H
+#define CHATMODEL_H
 #include <QString>
 #include <map>
 #include <vector>
@@ -6,65 +8,83 @@
 class ChatItem
 {
     private:
-        long timestamp;
-        QString address;
-        QString contact;
-        QString memo; 
-        bool outgoing = false;
+        long _timestamp;
+        QString _address;
+        QString _contact;
+        QString _memo; 
+        bool _outgoing = false;
 
     public:
         ChatItem() {}
-        ChatItem(long timestamp, QString address, QString contact, QString memo);
-        ChatItem(long timestamp, QString address, QString contact, QString memo, bool outgoing = false);
+
+        ChatItem(long timestamp, QString address, QString contact, QString memo)
+        {
+            _timestamp = timestamp;
+            _address = address;
+            _contact = contact;
+            _memo = memo;
+            _outgoing = false;
+
+        }
+
+        ChatItem(long timestamp, QString address, QString contact, QString memo, bool outgoing)
+        {
+            _timestamp = timestamp;
+            _address = address;
+            _contact = contact;
+            _memo = memo;
+            _outgoing = outgoing;
+
+        }
 
         long getTimestamp()
         {
-            return this->timestamp;
+            return _timestamp;
         }
 
         QString getAddress()
         {
-            return this->address;
+            return _address;
         }
 
         QString getContact()
         {
-            return this->contact;
+            return _contact;
         }
 
         QString getMemo()
         {
-            return this->memo;
+            return _memo;
         }
 
         bool isOutgoing()
         {
-            return this->outgoing;
+            return _outgoing;
         }
 
         void setTimestamp(long timestamp)
         {
-            this->timestamp = timestamp;
+            _timestamp = timestamp;
         }
 
         void setAddress(QString address)
         {
-            this->address = address;
+            _address = address;
         }
 
         void setContact(QString contact)
         {
-            this->contact = contact;
+            _contact = contact;
         }
 
         void setMemo(QString memo)
         {
-            this->memo = memo;
+            _memo = memo;
         }
 
         void toggleOutgo()
         {
-            this->outgoing = true;
+            _outgoing = true;
         }
 
         ~ChatItem()
@@ -96,3 +116,4 @@ class ChatModel
         void addMessage(ChatItem item);
         void addMessage(long timestamp, ChatItem item);
 };
+#endif

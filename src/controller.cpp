@@ -10,6 +10,7 @@ template<>
 DataStore<QString>* DataStore<QString>::instance = nullptr;
 template<>
 bool DataStore<QString>::instanced = false;
+ChatModel *chatModel = new ChatModel();
 
 using json = nlohmann::json;
 
@@ -877,6 +878,7 @@ void Controller::refreshTransactions()
                     QString memo;
                     if (!o["memo"].is_null()) 
                     {
+                        memo = QString::fromStdString(o["memo"]);
                         ChatItem item = ChatItem(
                                 datetime,
                                 address,
@@ -885,7 +887,7 @@ void Controller::refreshTransactions()
                                 true // is an outgoing message
                             );
                         chatModel->addMessage(item);
-                        memo = QString::fromStdString(o["memo"]);
+                        
                     }
                         
                     
@@ -925,6 +927,7 @@ void Controller::refreshTransactions()
                 QString memo;
                 if (!it["memo"].is_null())
                 {
+                    memo = QString::fromStdString(it["memo"]);
                     ChatItem item = ChatItem(
                                 datetime,
                                 address,
@@ -933,7 +936,7 @@ void Controller::refreshTransactions()
                             );
                     chatModel->addMessage(item);
                 }
-                    memo = QString::fromStdString(it["memo"]);
+                    
 
                 items.push_back(
                     TransactionItemDetail{
