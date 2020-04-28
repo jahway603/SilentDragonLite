@@ -984,14 +984,21 @@ void Controller::refreshTransactions()
         // Update model data, which updates the table view
         transactionsTableModel->replaceData(txdata);    
         chatModel->renderChatBox(ui->listChatMemo);    
-        //chatModel->showMessages();
+        refreshContacts(
+            ui->listContactWidget
+        );
     });
 }
 
 void Controller::refreshChat(QListWidget *listWidget)
 {
-    qDebug() << "Called Controller::refreshChat(QListWidget *listWidget)";
     chatModel->renderChatBox(listWidget);
+}
+
+void Controller::refreshContacts(QListWidget *listWidget)
+{
+    qDebug() << "Called Controller::refreshContacts(QListWidget *listWidget)";
+    contactModel->renderContactList(listWidget);
 }
 
 // If the wallet is encrpyted and locked, we need to unlock it 

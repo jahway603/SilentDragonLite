@@ -42,6 +42,12 @@ void AddressBookModel::addNewLabel(QString label, QString addr, QString myAddr)
 {
     //labels.push_back(QPair<QString, QString>(label, addr));
     AddressBook::getInstance()->addAddressLabel(label, addr, myAddr);
+    updateUi();
+    
+}
+
+void AddressBookModel::updateUi()
+{
     labels.clear();
     labels = AddressBook::getInstance()->getAllAddressLabels();
     dataChanged(index(0, 0), index(labels.size()-1, columnCount(index(0,0))-1));
@@ -175,8 +181,22 @@ void AddressBook::open(MainWindow* parent, QLineEdit* target)
             );
             return;
         } 
-    
-        model.addNewLabel(newLabel, ab.addr->text(), "");
+        Controller* rpc = parent->getRPC();
+        bool sapling = true;
+        rpc->createNewZaddr(sapling, [=] (json reply) {
+            QString myAddr = QString::fromStdString(reply.get<json::array_t>()[0]);
+            QString message = QString("New Chat Address for your partner: ") + myAddr;
+            QMessageBox::critical(
+                parent, 
+                QObject::tr("Success"), 
+                message, //todo traslate this shit
+                QMessageBox::Ok
+            );
+            qDebug() << "new generated myAddr" << myAddr;
+            AddressBook::getInstance()->addAddressLabel(newLabel, ab.addr->text(), myAddr);
+        });
+        model.updateUi(); //todo fix updating gui after adding 
+
     });
 
     // Import Button
@@ -284,6 +304,7 @@ void AddressBook::open(MainWindow* parent, QLineEdit* target)
 
     // Refresh after the dialog is closed to update the labels everywhere.
     parent->getRPC()->refresh(true);
+    model.updateUi(); //todo fix updating gui after adding 
 }
 
 //=============
@@ -317,14 +338,14 @@ void AddressBook::readFromStorage()
             // Convert old addressbook format v1 to v2
         QList<QList<QString>> stuff;
         in >> stuff;
-        qDebug() << "Stuff: " << stuff;
+        //qDebug() << "Stuff: " << stuff;
         for (int i=0; i < stuff.size(); i++) 
         {
             //qDebug() << "0:" << stuff[i][0];
             //qDebug() << "1:" << stuff[i][1];
             //qDebug() << "2:" << stuff[i][2];
             ContactItem contact = ContactItem(stuff[i][2], stuff[i][1], stuff[i][0]);
-            qDebug() << "contact=" << contact.toQTString();
+            //qDebug() << "contact=" << contact.toQTString();
             allLabels.push_back(contact);
         }
 
