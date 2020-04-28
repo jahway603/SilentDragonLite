@@ -74,6 +74,7 @@ void ChatModel::renderChatBox(QListWidget &view)
 
 void ChatModel::renderChatBox(QListWidget *view)
 {
+    
     qDebug() << "called ChatModel::renderChatBox(QListWidget *view)";
     QString line = "";
     while(view->count() > 0)
@@ -97,6 +98,7 @@ void ChatModel::renderChatBox(QListWidget *view)
 
 QString MainWindow::createHeaderMemo(QString cid, QString zaddr, int version=0, int headerNumber=1)
 {
+    
     QString header="";
     QJsonDocument j;
     QJsonObject h;
@@ -120,7 +122,14 @@ Tx MainWindow::createTxFromChatPage() {
     CAmount totalAmt;
     // For each addr/amt in the Chat tab
   {
-        QString addr = ""; // We need to set the reply Address for our Contact here
+
+     
+  
+    //	ui->ContactZaddr->setText("Zaddr");
+        
+        
+   
+       QString addr = ui->ContactZaddr->text().trimmed(); // We need to set the reply Address for our Contact here
         // Remove label if it exists
         addr = AddressBook::addressFromAddressLabel(addr);
         
@@ -134,15 +143,15 @@ Tx MainWindow::createTxFromChatPage() {
             totalAmt = totalAmt + amt;
         QString cid = QString::number( time(NULL) % std::rand() ); // low entropy for testing!
        // QString cid = QUuid::createUuid().toString(QUuid::WithoutBraces); // Needs to get a fix
-        QString hmemo= createHeaderMemo(cid,"ZADDR");
+        QString hmemo= createHeaderMemo(cid,"Some ZADDR");
 
         QString memo = ui->memoTxtChat->toPlainText().trimmed();
        // ui->memoSizeChat->setLenDisplayLabel();
         
        
-     tx.toAddrs.push_back(ToFields{addr, amt, hmemo.toUtf8().toHex()}) ;
+     tx.toAddrs.push_back(ToFields{addr, amt, hmemo}) ;
      qDebug()<<hmemo;
-     tx.toAddrs.push_back( ToFields{addr, amt, memo.toUtf8().toHex()});
+     tx.toAddrs.push_back( ToFields{addr, amt, memo});
 
          qDebug() << "pushback chattx";
    } 
