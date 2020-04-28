@@ -38,10 +38,10 @@ void AddressBookModel::loadData()
     );
 }
 
-void AddressBookModel::addNewLabel(QString label, QString addr) 
+void AddressBookModel::addNewLabel(QString label, QString addr, QString myAddr) 
 {
     //labels.push_back(QPair<QString, QString>(label, addr));
-    AddressBook::getInstance()->addAddressLabel(label, addr);
+    AddressBook::getInstance()->addAddressLabel(label, addr, myAddr);
     labels.clear();
     labels = AddressBook::getInstance()->getAllAddressLabels();
     dataChanged(index(0, 0), index(labels.size()-1, columnCount(index(0,0))-1));
@@ -53,20 +53,25 @@ void AddressBookModel::removeItemAt(int row)
     if (row >= labels.size())
         return;
 
-    AddressBook::getInstance()->removeAddressLabel(labels[row].first, labels[row].second);    
+    AddressBook::getInstance()->removeAddressLabel(labels[row].getName(), labels[row].getPartnerAddress());    
     labels.clear();
     labels = AddressBook::getInstance()->getAllAddressLabels();
     dataChanged(index(0, 0), index(labels.size()-1, columnCount(index(0,0))-1));
     layoutChanged();
 }
 
-QPair<QString, QString> AddressBookModel::itemAt(int row) 
+ContactItem AddressBookModel::itemAt(int row) 
 {
-    if (row >= labels.size()) 
-        return QPair<QString, QString>();
+    if (row >= labels.size())
+    {
+        ContactItem item = ContactItem("", "", "");
+        return item;
+    }   
+        
 
     return labels.at(row);
 }
+
 
 
 int AddressBookModel::rowCount(const QModelIndex&) const 
@@ -86,8 +91,8 @@ QVariant AddressBookModel::data(const QModelIndex &index, int role) const
     {
         switch(index.column()) 
         {
-            case 0: return labels.at(index.row()).first;
-            case 1: return labels.at(index.row()).second;
+            case 0: return labels.at(index.row()).getName();
+            case 1: return labels.at(index.row()).getPartnerAddress();
         }
     }
 
@@ -171,7 +176,7 @@ void AddressBook::open(MainWindow* parent, QLineEdit* target)
             return;
         } 
     
-        model.addNewLabel(newLabel, ab.addr->text());
+        model.addNewLabel(newLabel, ab.addr->text(), "");
     });
 
     // Import Button
@@ -209,7 +214,7 @@ void AddressBook::open(MainWindow* parent, QLineEdit* target)
                 continue;
 
             // Add label, address.
-            model.addNewLabel(items.at(1), items.at(0));
+            model.addNewLabel(items.at(1), items.at(0), "");
             numImported++;
         }
 
@@ -233,8 +238,8 @@ void AddressBook::open(MainWindow* parent, QLineEdit* target)
         if (index.row() < 0)
             return;
 
-        QString lbl  = model.itemAt(index.row()).first;
-        QString addr = model.itemAt(index.row()).second;
+        QString lbl  = model.itemAt(index.row()).getName();
+        QString addr = model.itemAt(index.row()).getPartnerAddress();
         d.accept();
         fnSetTargetLabelAddr(target, lbl, addr);
     });
@@ -246,8 +251,8 @@ void AddressBook::open(MainWindow* parent, QLineEdit* target)
         if (index.row() < 0)
             return;
 
-        QString lbl  = model.itemAt(index.row()).first;
-        QString addr = model.itemAt(index.row()).second;
+        QString lbl  = model.itemAt(index.row()).getName();
+        QString addr = model.itemAt(index.row()).getPartnerAddress();
 
         QMenu menu(parent);
 
@@ -273,7 +278,7 @@ void AddressBook::open(MainWindow* parent, QLineEdit* target)
         auto selection = ab.addresses->selectionModel();
         if (selection && selection->hasSelection() && selection->selectedRows().size() > 0) {
             auto item = model.itemAt(selection->selectedRows().at(0).row());
-            fnSetTargetLabelAddr(target, item.first, item.second);
+            fnSetTargetLabelAddr(target, item.getName(), item.getPartnerAddress());
         }
     };
 
@@ -307,15 +312,35 @@ void AddressBook::readFromStorage()
         file.open(QIODevice::ReadOnly);
         QDataStream in(&file);    // read the data serialized from the file
         QString version;
-        in >> version >> allLabels; 
+        in >> version;
+        qDebug() << "Detected old addressbook format";
+            // Convert old addressbook format v1 to v2
+        QList<QList<QString>> stuff;
+        in >> stuff;
+        qDebug() << "Stuff: " << stuff;
+        for (int i=0; i < stuff.size(); i++) 
+        {
+            //qDebug() << "0:" << stuff[i][0];
+            //qDebug() << "1:" << stuff[i][1];
+            //qDebug() << "2:" << stuff[i][2];
+            ContactItem contact = ContactItem(stuff[i][2], stuff[i][1], stuff[i][0]);
+            qDebug() << "contact=" << contact.toQTString();
+            allLabels.push_back(contact);
+        }
+
+        qDebug() << "Read " << version << " Hush contacts from disk...";
         file.close();
+    }
+    else 
+    {
+        qDebug() << "No Hush contacts found on disk!";
     }
 
     // Special. 
     // Add the default silentdragon donation address if it isn't already present
     // QList<QString> allAddresses;
     // std::transform(allLabels.begin(), allLabels.end(), 
-    //     std::back_inserter(allAddresses), [=] (auto i) { return i.second; });
+    //     std::back_inserter(allAddresses), [=] (auto i) { return i.getPartnerAddress(); });
     // if (!allAddresses.contains(Settings::getDonationAddr(true))) {
     //     allLabels.append(QPair<QString, QString>("silentdragon donation", Settings::getDonationAddr(true)));
     // }
@@ -326,7 +351,16 @@ void AddressBook::writeToStorage()
     QFile file(AddressBook::writeableFile());
     file.open(QIODevice::ReadWrite | QIODevice::Truncate);
     QDataStream out(&file);   // we will serialize the data into the file
-    out << QString("v1") << allLabels;
+    QList<QList<QString>> contacts;
+    for(auto &item: allLabels)
+    {
+        QList<QString> c;
+        c.push_back(item.getName());
+        c.push_back(item.getPartnerAddress());
+        c.push_back(item.getMyAddress());
+        contacts.push_back(c);
+    }
+    out << QString("v1") << contacts;
     file.close();
 }
 
@@ -346,17 +380,17 @@ QString AddressBook::writeableFile()
 
 
 // Add a new address/label to the database
-void AddressBook::addAddressLabel(QString label, QString address) 
+void AddressBook::addAddressLabel(QString label, QString address, QString myAddr) 
 {
     Q_ASSERT(Settings::isValidAddress(address));
-
-    // First, remove any existing label
+    // getName(), remove any existing label
     // Iterate over the list and remove the label/address
     for (int i=0; i < allLabels.size(); i++)
-        if (allLabels[i].first == label)
-            removeAddressLabel(allLabels[i].first, allLabels[i].second);
+        if (allLabels[i].getName() == label)
+            removeAddressLabel(allLabels[i].getName(), allLabels[i].getPartnerAddress());
 
-    allLabels.push_back(QPair<QString, QString>(label, address));
+    ContactItem item = ContactItem(myAddr, address, label);
+    allLabels.push_back(item);
     writeToStorage();
 }
 
@@ -366,7 +400,7 @@ void AddressBook::removeAddressLabel(QString label, QString address)
     // Iterate over the list and remove the label/address
     for (int i=0; i < allLabels.size(); i++) 
     {
-        if (allLabels[i].first == label && allLabels[i].second == address) 
+        if (allLabels[i].getName() == label && allLabels[i].getPartnerAddress() == address) 
         {
             allLabels.removeAt(i);
             writeToStorage();
@@ -380,9 +414,9 @@ void AddressBook::updateLabel(QString oldlabel, QString address, QString newlabe
     // Iterate over the list and update the label/address
     for (int i = 0; i < allLabels.size(); i++) 
     {
-        if (allLabels[i].first == oldlabel && allLabels[i].second == address) 
+        if (allLabels[i].getName() == oldlabel && allLabels[i].getPartnerAddress() == address) 
         {
-            allLabels[i].first = newlabel;
+            allLabels[i].setName(newlabel);
             writeToStorage();
             return;
         }
@@ -390,7 +424,7 @@ void AddressBook::updateLabel(QString oldlabel, QString address, QString newlabe
 }
 
 // Read all addresses
-const QList<QPair<QString, QString>>& AddressBook::getAllAddressLabels() 
+const QList<ContactItem>& AddressBook::getAllAddressLabels() 
 {
     if (allLabels.isEmpty())
         readFromStorage();
@@ -402,8 +436,8 @@ const QList<QPair<QString, QString>>& AddressBook::getAllAddressLabels()
 QString AddressBook::getLabelForAddress(QString addr) 
 {
     for (auto i : allLabels)
-        if (i.second == addr)
-            return i.first;
+        if (i.getPartnerAddress() == addr)
+            return i.getName();
 
     return "";
 }
@@ -412,8 +446,8 @@ QString AddressBook::getLabelForAddress(QString addr)
 QString AddressBook::getAddressForLabel(QString label) 
 {
     for (auto i: allLabels)
-        if (i.first == label)
-            return i.second;
+        if (i.getName() == label)
+            return i.getPartnerAddress();
 
     return "";
 }
