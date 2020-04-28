@@ -152,6 +152,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setupReceiveTab();
     setupBalancesTab();
     setuphushdTab();
+    setupchatTab();
 
     rpc = new Controller(this);
 

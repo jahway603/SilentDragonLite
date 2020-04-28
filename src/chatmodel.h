@@ -116,4 +116,22 @@ class ChatModel
         void addMessage(ChatItem item);
         void addMessage(long timestamp, ChatItem item);
 };
+
+class ChatMemoEdit : public QPlainTextEdit
+{
+public:
+    ChatMemoEdit(QWidget* parent);
+
+    void setMaxLen(int len);
+    void setLenDisplayLabel(QLabel* label);
+    void setSendChatButton(QPushButton* button);
+    void includeReplyTo(QString replyToAddress);
+    void updateDisplay();
+
+private:
+    int             maxlen           = 512;
+    QLabel*         lenDisplayLabel  = nullptr;
+    QPushButton*    sendChatButton     = nullptr;
+};
+
 #endif

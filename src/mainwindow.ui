@@ -1367,9 +1367,9 @@
        <widget class="MemoEdit" name="memoTxtChat">
         <property name="geometry">
          <rect>
-          <x>357</x>
+          <x>347</x>
           <y>483</y>
-          <width>891</width>
+          <width>901</width>
           <height>128</height>
          </rect>
         </property>
@@ -1385,22 +1385,6 @@
         </property>
         <property name="text">
          <string>Include Reply Address</string>
-        </property>
-       </widget>
-       <widget class="QDialogButtonBox" name="buttonBox">
-        <property name="geometry">
-         <rect>
-          <x>692</x>
-          <y>618</y>
-          <width>189</width>
-          <height>25</height>
-         </rect>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="standardButtons">
-         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
         </property>
        </widget>
        <widget class="QLabel" name="memoSizeChat">
@@ -1440,6 +1424,28 @@
           <width>921</width>
           <height>371</height>
          </rect>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="sendChatButton">
+        <property name="geometry">
+         <rect>
+          <x>1130</x>
+          <y>620</y>
+          <width>114</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="baseSize">
+         <size>
+          <width>100</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Send</string>
+        </property>
+        <property name="flat">
+         <bool>false</bool>
         </property>
        </widget>
       </widget>
