@@ -1286,7 +1286,7 @@ void MainWindow::setupReceiveTab() {
 
         if (!curLabel.isEmpty() && label.isEmpty()) {
             info = "Removed Label '" % curLabel % "'";
-            AddressBook::getInstance()->removeAddressLabel(curLabel, addr);
+            AddressBook::getInstance()->removeAddressLabel(curLabel, addr, "");
         }
         else if (!curLabel.isEmpty() && !label.isEmpty()) {
             info = "Updated Label '" % curLabel % "' to '" % label % "'";
