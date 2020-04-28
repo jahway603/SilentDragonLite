@@ -130,7 +130,7 @@ Tx MainWindow::createTxFromChatPage() {
         CAmount amt;  
 
          
-            amt = CAmount::fromDecimalString("0.00001");
+            amt = CAmount::fromDecimalString("0");
             totalAmt = totalAmt + amt;
         QString cid = QString::number( time(NULL) % std::rand() ); // low entropy for testing!
        // QString cid = QUuid::createUuid().toString(QUuid::WithoutBraces); // Needs to get a fix
