@@ -1388,14 +1388,6 @@
         </property>
        </widget>
        <widget class="QLabel" name="memoSizeChat">
-        <property name="geometry">
-         <rect>
-          <x>1150</x>
-          <y>460</y>
-          <width>91</width>
-          <height>17</height>
-         </rect>
-        </property>
         <property name="text">
          <string notr="true">0 / 512</string>
         </property>
