@@ -13,6 +13,7 @@ public:
     ~AddressBookModel();
 
     void                    addNewLabel(QString label, QString address, QString myAddr);
+    void updateUi();
     void                    removeItemAt(int row);
     //QPair<QString, QString> itemAt(int row);
     ContactItem itemAt(int row);

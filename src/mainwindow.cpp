@@ -985,8 +985,13 @@ void MainWindow::setupTransactionsTab() {
 
 void MainWindow::updateChat()
 {
-    qDebug() << "Called MainWindow::updateChat()";
     rpc->refreshChat(ui->listChatMemo);
+}
+
+void MainWindow::updateContacts()
+{
+    qDebug() << "Called MainWindow::updateContacts()";
+    rpc->refreshContacts(ui->listContactWidget);
 }
 
 void MainWindow::addNewZaddr(bool sapling) {

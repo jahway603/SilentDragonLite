@@ -68,7 +68,8 @@ SOURCES += \
     src/camount.cpp \
     src/chatbubbleme.cpp \
     src/chatbubblepartner.cpp \
-    src/chatmodel.cpp
+    src/chatmodel.cpp \
+    src/contactmodel.cpp
 
 HEADERS += \
     src/firsttimewizard.h \
@@ -100,7 +101,8 @@ HEADERS += \
     lib/silentdragonlitelib.h \ 
     src/chatbubbleme.h \
     src/chatbubblepartner.h \
-    src/chatmodel.h
+    src/chatmodel.h \
+    src/contactmodel.h
 
 FORMS += \
     src/encryption.ui \

@@ -84,7 +84,7 @@ void ChatModel::renderChatBox(QListWidget *view)
         QDateTime myDateTime;
  
         myDateTime.setTime_t(c.second.getTimestamp());
-        qDebug() << "[" << myDateTime.toString("dd.MM.yyyy hh:mm:ss ") << "] " << "<" << c.second.getAddress() << "> :" << c.second.getMemo(); 
+        //qDebug() << "[" << myDateTime.toString("dd.MM.yyyy hh:mm:ss ") << "] " << "<" << c.second.getAddress() << "> :" << c.second.getMemo(); 
         line += QString("[") + myDateTime.toString("dd.MM.yyyy hh:mm:ss ") +  QString("] ");
         line += QString("<") + QString(c.second.getContact()) + QString("> :\n");
         line += QString(c.second.getMemo()) + QString("\n");

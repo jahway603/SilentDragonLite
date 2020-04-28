@@ -91,6 +91,7 @@ private:
     void setuphushdTab();
     void setupchatTab();
     void updateChat();
+    void updateContacts();
 
     void setupSettingsModal();
     void setupStatusBar();
