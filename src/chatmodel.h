@@ -102,6 +102,7 @@ class ChatModel
 {
     private:
         std::map<long, ChatItem> chatItems; 
+        QTableView* parent;
 
     public:
         ChatModel() {};

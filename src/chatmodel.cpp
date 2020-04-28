@@ -62,6 +62,8 @@ void ChatModel::showMessages()
     }
 }
 
+
+
 void ChatModel::renderChatBox(QListWidget &view)
 {
     /*for(auto &c : this->chatItems)
@@ -82,8 +84,15 @@ void ChatModel::renderChatBox(QListWidget *view)
         view->takeItem(0);
     }
 
+     //QModelIndex index = parent->listContactWidget->currentIndex();
+    // QString itemText = index.data(Qt::DisplayRole).toString();
+
+   
     for(auto &c : this->chatItems)
+   
     {
+
+       // if  ("" == QString(c.second.getAddress())){   ////// ToDo: render only memos from selected contact
         QDateTime myDateTime;
  
         myDateTime.setTime_t(c.second.getTimestamp());
@@ -93,6 +102,10 @@ void ChatModel::renderChatBox(QListWidget *view)
         line += QString(c.second.getMemo()) + QString("\n");
         view->addItem(line);
         line ="";
+  //  }
+  //  else{
+
+  //  }
     }
 }
 
