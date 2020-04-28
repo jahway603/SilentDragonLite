@@ -1241,7 +1241,7 @@ void MainWindow::setupReceiveTab() {
         }
         else if (curLabel.isEmpty() && !label.isEmpty()) {
             info = "Added Label '" % label % "'";
-            AddressBook::getInstance()->addAddressLabel(label, addr);
+            AddressBook::getInstance()->addAddressLabel(label, addr, "");
         }
 
         // Update labels everywhere on the UI
@@ -1291,7 +1291,7 @@ void MainWindow::updateTAddrCombo(bool checked) {
         auto allTaddrs = this->rpc->getModel()->getAllTAddresses();
         QSet<QString> labels;
         for (auto p : AddressBook::getInstance()->getAllAddressLabels()) {
-            labels.insert(p.second);
+            labels.insert(p.getPartnerAddress());
         }
         std::for_each(allTaddrs.begin(), allTaddrs.end(), [=, &addrs] (auto& taddr) {
             // If the address is in the address book, add it. 

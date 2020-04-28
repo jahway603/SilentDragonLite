@@ -11,6 +11,7 @@ DataStore<QString>* DataStore<QString>::instance = nullptr;
 template<>
 bool DataStore<QString>::instanced = false;
 ChatModel *chatModel = new ChatModel();
+ContactModel *contactModel = new ContactModel();
 
 using json = nlohmann::json;
 

@@ -207,7 +207,7 @@ void MainWindow::updateLabelsAutoComplete() {
     auto labels = AddressBook::getInstance()->getAllAddressLabels();
     
     std::transform(labels.begin(), labels.end(), std::back_inserter(list), [=] (auto la) -> QString {
-        return la.first % "/" % la.second;
+        return la.getName() % "/" % la.getPartnerAddress();
     });
     
     delete labelCompleter;
