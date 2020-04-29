@@ -1374,19 +1374,6 @@
          </rect>
         </property>
        </widget>
-       <widget class="QPushButton" name="btnInsertFrom">
-        <property name="geometry">
-         <rect>
-          <x>350</x>
-          <y>650</y>
-          <width>158</width>
-          <height>25</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Include Reply Address</string>
-        </property>
-       </widget>
        <widget class="QLabel" name="memoSizeChat">
         <property name="geometry">
          <rect>

@@ -880,10 +880,7 @@ void Controller::refreshTransactions()
                     if (!o["memo"].is_null()) 
                     {
                         memo = QString::fromStdString(o["memo"]);
-                        if (memo.startsWith("{"))
-                        {
 
-                        }else{
                         ChatItem item = ChatItem(
                                 datetime,
                                 address,
@@ -892,8 +889,7 @@ void Controller::refreshTransactions()
                                 true // is an outgoing message
                             );
                         chatModel->addMessage(item);
-                        
-                    }
+
                     }
                         
                     
@@ -934,11 +930,7 @@ void Controller::refreshTransactions()
                 if (!it["memo"].is_null())
                 {
                     memo = QString::fromStdString(it["memo"]);
-                    if (memo.startsWith("{"))
-                    {
-
-                    }else{
-
+            
                     ChatItem item = ChatItem(
                                 datetime,
                                 address,
@@ -946,7 +938,7 @@ void Controller::refreshTransactions()
                                 memo
                             );
                     chatModel->addMessage(item);
-                }}
+                }
                     
 
                 items.push_back(

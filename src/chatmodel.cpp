@@ -88,8 +88,21 @@ void ChatModel::renderChatBox(QListWidget *view)
    
     {
 
-       // if  ("" == QString(c.second.getAddress())){   ////// ToDo: render only memos from selected contact
-        QDateTime myDateTime;
+          if (c.second.getMemo().startsWith("{\n    \"c\": \"true\"")){
+                    
+                   // Render a incoming contact Request
+                
+        }
+      
+          if (c.second.getMemo().startsWith("{\n    \"c\": \"false\"") ){
+
+          // we dont want to render this
+            
+            }
+            
+          if (c.second.getMemo().startsWith("{") == false){ //TOdo and is selected in Contact Widget - 
+
+                 QDateTime myDateTime;
  
         myDateTime.setTime_t(c.second.getTimestamp());
         //qDebug() << "[" << myDateTime.toString("dd.MM.yyyy hh:mm:ss ") << "] " << "<" << c.second.getAddress() << "> :" << c.second.getMemo(); 
@@ -98,10 +111,8 @@ void ChatModel::renderChatBox(QListWidget *view)
         line += QString(c.second.getMemo()) + QString("\n");
         view->addItem(line);
         line ="";
-  //  }
-  //  else{
+    }
 
-  //  }
     }
 }
 
