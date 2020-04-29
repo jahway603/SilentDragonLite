@@ -14,7 +14,7 @@
    <string>SilentDragonLite</string>
   </property>
   <property name="windowIcon">
-   <iconset>
+   <iconset resource="../application.qrc">
     <normaloff>:/icons/res/icon.ico</normaloff>:/icons/res/icon.ico</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -1356,7 +1356,7 @@
          <rect>
           <x>340</x>
           <y>490</y>
-          <width>61</width>
+          <width>331</width>
           <height>17</height>
          </rect>
         </property>
@@ -1466,7 +1466,7 @@
        <widget class="QLabel" name="label_42">
         <property name="geometry">
          <rect>
-          <x>410</x>
+          <x>690</x>
           <y>490</y>
           <width>67</width>
           <height>17</height>
@@ -1736,6 +1736,8 @@
   <tabstop>minerFeeAmt</tabstop>
   <tabstop>sendToScrollArea</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../application.qrc"/>
+ </resources>
  <connections/>
 </ui>
