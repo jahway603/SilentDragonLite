@@ -315,6 +315,9 @@ Tx MainWindow::createTxForSafeContactRequest() {
            // QString cid = c.getCid();            // This has to be a new cid for the contact
            // QString myAddr = c.getMyAddress();   //  this should be a new HushChat zaddr
           //  QString addr = c.getPartnerAddress(); //  this address will be insert by the user
+          QString cid = "";
+          QString myAddr = "";
+          QString addr = "";
             QString safeContact = "true";
     
      
