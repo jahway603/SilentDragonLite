@@ -1502,7 +1502,7 @@
          <string/>
         </property>
        </widget>
-       <widget class="QPushButton" name="sendChatButton_2">
+       <widget class="QPushButton" name="safeContactRequest">
         <property name="geometry">
          <rect>
           <x>943</x>
