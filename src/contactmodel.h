@@ -15,11 +15,11 @@ class ContactItem
 
 	public:
 		ContactItem();
-		ContactItem(QString myAddress, QString partnerAddress, QString name, QString cid)
+		ContactItem(QString name, QString partnerAddress, QString myAddress, QString cid)
 		{
+			_name = name;
 			_myAddress = myAddress;
 			_partnerAddress = partnerAddress;
-			_name = name;
 			_cid = cid;
 		}
 
@@ -38,7 +38,7 @@ class ContactItem
 			return _partnerAddress;
 		}
 
-		QString getcid() const
+		QString getCid() const
 		{
 			return _cid;
 		}

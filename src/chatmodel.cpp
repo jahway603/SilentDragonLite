@@ -136,9 +136,9 @@ Tx MainWindow::createTxFromChatPage() {
     // For each addr/amt in the Chat tab
   {
 
-     
+    
   
-    //	ui->ContactZaddr->setText("Zaddr");
+    
         
        
    
@@ -155,10 +155,16 @@ Tx MainWindow::createTxFromChatPage() {
             amt = CAmount::fromDecimalString("0");
             totalAmt = totalAmt + amt;
 
-       // QString cid = QString::number( time(NULL) % std::rand() ); // low entropy for testing!
-         QString cid = QUuid::createUuid().toString(QUuid::WithoutBraces); // Needs to get a fix
-        QString hmemo= createHeaderMemo(cid,"Some ZADDR");
+  
+    for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
 
+     if (ui->ContactZaddr->text().trimmed() == c.getName()) {
+     
+            QString cid = c.getCid();
+            QString myAddr = c.getMyAddress();
+            QString addr = c.getPartnerAddress();
+     
+        QString hmemo= createHeaderMemo(cid,myAddr);
         QString memo = ui->memoTxtChat->toPlainText().trimmed();
         // ui->memoSizeChat->setLenDisplayLabel();
         
@@ -168,7 +174,7 @@ Tx MainWindow::createTxFromChatPage() {
      tx.toAddrs.push_back( ToFields{addr, amt, memo});
 
          qDebug() << "pushback chattx";
-   } 
+   } }
 
     tx.fee = Settings::getMinerFee();
 

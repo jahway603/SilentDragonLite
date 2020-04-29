@@ -59,7 +59,7 @@ void AddressBookModel::removeItemAt(int row)
     if (row >= labels.size())
         return;
 
-    AddressBook::getInstance()->removeAddressLabel(labels[row].getName(), labels[row].getPartnerAddress(), labels[row].getMyAddress(),labels[row].getcid());    
+    AddressBook::getInstance()->removeAddressLabel(labels[row].getName(), labels[row].getPartnerAddress(), labels[row].getMyAddress(),labels[row].getCid());    
     labels.clear();
     labels = AddressBook::getInstance()->getAllAddressLabels();
     dataChanged(index(0, 0), index(labels.size()-1, columnCount(index(0,0))-1));
@@ -100,7 +100,7 @@ QVariant AddressBookModel::data(const QModelIndex &index, int role) const
             case 0: return labels.at(index.row()).getName();
             case 1: return labels.at(index.row()).getPartnerAddress();
             case 2: return labels.at(index.row()).getMyAddress();
-            case 3: return labels.at(index.row()).getcid();
+            case 3: return labels.at(index.row()).getCid();
         }
     }
 
@@ -271,7 +271,7 @@ void AddressBook::open(MainWindow* parent, QLineEdit* target)
         QString lbl  = model.itemAt(index.row()).getName();
         QString addr = model.itemAt(index.row()).getPartnerAddress();
         QString myAddr = model.itemAt(index.row()).getMyAddress();
-        QString cid = model.itemAt(index.row()).getcid();
+        QString cid = model.itemAt(index.row()).getCid();
         d.accept();
         fnSetTargetLabelAddr(target, lbl, addr, myAddr, cid);
     });
@@ -286,7 +286,7 @@ void AddressBook::open(MainWindow* parent, QLineEdit* target)
         QString lbl  = model.itemAt(index.row()).getName();
         QString addr = model.itemAt(index.row()).getPartnerAddress();
         QString myAddr = model.itemAt(index.row()).getMyAddress();
-        QString cid = model.itemAt(index.row()).getcid();
+        QString cid = model.itemAt(index.row()).getCid();
 
         QMenu menu(parent);
 
@@ -312,7 +312,7 @@ void AddressBook::open(MainWindow* parent, QLineEdit* target)
         auto selection = ab.addresses->selectionModel();
         if (selection && selection->hasSelection() && selection->selectedRows().size() > 0) {
             auto item = model.itemAt(selection->selectedRows().at(0).row());
-            fnSetTargetLabelAddr(target, item.getName(), item.getMyAddress(), item.getPartnerAddress(),  item.getcid());
+            fnSetTargetLabelAddr(target, item.getName(), item.getMyAddress(), item.getPartnerAddress(),  item.getCid());
         }
     };
 
@@ -358,7 +358,7 @@ void AddressBook::readFromStorage()
             //qDebug() << "0:" << stuff[i][0];
             //qDebug() << "1:" << stuff[i][1];
             //qDebug() << "2:" << stuff[i][2];
-            ContactItem contact = ContactItem(stuff[i][3],stuff[i][2], stuff[i][1], stuff[i][0]);
+            ContactItem contact = ContactItem(stuff[i][0],stuff[i][1], stuff[i][2], stuff[i][3]);
             //qDebug() << "contact=" << contact.toQTString();
             allLabels.push_back(contact);
         }
@@ -393,7 +393,7 @@ void AddressBook::writeToStorage()
         c.push_back(item.getName());
         c.push_back(item.getPartnerAddress());
         c.push_back(item.getMyAddress());
-        c.push_back(item.getcid());
+        c.push_back(item.getCid());
         contacts.push_back(c);
     }
     out << QString("v1") << contacts;
@@ -423,9 +423,9 @@ void AddressBook::addAddressLabel(QString label, QString address, QString myAddr
     // Iterate over the list and remove the label/address
     for (int i=0; i < allLabels.size(); i++)
         if (allLabels[i].getName() == label)
-            removeAddressLabel(allLabels[i].getName(), allLabels[i].getPartnerAddress(),allLabels[i].getMyAddress(), allLabels[i].getcid());
+            removeAddressLabel(allLabels[i].getName(), allLabels[i].getPartnerAddress(),allLabels[i].getMyAddress(), allLabels[i].getCid());
 
-    ContactItem item = ContactItem(myAddr, address, label, cid);
+    ContactItem item = ContactItem(label, address, myAddr, cid);
     allLabels.push_back(item);
     writeToStorage();
 }
