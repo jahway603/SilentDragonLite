@@ -140,9 +140,9 @@ Tx MainWindow::createTxFromChatPage() {
   
     //	ui->ContactZaddr->setText("Zaddr");
         
-        
+       
    
-       QString addr = ui->ContactZaddr->text().trimmed(); // We need to set the reply Address for our Contact here
+        QString addr = ui->ContactZaddr->text().trimmed(); // We need to set the reply Address for our Contact here
         // Remove label if it exists
         addr = AddressBook::addressFromAddressLabel(addr);
         
@@ -154,12 +154,13 @@ Tx MainWindow::createTxFromChatPage() {
          
             amt = CAmount::fromDecimalString("0");
             totalAmt = totalAmt + amt;
-        QString cid = QString::number( time(NULL) % std::rand() ); // low entropy for testing!
-       // QString cid = QUuid::createUuid().toString(QUuid::WithoutBraces); // Needs to get a fix
+
+       // QString cid = QString::number( time(NULL) % std::rand() ); // low entropy for testing!
+         QString cid = QUuid::createUuid().toString(QUuid::WithoutBraces); // Needs to get a fix
         QString hmemo= createHeaderMemo(cid,"Some ZADDR");
 
         QString memo = ui->memoTxtChat->toPlainText().trimmed();
-       // ui->memoSizeChat->setLenDisplayLabel();
+        // ui->memoSizeChat->setLenDisplayLabel();
         
        
      tx.toAddrs.push_back(ToFields{addr, amt, hmemo}) ;

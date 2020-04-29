@@ -991,11 +991,11 @@ void MainWindow::setupchatTab() {
 
 ///////// Set selected Zaddr for Chat with Doubleklick
 
-    QObject::connect(ui->listContactWidget, &QTableView::doubleClicked, [=] () {
+    QObject::connect(ui->listContactWidget, &QTableView::clicked, [=] () {
     
         QModelIndex index = ui->listContactWidget->currentIndex();
-        QString itemText = index.data(Qt::DisplayRole).toString();
-        ui->ContactZaddr->setText(itemText);
+        QString zaddr = index.data(Qt::DisplayRole).toString();
+        ui->ContactZaddr->setText(zaddr);
     
     });
 }
