@@ -1460,7 +1460,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>To:</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Send to :&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
        <widget class="QLabel" name="ContactName">
@@ -1468,18 +1468,18 @@
          <rect>
           <x>340</x>
           <y>490</y>
-          <width>161</width>
+          <width>81</width>
           <height>17</height>
          </rect>
         </property>
         <property name="text">
-         <string>Your HushChat zaddr:</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;My zaddr :&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
        <widget class="QLabel" name="ContactZaddr">
         <property name="geometry">
          <rect>
-          <x>370</x>
+          <x>420</x>
           <y>460</y>
           <width>691</width>
           <height>20</height>
@@ -1514,7 +1514,7 @@
        <widget class="QLabel" name="MyZaddr">
         <property name="geometry">
          <rect>
-          <x>490</x>
+          <x>420</x>
           <y>490</y>
           <width>691</width>
           <height>20</height>

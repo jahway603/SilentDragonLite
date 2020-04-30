@@ -36,6 +36,7 @@ void ChatModel::setItems(std::vector<ChatItem> items)
     for(ChatItem c : items)
     {
         this->chatItems[c.getTimestamp()] = c;
+        
     }
 }
 
@@ -95,7 +96,7 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListWidget *view)
         line += QString(c.second.getMemo()) + QString("\n");      
         view->addItem(line);
         line ="";
-        }
+        }else{}
 
         if ((ui->MyZaddr->text().trimmed() == c.second.getAddress()) && (c.second.getMemo().startsWith("{") == false) && (c.second.getMemo().isEmpty() == false)){
         line += QString("[") + myDateTime.toString("dd.MM.yyyy hh:mm:ss ") +  QString("] ");
@@ -321,7 +322,7 @@ Tx MainWindow::createTxForSafeContactRequest() {
      
         QString hmemo= createHeaderMemo(type,cid,myAddr);
      
-     tx.toAddrs.push_back(ToFields{addr, amt, hmemo}) ;
+   //  tx.toAddrs.push_back(ToFields{addr, amt, hmemo}) ;
 
          qDebug() << "pushback chattx";
    }
@@ -334,7 +335,7 @@ Tx MainWindow::createTxForSafeContactRequest() {
 
      qDebug() << "ChatTx created";
 }
-
+//////////////////De-activated for now///////////////////
 void MainWindow::safeContactRequest() {
 
     ////////////////////////////Todo: Check if its a zaddr//////////
@@ -357,9 +358,9 @@ void MainWindow::safeContactRequest() {
  //       return;
   //  }
 
-    Tx tx = createTxForSafeContactRequest();
+  /*  Tx tx = createTxForSafeContactRequest();
 
-    QString error = doSendChatTxValidations(tx);
+    QString error = doSendRequestTxValidations(tx);
 
     if (!error.isEmpty()) {
         // Something went wrong, so show an error and exit
@@ -419,14 +420,14 @@ void MainWindow::safeContactRequest() {
 
                 QMessageBox::critical(this, QObject::tr("Transaction Error"), errStr, QMessageBox::Ok);            
             }
-        );
-    }        
+        );*/
+    }       
 
 
 QString MainWindow::doSendRequestTxValidations(Tx tx) {
     // Check to see if we have enough verified funds to send the Tx.
 
-    CAmount total;
+ /*   CAmount total;
     for (auto toAddr : tx.toAddrs) {
         if (!Settings::isValidAddress(toAddr.addr)) {
             QString addr = (toAddr.addr.length() > 100 ? toAddr.addr.left(100) + "..." : toAddr.addr);
@@ -450,5 +451,5 @@ QString MainWindow::doSendRequestTxValidations(Tx tx) {
             .arg(available.toDecimalhushString(), total.toDecimalhushString());
     }
 
-    return "";
+    return "";*/
 }

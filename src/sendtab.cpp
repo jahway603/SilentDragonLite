@@ -35,7 +35,7 @@ void MainWindow::setupSendTab() {
     });
 
     // The first Memo button
-    QObject::connect(ui->MemoBtn1, &QPushButton::clicked, [=] () {
+   QObject::connect(ui->MemoBtn1, &QPushButton::clicked, [=] () {
         this->memoButtonClicked(1);
     });
     setMemoEnabled(1, false);
@@ -377,15 +377,15 @@ void MainWindow::setMemoEnabled(int number, bool enabled) {
 
 void MainWindow::memoButtonClicked(int number, bool includeReplyTo) {
     // Memos can only be used with zAddrs. So check that first
-    auto addr = ui->sendToWidgets->findChild<QLineEdit*>(QString("Address") + QString::number(number));
-    if (! Settings::isZAddress(AddressBook::addressFromAddressLabel(addr->text()))) {
-        QMessageBox msg(QMessageBox::Critical, tr("Memos can only be used with z-addresses"),
-        tr("The memo field can only be used with a z-address.\n") + addr->text() + tr("\ndoesn't look like a z-address"),
-        QMessageBox::Ok, this);
+  //  auto addr = ui->sendToWidgets->findChild<QLineEdit*>(QString("Address") + QString::number(number));
+    //if (! Settings::isZAddress(AddressBook::addressFromAddressLabel(addr->text()))) {
+      //  QMessageBox msg(QMessageBox::Critical, tr("Memos can only be used with z-addresses"),
+     //   tr("The memo field can only be used with a z-address.\n") + addr->text() + tr("\ndoesn't look like a z-address"),
+     //   QMessageBox::Ok, this);
 
-        msg.exec();
-        return;
-    }
+    //    msg.exec();
+    //    return;
+   // }
 
     // Get the current memo if it exists
     auto memoTxt = ui->sendToWidgets->findChild<QLabel *>(QString("MemoTxt") + QString::number(number));

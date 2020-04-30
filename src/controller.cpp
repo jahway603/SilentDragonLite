@@ -879,37 +879,40 @@ void Controller::refreshTransactions() {
                     QString memo;
                     if (!o["memo"].is_null()) {
                         memo = QString::fromStdString(o["memo"]);
-                     }
-                      ChatItem item = ChatItem(
+
+                        ChatItem item = ChatItem(
                                 datetime,
                                 address,
                                 QString(""),
-                                memo,
-                                true // is an outgoing message
+                                memo
+                               // true // is an outgoing message
                             );
                         chatModel->addMessage(item);
+                     }
+                      
                     
                     items.push_back(TransactionItemDetail{address, amount, memo});
                     total_amount = total_amount + amount;
-                }
+              //  }
 
-                {
+              //  {
                     // Concat all the addresses
                   
-                    QList<QString> addresses;
-                    for (auto item : items) {
+                //    QList<QString> addresses;
+                  //  for (auto item : items) {
   
-                   addresses.push_back(item.address);
+                 //  addresses.push_back(item.address);
                   
-                  address = addresses.join(",");   
+                 
                 
-                  }
+                //  }
                 
-                }
+               // }
  
                 txdata.push_back(TransactionItem{
                    "send", datetime, address, txid,confirmations, items
                 });
+            }
             } else {
                 // Incoming Transaction
                 address = (it["address"].is_null() ? "" : QString::fromStdString(it["address"]));
@@ -919,8 +922,14 @@ void Controller::refreshTransactions() {
                 if (!it["memo"].is_null()) {
                     memo = QString::fromStdString(it["memo"]);
                 }
+  
+                TransactionItem tx{
+                    "Receive", datetime, address, txid,confirmations, items
+                };
 
-                ChatItem item = ChatItem(
+                txdata.push_back(tx);
+
+                    ChatItem item = ChatItem(
                                 datetime,
                                 address,
                                 QString(""),
@@ -933,13 +942,6 @@ void Controller::refreshTransactions() {
                     CAmount::fromqint64(it["amount"].get<json::number_integer_t>()),
                     memo
                 });
-
-  
-                TransactionItem tx{
-                    "Receive", datetime, address, txid,confirmations, items
-                };
-
-                txdata.push_back(tx);
             }
             
         }

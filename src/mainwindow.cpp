@@ -974,7 +974,7 @@ void MainWindow::setupTransactionsTab() {
                     qApp->processEvents();
 
                     // Click the memo button
-                    this->memoButtonClicked(1, true);
+                   this->memoButtonClicked(1, true);
                 });
             }
         }
