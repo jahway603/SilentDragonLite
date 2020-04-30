@@ -77,7 +77,7 @@ public:
     Logger*      logger;
 
     void doClose();
-    QString createHeaderMemo(QString safeContact, QString cid, QString zaddr, int version, int headerNumber);
+    QString createHeaderMemo(QString type, QString cid, QString zaddr, int version, int headerNumber);
 
 public slots:
     void slot_change_theme(const QString& themeName);

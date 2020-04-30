@@ -5,6 +5,10 @@
 #include <vector>
 #include <QListWidget>
 #include "precompiled.h"
+#include "mainwindow.h"
+#include "controller.h"
+#include "settings.h"
+#include "camount.h"
 
 class ChatItem
 {
@@ -103,6 +107,8 @@ class ChatModel
     private:
         std::map<long, ChatItem> chatItems; 
         QTableView* parent;
+        Ui::MainWindow*             ui;
+        MainWindow*                 main;
 
     public:
         ChatModel() {};
@@ -110,9 +116,10 @@ class ChatModel
         ChatModel(std::vector<ChatItem> chatItems);
         std::map<long, ChatItem> getItems();
         void setItems(std::map<long, ChatItem> items);
+        QString zaddr();
         void setItems(std::vector<ChatItem> items);
-        void renderChatBox(QListWidget &view);
-        void renderChatBox(QListWidget *view);
+        void renderChatBox(Ui::MainWindow*             ui, QListWidget &view);
+        void renderChatBox(Ui::MainWindow*             ui, QListWidget *view);
         void showMessages();
         void clear();
         void addMessage(ChatItem item);

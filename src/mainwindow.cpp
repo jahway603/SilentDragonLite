@@ -994,10 +994,14 @@ void MainWindow::setupchatTab() {
     QObject::connect(ui->listContactWidget, &QTableView::clicked, [=] () {
     
         QModelIndex index = ui->listContactWidget->currentIndex();
-        QString zaddr = index.data(Qt::DisplayRole).toString();
-        ui->ContactZaddr->setText(zaddr);
-    
-    });
+        QString label_contact = index.data(Qt::DisplayRole).toString();
+        
+        for(auto &p : AddressBook::getInstance()->getAllAddressLabels())
+        if (label_contact == p.getName())
+        ui->ContactZaddr->setText(p.getPartnerAddress());
+        
+    rpc->refresh(true);
+   });
 }
 
 ChatMemoEdit::ChatMemoEdit(QWidget* parent) : QPlainTextEdit(parent) {

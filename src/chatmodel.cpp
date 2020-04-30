@@ -64,7 +64,7 @@ void ChatModel::showMessages()
 
 
 
-void ChatModel::renderChatBox(QListWidget &view)
+void ChatModel::renderChatBox(Ui::MainWindow*             ui, QListWidget &view)
 {
     /*for(auto &c : this->chatItems)
     {
@@ -74,49 +74,36 @@ void ChatModel::renderChatBox(QListWidget &view)
     //todo render items to view
 }
 
-void ChatModel::renderChatBox(QListWidget *view)
+void ChatModel::renderChatBox(Ui::MainWindow* ui, QListWidget *view)
 {
-    
-    qDebug() << "called ChatModel::renderChatBox(QListWidget *view)";
-    QString line = "";
+
     while(view->count() > 0)
     {
         view->takeItem(0);
     }
-  
-    for(auto &c : this->chatItems)
+
+    QString line = "";
+    
+    for(auto &c : this->chatItems){
    
-    {
-
-          if (c.second.getMemo().startsWith("{\n    \"c\": \"true\"")){
-                    
-                   // Render a incoming contact Request
-                
-        }
-      
-          if (c.second.getMemo().startsWith("{\n    \"c\": \"false\"") ){
-
-          // we dont want to render this
-            
-            }
-            
-          if (c.second.getMemo().startsWith("{") == false){ //TOdo and is selected in Contact Widget - 
-
                  QDateTime myDateTime;
  
         myDateTime.setTime_t(c.second.getTimestamp());
-        //qDebug() << "[" << myDateTime.toString("dd.MM.yyyy hh:mm:ss ") << "] " << "<" << c.second.getAddress() << "> :" << c.second.getMemo(); 
+        
+        //////
+        if ((ui->ContactZaddr->text().trimmed() == c.second.getAddress()) && (c.second.getMemo().startsWith("{") == false)) {
         line += QString("[") + myDateTime.toString("dd.MM.yyyy hh:mm:ss ") +  QString("] ");
         line += QString("<") + QString(c.second.getContact()) + QString("> :\n");
-        line += QString(c.second.getMemo()) + QString("\n");
+        line += QString(c.second.getMemo()) + QString("\n");      
         view->addItem(line);
         line ="";
-    }
+        }else {}
 
     }
+ 
 }
 
-QString MainWindow::createHeaderMemo(QString safeContact, QString cid, QString zaddr,  int version=0, int headerNumber=1)
+QString MainWindow::createHeaderMemo(QString type, QString cid, QString zaddr,  int version=0, int headerNumber=1)
 {
     
     QString header="";
@@ -128,14 +115,14 @@ QString MainWindow::createHeaderMemo(QString safeContact, QString cid, QString z
     h["v"]   = version;         // HushChat version
     h["z"]   = zaddr;           // zaddr to respond to
     h["cid"] = cid;             // conversation id
-    h["c"] = safeContact;       // Is this a safe Contact request?
+    h["t"] = type;       // Memo or incoming contact request
 
     j.setObject(h);
     header = j.toJson();
     qDebug() << "made header=" << header;
-
     return header;
 }
+
 
 // Create a Tx from the current state of the Chat page. 
 Tx MainWindow::createTxFromChatPage() {
@@ -144,9 +131,9 @@ Tx MainWindow::createTxFromChatPage() {
     // For each addr/amt in the Chat tab
   {
     
-        QString addr = ui->ContactZaddr->text().trimmed(); // We need to set the reply Address for our Contact here
+       // QString addr = ui->ContactZaddr->text().trimmed(); // We need to set the reply Address for our Contact here
         // Remove label if it exists
-        addr = AddressBook::addressFromAddressLabel(addr);
+      //  addr = AddressBook::addressFromAddressLabel(addr);
         
         QString amtStr = "0";
       
@@ -160,15 +147,15 @@ Tx MainWindow::createTxFromChatPage() {
   
     for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
 
-     if (ui->ContactZaddr->text().trimmed() == c.getName()) {
+     if (ui->ContactZaddr->text().trimmed() == c.getPartnerAddress()) {
      
             QString cid = c.getCid();
             QString myAddr = c.getMyAddress();
-            QString safeContact = "false";
+            QString type = "memo";
             QString addr = c.getPartnerAddress();
            
      
-        QString hmemo= createHeaderMemo(safeContact,cid,myAddr);
+        QString hmemo= createHeaderMemo(type,cid,myAddr);
         QString memo = ui->memoTxtChat->toPlainText().trimmed();
         // ui->memoSizeChat->setLenDisplayLabel();
         
@@ -229,6 +216,7 @@ void MainWindow::sendChatButton() {
         connD->statusDetail->setText(tr("Your Message will be send"));
 
         d->show();
+        ui->memoTxtChat->clear();
 
         // And send the Tx
         rpc->executeTransaction(tx, 
@@ -248,6 +236,7 @@ void MainWindow::sendChatButton() {
                 
                 // Force a UI update so we get the unconfirmed Tx
                 rpc->refresh(true);
+                ui->memoTxtChat->clear();
 
             },
             // Errored out

@@ -1453,7 +1453,7 @@
        <widget class="QLabel" name="label_42">
         <property name="geometry">
          <rect>
-          <x>690</x>
+          <x>520</x>
           <y>490</y>
           <width>67</width>
           <height>17</height>
@@ -1479,10 +1479,10 @@
        <widget class="QLabel" name="ContactZaddr">
         <property name="geometry">
          <rect>
-          <x>740</x>
+          <x>550</x>
           <y>490</y>
-          <width>171</width>
-          <height>17</height>
+          <width>691</width>
+          <height>20</height>
          </rect>
         </property>
         <property name="text">

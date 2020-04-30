@@ -985,7 +985,7 @@ void Controller::refreshTransactions()
 
         // Update model data, which updates the table view
         transactionsTableModel->replaceData(txdata);    
-        chatModel->renderChatBox(ui->listChatMemo);    
+        chatModel->renderChatBox(ui, ui->listChatMemo);    
         refreshContacts(
             ui->listContactWidget
         );
@@ -994,7 +994,7 @@ void Controller::refreshTransactions()
 
 void Controller::refreshChat(QListWidget *listWidget)
 {
-    chatModel->renderChatBox(listWidget);
+    chatModel->renderChatBox(ui, listWidget);
 }
 
 void Controller::refreshContacts(QListWidget *listWidget)
