@@ -91,7 +91,7 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListWidget *view)
         //////Render only Memos for selected contacts. Do not render empty Memos
         if ((ui->ContactZaddr->text().trimmed() == c.second.getAddress())  && (c.second.getMemo().startsWith("{") == false) && (c.second.getMemo().isEmpty() == false)) {
         line += QString("[") + myDateTime.toString("dd.MM.yyyy hh:mm:ss ") +  QString("] ");
-        line += QString("<") + QString(c.second.getContact()) + QString("> :\n");
+        line += QString("<") + QString("Outgoing") + QString("> :\n");
         line += QString(c.second.getMemo()) + QString("\n");      
         view->addItem(line);
         line ="";
@@ -99,7 +99,7 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListWidget *view)
 
         if ((ui->MyZaddr->text().trimmed() == c.second.getAddress()) && (c.second.getMemo().startsWith("{") == false) && (c.second.getMemo().isEmpty() == false)){
         line += QString("[") + myDateTime.toString("dd.MM.yyyy hh:mm:ss ") +  QString("] ");
-        line += QString("<") + QString(c.second.getContact()) + QString("> :\n");
+        line += QString("<") + QString("incoming") + QString("> :\n");
         line += QString(c.second.getMemo()) + QString("\n");      
         view->addItem(line);
         line ="";

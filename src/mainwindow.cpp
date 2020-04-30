@@ -1000,6 +1000,7 @@ void MainWindow::setupchatTab() {
         if (label_contact == p.getName()) {
         ui->ContactZaddr->setText(p.getPartnerAddress());
         ui->MyZaddr->setText(p.getMyAddress());
+        ui->contactNameMemo->setText(p.getName());
         
     rpc->refresh(true);
         }
