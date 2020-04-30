@@ -138,6 +138,24 @@ void AddressBook::open(MainWindow* parent, QLineEdit* target)
     // Connect the dialog's closing to updating the label address completor
     QObject::connect(&d, &QDialog::finished, [=] (auto) { parent->updateLabels(); });
 
+       Controller* rpc = parent->getRPC();
+        bool sapling = true;
+        rpc->createNewZaddr(sapling, [=] (json reply) {
+            QString myAddr = QString::fromStdString(reply.get<json::array_t>()[0]);
+         // QString myAddr = "zs1flslqurcnummsw37mfxkhx6d7uwpevlc78cdjyqrgng7357t8f3stm9fneeqtuupfnrt7f933a9";
+            QString message = QString("New Chat Address for your partner: ") + myAddr;
+           
+            parent->ui->listReceiveAddresses->insertItem(0, myAddr); 
+            parent->ui->listReceiveAddresses->setCurrentIndex(0);
+           // ab.addr_chat->setText(myAddr);
+            qDebug() << "new generated myAddr" << myAddr;
+             // 
+            ab.addr_chat->setText(myAddr);
+           // AddressBook::getInstance()->addAddressLabel(newLabel, ab.addr->text(), myAddr, cid);
+        });
+        model.updateUi(); //todo fix updating gui after adding 
+        rpc->refresh(true);
+
     // If there is a target then make it the addr for the "Add to" button
     if (target != nullptr && Settings::isValidAddress(target->text())) 
     {
@@ -148,7 +166,11 @@ void AddressBook::open(MainWindow* parent, QLineEdit* target)
     // Add new address button
     QObject::connect(ab.addNew, &QPushButton::clicked, [&] () {
         auto addr = ab.addr->text().trimmed();
+        auto myAddr = ab.addr->text().trimmed();
         QString newLabel = ab.label->text();
+        QString cid = QUuid::createUuid().toString(QUuid::WithoutBraces);
+
+        
 
         if (addr.isEmpty() || newLabel.isEmpty()) 
         {
@@ -183,31 +205,22 @@ void AddressBook::open(MainWindow* parent, QLineEdit* target)
             );
             return;
         } 
-        Controller* rpc = parent->getRPC();
-        bool sapling = true;
-        rpc->createNewZaddr(sapling, [=] (json reply) {
-            QString myAddr = QString::fromStdString(reply.get<json::array_t>()[0]);
-            QString message = QString("New Chat Address for your partner: ") + myAddr;
+
+        ////// We need a better popup here. 
+            AddressBook::getInstance()->addAddressLabel(newLabel, addr, myAddr, cid);
             QMessageBox::critical(
                 parent, 
-                QObject::tr("Success"), 
-                message, //todo translate this
+                QObject::tr("Add Successfully"), 
+                QObject::tr("juhu").arg(newLabel), 
                 QMessageBox::Ok
             );
-              parent->ui->listReceiveAddresses->insertItem(0, addr); 
-            parent->ui->listReceiveAddresses->setCurrentIndex(0);
-           // ab.addr_chat->setText(myAddr);
-            qDebug() << "new generated myAddr" << myAddr;
-            QString cid = QUuid::createUuid().toString(QUuid::WithoutBraces); // 
-            AddressBook::getInstance()->addAddressLabel(newLabel, ab.addr->text(), myAddr, cid);
-        });
-        model.updateUi(); //todo fix updating gui after adding 
+            return;
+        
+        
+        rpc->refresh(true);
+         model.updateUi();
 
     });
-
-    /// Generate CID for Contact
-
-    
 
    //  AddressBook::getInstance()->addAddressLabel(newLabel, ab.addr->text(), cid);
 
