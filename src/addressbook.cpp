@@ -194,6 +194,8 @@ void AddressBook::open(MainWindow* parent, QLineEdit* target)
                 message, //todo translate this
                 QMessageBox::Ok
             );
+              parent->ui->listReceiveAddresses->insertItem(0, addr); 
+            parent->ui->listReceiveAddresses->setCurrentIndex(0);
            // ab.addr_chat->setText(myAddr);
             qDebug() << "new generated myAddr" << myAddr;
             QString cid = QUuid::createUuid().toString(QUuid::WithoutBraces); // 

@@ -840,48 +840,47 @@ void Controller::refreshBalances()
     });
 }
 
-void Controller::refreshTransactions() 
-{    
+void Controller::refreshTransactions() {    
     if (!zrpc->haveConnection()) 
         return noConnection();
 
     zrpc->fetchTransactions([=] (json reply) {
         QList<TransactionItem> txdata;        
 
-        for (auto& it : reply.get<json::array_t>()) 
-        {  
+        for (auto& it : reply.get<json::array_t>()) {  
             QString address;
             CAmount total_amount;
             QList<TransactionItemDetail> items;
 
             long confirmations;
-            if (it.find("unconfirmed") != it.end() && it["unconfirmed"].get<json::boolean_t>())
+            if (it.find("unconfirmed") != it.end() && it["unconfirmed"].get<json::boolean_t>()) {
                 confirmations = 0;
-            else
+            } else {
                 confirmations = model->getLatestBlock() - it["block_height"].get<json::number_integer_t>() + 1;
+            }
             
             auto txid = QString::fromStdString(it["txid"]);
             auto datetime = it["datetime"].get<json::number_integer_t>();
 
             // First, check if there's outgoing metadata
-            if (!it["outgoing_metadata"].is_null()) 
-            {
-                for (auto o: it["outgoing_metadata"].get<json::array_t>()) 
-                {    
-                    QString address;
+            if (!it["outgoing_metadata"].is_null()) {
+            
+                for (auto o: it["outgoing_metadata"].get<json::array_t>()) {
+                    
+                     QString address;
+              
                     address = QString::fromStdString(o["address"]);
-
+                
                     // Sent items are -ve
                     CAmount amount = CAmount::fromqint64(-1* o["value"].get<json::number_unsigned_t>()); 
                     
                    // Check for Memos
                    
                     QString memo;
-                    if (!o["memo"].is_null()) 
-                    {
+                    if (!o["memo"].is_null()) {
                         memo = QString::fromStdString(o["memo"]);
-
-                        ChatItem item = ChatItem(
+                     }
+                      ChatItem item = ChatItem(
                                 datetime,
                                 address,
                                 QString(""),
@@ -889,9 +888,6 @@ void Controller::refreshTransactions()
                                 true // is an outgoing message
                             );
                         chatModel->addMessage(item);
-
-                    }
-                        
                     
                     items.push_back(TransactionItemDetail{address, amount, memo});
                     total_amount = total_amount + amount;
@@ -901,62 +897,46 @@ void Controller::refreshTransactions()
                     // Concat all the addresses
                   
                     QList<QString> addresses;
-                    for (auto item : items) 
-                    {
-                        if (item.amount == 0 ) 
-                        {
-                        } 
-                        else 
-                        {
-                            addresses.push_back(item.address);    
-                            address = addresses.join(",");   
-                        }
+                    for (auto item : items) {
+  
+                   addresses.push_back(item.address);
+                  
+                  address = addresses.join(",");   
                 
-                    }
+                  }
                 
                 }
  
-                txdata.push_back(
-                    TransactionItem{"send", datetime, address, txid,confirmations, items}
-                );
-
-            } 
-            else 
-            {
+                txdata.push_back(TransactionItem{
+                   "send", datetime, address, txid,confirmations, items
+                });
+            } else {
                 // Incoming Transaction
                 address = (it["address"].is_null() ? "" : QString::fromStdString(it["address"]));
                 model->markAddressUsed(address);
+
                 QString memo;
-                if (!it["memo"].is_null())
-                {
+                if (!it["memo"].is_null()) {
                     memo = QString::fromStdString(it["memo"]);
-            
-                    ChatItem item = ChatItem(
+                }
+
+                ChatItem item = ChatItem(
                                 datetime,
                                 address,
                                 QString(""),
                                 memo
                             );
                     chatModel->addMessage(item);
-                }
-                    
 
-                items.push_back(
-                    TransactionItemDetail{
-                        address,
-                        CAmount::fromqint64(it["amount"].get<json::number_integer_t>()),
-                        memo
-                    }
-                );
+                items.push_back(TransactionItemDetail{
+                    address,
+                    CAmount::fromqint64(it["amount"].get<json::number_integer_t>()),
+                    memo
+                });
 
   
                 TransactionItem tx{
-                    "Receive",
-                    datetime,
-                    address,
-                    txid,
-                    confirmations,
-                    items
+                    "Receive", datetime, address, txid,confirmations, items
                 };
 
                 txdata.push_back(tx);
@@ -967,29 +947,25 @@ void Controller::refreshTransactions()
         // Calculate the total unspent amount that's pending. This will need to be 
         // shown in the UI so the user can keep track of pending funds
         CAmount totalPending;
-        for (auto txitem : txdata) 
-        {
-            if (txitem.confirmations == 0) 
-            {
-                for (auto item: txitem.items) 
-                {
+        for (auto txitem : txdata) {
+            if (txitem.confirmations == 0) {
+                for (auto item: txitem.items) {
                     totalPending = totalPending + item.amount;
                 }
             }
         }
-
-        getModel()->setTotalPending(totalPending);
+                getModel()->setTotalPending(totalPending);
 
         // Update UI Balance
         updateUIBalances();
 
-        // Update model data, which updates the table view
+         // Update model data, which updates the table view
         transactionsTableModel->replaceData(txdata);    
         chatModel->renderChatBox(ui, ui->listChatMemo);    
         refreshContacts(
             ui->listContactWidget
         );
-    });
+         });
 }
 
 void Controller::refreshChat(QListWidget *listWidget)

@@ -62,9 +62,7 @@ void ChatModel::showMessages()
     }
 }
 
-
-
-void ChatModel::renderChatBox(Ui::MainWindow*             ui, QListWidget &view)
+void ChatModel::renderChatBox(Ui::MainWindow* ui, QListWidget &view)
 {
     /*for(auto &c : this->chatItems)
     {
@@ -90,14 +88,22 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListWidget *view)
  
         myDateTime.setTime_t(c.second.getTimestamp());
         
-        //////
-        if ((ui->ContactZaddr->text().trimmed() == c.second.getAddress()) && (c.second.getMemo().startsWith("{") == false)) {
+        //////Render only Memos for selected contacts. Do not render empty Memos
+        if ((ui->ContactZaddr->text().trimmed() == c.second.getAddress())  && (c.second.getMemo().startsWith("{") == false) && (c.second.getMemo().isEmpty() == false)) {
         line += QString("[") + myDateTime.toString("dd.MM.yyyy hh:mm:ss ") +  QString("] ");
         line += QString("<") + QString(c.second.getContact()) + QString("> :\n");
         line += QString(c.second.getMemo()) + QString("\n");      
         view->addItem(line);
         line ="";
-        }else {}
+        }
+
+        if ((ui->MyZaddr->text().trimmed() == c.second.getAddress()) && (c.second.getMemo().startsWith("{") == false) && (c.second.getMemo().isEmpty() == false)){
+        line += QString("[") + myDateTime.toString("dd.MM.yyyy hh:mm:ss ") +  QString("] ");
+        line += QString("<") + QString(c.second.getContact()) + QString("> :\n");
+        line += QString(c.second.getMemo()) + QString("\n");      
+        view->addItem(line);
+        line ="";
+        }else{}
 
     }
  
@@ -130,14 +136,8 @@ Tx MainWindow::createTxFromChatPage() {
     CAmount totalAmt;
     // For each addr/amt in the Chat tab
   {
-    
-       // QString addr = ui->ContactZaddr->text().trimmed(); // We need to set the reply Address for our Contact here
-        // Remove label if it exists
-      //  addr = AddressBook::addressFromAddressLabel(addr);
-        
+       
         QString amtStr = "0";
-      
-      //  bool ok;
         CAmount amt;  
 
          
@@ -151,17 +151,16 @@ Tx MainWindow::createTxFromChatPage() {
      
             QString cid = c.getCid();
             QString myAddr = c.getMyAddress();
-            QString type = "memo";
+            QString type = "Memo";
             QString addr = c.getPartnerAddress();
            
      
         QString hmemo= createHeaderMemo(type,cid,myAddr);
         QString memo = ui->memoTxtChat->toPlainText().trimmed();
-        // ui->memoSizeChat->setLenDisplayLabel();
-        
-       
+        // ui->memoSizeChat->setLenDisplayLabel();// Todo -> activate lendisplay for chat
+            
      tx.toAddrs.push_back(ToFields{addr, amt, hmemo}) ;
-     qDebug()<<hmemo;
+
      tx.toAddrs.push_back( ToFields{addr, amt, memo});
 
          qDebug() << "pushback chattx";
@@ -175,19 +174,25 @@ Tx MainWindow::createTxFromChatPage() {
 }
 
 void MainWindow::sendChatButton() {
+      ////////////////////////////Todo: Check if its a zaddr//////////
+
     // Create a Tx from the values on the send tab. Note that this Tx object
     // might not be valid yet.
 
     // Memos can only be used with zAddrs. So check that first
-   //auto addr = "zs1fllv4hgrjddnz2yz5dng9kchcg3wkhs0j2v5v3nc89w3r3kntkgq2sefcz2a9k2ycc8f6t0gm2q";
-   // if (! Settings::isZAddress(AddressBook::addressFromAddressLabel(addr->text()))) {
-     //   QMessageBox msg(QMessageBox::Critical, tr("Memos can only be used with z-addresses"),
-       // tr("The memo field can only be used with a z-address.\n") + addr->text() + tr("\ndoesn't look like a z-address"),
-       // QMessageBox::Ok, this);
+   // for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
 
-       // msg.exec();
-        //return;
-    //}
+   //  if (ui->ContactZaddr->text().trimmed() == c.getName()) {
+     
+  // auto addr = "";
+  //  if (! Settings::isZAddress(AddressBook::addressFromAddressLabel(addr->text()))) {
+  //      QMessageBox msg(QMessageBox::Critical, tr("Memos can only be used with z-addresses"),
+  //      tr("The memo field can only be used with a z-address.\n") + addr->text() + tr("\ndoesn't look like a z-address"),
+  //      QMessageBox::Ok, this);
+
+ //       msg.exec();
+ //       return;
+  //  }
 
     Tx tx = createTxFromChatPage();
 
@@ -287,20 +292,13 @@ QString MainWindow::doSendChatTxValidations(Tx tx) {
     return "";
 }
 
-// Create a Safe Contact Request. 
+// Create a Contact Request. 
 Tx MainWindow::createTxForSafeContactRequest() {
    Tx tx;
     CAmount totalAmt;
-    // For each addr/amt in the Chat tab
   {
     
-        QString addr = ui->ContactZaddr->text().trimmed(); // We need to set the reply Address for our Contact here
-        // Remove label if it exists
-        addr = AddressBook::addressFromAddressLabel(addr);
-        
         QString amtStr = "0";
-      
-      //  bool ok;
         CAmount amt;  
 
          
@@ -318,20 +316,17 @@ Tx MainWindow::createTxForSafeContactRequest() {
           QString cid = "";
           QString myAddr = "";
           QString addr = "";
-            QString safeContact = "true";
+          QString type = "Request";
     
      
-        QString hmemo= createHeaderMemo(safeContact,cid,myAddr);
-        QString memo = ui->memoTxtChat->toPlainText().trimmed();
-        // ui->memoSizeChat->setLenDisplayLabel();
-        
-       
+        QString hmemo= createHeaderMemo(type,cid,myAddr);
+     
      tx.toAddrs.push_back(ToFields{addr, amt, hmemo}) ;
-     qDebug()<<hmemo;
-    // tx.toAddrs.push_back( ToFields{addr, amt, memo});
 
          qDebug() << "pushback chattx";
-   } }
+   }
+}
+
 
     tx.fee = Settings::getMinerFee();
 
@@ -341,19 +336,26 @@ Tx MainWindow::createTxForSafeContactRequest() {
 }
 
 void MainWindow::safeContactRequest() {
+
+    ////////////////////////////Todo: Check if its a zaddr//////////
+
     // Create a Tx from the values on the send tab. Note that this Tx object
     // might not be valid yet.
 
     // Memos can only be used with zAddrs. So check that first
-   //auto addr = "zs1fllv4hgrjddnz2yz5dng9kchcg3wkhs0j2v5v3nc89w3r3kntkgq2sefcz2a9k2ycc8f6t0gm2q";
-   // if (! Settings::isZAddress(AddressBook::addressFromAddressLabel(addr->text()))) {
-     //   QMessageBox msg(QMessageBox::Critical, tr("Memos can only be used with z-addresses"),
-       // tr("The memo field can only be used with a z-address.\n") + addr->text() + tr("\ndoesn't look like a z-address"),
-       // QMessageBox::Ok, this);
+   // for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
 
-       // msg.exec();
-        //return;
-    //}
+   //  if (ui->ContactZaddr->text().trimmed() == c.getName()) {
+     
+  // auto addr = "";
+  //  if (! Settings::isZAddress(AddressBook::addressFromAddressLabel(addr->text()))) {
+  //      QMessageBox msg(QMessageBox::Critical, tr("Contact requests can only be used with z-addresses"),
+  //      tr("The memo field can only be used with a z-address.\n") + addr->text() + tr("\ndoesn't look like a z-address"),
+  //      QMessageBox::Ok, this);
+
+ //       msg.exec();
+ //       return;
+  //  }
 
     Tx tx = createTxForSafeContactRequest();
 

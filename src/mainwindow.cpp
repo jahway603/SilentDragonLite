@@ -997,10 +997,12 @@ void MainWindow::setupchatTab() {
         QString label_contact = index.data(Qt::DisplayRole).toString();
         
         for(auto &p : AddressBook::getInstance()->getAllAddressLabels())
-        if (label_contact == p.getName())
+        if (label_contact == p.getName()) {
         ui->ContactZaddr->setText(p.getPartnerAddress());
+        ui->MyZaddr->setText(p.getMyAddress());
         
     rpc->refresh(true);
+        }
    });
 }
 

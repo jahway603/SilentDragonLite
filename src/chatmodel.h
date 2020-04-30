@@ -118,8 +118,8 @@ class ChatModel
         void setItems(std::map<long, ChatItem> items);
         QString zaddr();
         void setItems(std::vector<ChatItem> items);
-        void renderChatBox(Ui::MainWindow*             ui, QListWidget &view);
-        void renderChatBox(Ui::MainWindow*             ui, QListWidget *view);
+        void renderChatBox(Ui::MainWindow* ui, QListWidget &view);
+        void renderChatBox(Ui::MainWindow* ui, QListWidget *view);
         void showMessages();
         void clear();
         void addMessage(ChatItem item);
