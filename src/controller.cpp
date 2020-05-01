@@ -880,12 +880,19 @@ void Controller::refreshTransactions() {
                     if (!o["memo"].is_null()) {
                         memo = QString::fromStdString(o["memo"]);
 
+                        QString cid;
+                    for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
+                     if (ui->ContactZaddr->text().trimmed() == c.getPartnerAddress()) {
+
+                         cid = c.getCid();
+                     }else {cid = "";} 
+
                         ChatItem item = ChatItem(
                                 datetime,
                                 address,
                                 QString(""),
                                 memo,
-                                "", // we have to set the cid here, its included in our Addressbook for this contact
+                                cid, // we have to set the cid here, its included in our Addressbook for this contact
                                 txid
                                // true // is an outgoing message
                             );
