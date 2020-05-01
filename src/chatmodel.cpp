@@ -93,7 +93,9 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListWidget *view)
         myDateTime.setTime_t(c.second.getTimestamp());
         
         //////Render only Memos for selected contacts. Do not render empty Memos //// Render only memos where cid=cid
-        if ((ui->ContactZaddr->text().trimmed() == c.second.getAddress())  && (c.second.getMemo().startsWith("{") == false) && (c.second.getMemo().isEmpty() == false)) {
+
+        /// 
+        if ((ui->ContactZaddr->text().trimmed() == c.second.getAddress()) && (c.second.getMemo().startsWith("{") == false) && (c.second.getMemo().isEmpty() == false)) {   
         //  if (c.second.getMemo.find())
         line += QString("[") + myDateTime.toString("dd.MM.yyyy hh:mm:ss ") +  QString("] ");
         line += QString("<") + QString("Outgoing") + QString("> :\n");
@@ -102,7 +104,7 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListWidget *view)
         line ="";
 
        ////////////////////////////////// Todo : Render green checkmark for contacts if cid = cid - We have to search for cid in txid/cid list
-        QString cid = c.second.getCid();
+      //  QString cid = c.second.getCid();
 
         }else{}
 
@@ -170,7 +172,7 @@ Tx MainWindow::createTxFromChatPage() {
             
      tx.toAddrs.push_back(ToFields{addr, amt, hmemo}) ;
 
-     tx.toAddrs.push_back( ToFields{addr, amt, memo});
+     tx.toAddrs.push_back(ToFields{addr, amt, memo});
 
          qDebug() << "pushback chattx";
    } }
@@ -249,7 +251,7 @@ void MainWindow::sendChatButton() {
                   });
                 
                 // Force a UI update so we get the unconfirmed Tx
-                rpc->refresh(true);
+              //  rpc->refresh(true);
                 ui->memoTxtChat->clear();
 
             },

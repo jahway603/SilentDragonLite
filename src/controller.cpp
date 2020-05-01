@@ -926,25 +926,26 @@ void Controller::refreshTransactions() {
                     memo = QString::fromStdString(it["memo"]);
                 }
 
-                    items.push_back(TransactionItemDetail{
+                items.push_back(TransactionItemDetail{
                     address,
                     CAmount::fromqint64(it["amount"].get<json::number_integer_t>()),
                     memo
                 });
-                
+
+
                 TransactionItem tx{
                     "Receive", datetime, address, txid,confirmations, items
                 };
 
                 txdata.push_back(tx);
 
-                QString cid;
-                if (memo.startsWith("{")) {
+                    QString cid = "";
+            //    if (memo.startsWith("{")) {
 
-                cid =  memo.mid(14,36);
+              //  cid =  memo.mid(14,36);
 
-                }else{ cid = "";}
-
+                // }else{ cid = "";}
+                   
                     ChatItem item = ChatItem(
                                 datetime,
                                 address,
@@ -955,13 +956,9 @@ void Controller::refreshTransactions() {
                             );
                         qDebug()<<cid;
                         qDebug()<<txid;
+                        qDebug()<<memo;
                     chatModel->addMessage(item);
 
-                items.push_back(TransactionItemDetail{
-                    address,
-                    CAmount::fromqint64(it["amount"].get<json::number_integer_t>()),
-                    memo
-                });
             }
             
         }
@@ -986,6 +983,7 @@ void Controller::refreshTransactions() {
         chatModel->renderChatBox(ui, ui->listChatMemo);    
         refreshContacts(
             ui->listContactWidget
+            
         );
          });
 }
@@ -993,6 +991,7 @@ void Controller::refreshTransactions() {
 void Controller::refreshChat(QListWidget *listWidget)
 {
     chatModel->renderChatBox(ui, listWidget);
+  
 }
 
 void Controller::refreshContacts(QListWidget *listWidget)
