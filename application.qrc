@@ -7,6 +7,7 @@
         <file>res/loading.gif</file>
         <file>res/paymentreq.gif</file>
         <file>res/icon.ico</file>
+        <file>res/mail.png</file>
     </qresource>
     <qresource prefix="/img">
         <file>res/hushdlogo.gif</file>
