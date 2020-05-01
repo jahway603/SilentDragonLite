@@ -884,7 +884,9 @@ void Controller::refreshTransactions() {
                                 datetime,
                                 address,
                                 QString(""),
-                                memo
+                                memo,
+                                "", // we have to set the cid here, its included in our Addressbook for this contact
+                                txid
                                // true // is an outgoing message
                             );
                         chatModel->addMessage(item);
@@ -922,19 +924,30 @@ void Controller::refreshTransactions() {
                 if (!it["memo"].is_null()) {
                     memo = QString::fromStdString(it["memo"]);
                 }
-  
+
                 TransactionItem tx{
                     "Receive", datetime, address, txid,confirmations, items
                 };
 
                 txdata.push_back(tx);
 
+                QString cid;
+                if (memo.startsWith("{")) {
+
+                cid =  memo.mid(14,36);
+
+                }else{ cid = "";}
+
                     ChatItem item = ChatItem(
                                 datetime,
                                 address,
                                 QString(""),
-                                memo
+                                memo,
+                                cid, // we have to set the cid here, its included in the headermemo
+                                txid
                             );
+                        qDebug()<<cid;
+                        qDebug()<<txid;
                     chatModel->addMessage(item);
 
                 items.push_back(TransactionItemDetail{

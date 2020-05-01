@@ -17,27 +17,33 @@ class ChatItem
         QString _address;
         QString _contact;
         QString _memo; 
+        QString _cid;
+        QString _txid;
         bool _outgoing = false;
 
     public:
         ChatItem() {}
 
-        ChatItem(long timestamp, QString address, QString contact, QString memo)
+        ChatItem(long timestamp, QString address, QString contact, QString memo, QString cid, QString txid)
         {
             _timestamp = timestamp;
             _address = address;
             _contact = contact;
             _memo = memo;
+            _cid = cid;
+            _txid = txid;
             _outgoing = false;
 
         }
 
-        ChatItem(long timestamp, QString address, QString contact, QString memo, bool outgoing)
+        ChatItem(long timestamp, QString address, QString contact, QString memo, QString cid, QString txid, bool outgoing)
         {
             _timestamp = timestamp;
             _address = address;
             _contact = contact;
             _memo = memo;
+            _cid = cid;
+            _txid = txid;
             _outgoing = outgoing;
 
         }
@@ -60,6 +66,16 @@ class ChatItem
         QString getMemo()
         {
             return _memo;
+        }
+
+        QString getCid()
+        {
+            return _cid;
+        }
+
+         QString getTxid()
+        {
+            return _txid;
         }
 
         bool isOutgoing()
@@ -85,6 +101,15 @@ class ChatItem
         void setMemo(QString memo)
         {
             _memo = memo;
+        }
+
+        void setCid(QString cid)
+        {
+            _cid = cid;
+        }
+         void setTxid(QString txid)
+        {
+            _txid = txid;
         }
 
         void toggleOutgo()
