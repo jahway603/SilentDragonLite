@@ -1570,7 +1570,7 @@ void Controller::shutdownhushd()
         QDialog d(main);
         Ui_ConnectionDialog connD;
         connD.setupUi(&d);
-        connD.topIcon->setBasePixmap(QIcon(":/icons/res/icon.ico").pixmap(256, 256));
+        connD.topIcon->setPixmap(QIcon(":/icons/res/icon.ico").pixmap(256, 256));
         connD.status->setText(QObject::tr("Please wait for SilentDragonLite to exit"));
         connD.statusDetail->setText(QObject::tr("Waiting for hushd to exit"));
         bool finished = false;

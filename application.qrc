@@ -12,6 +12,10 @@
     <qresource prefix="/img">
         <file>res/hushdlogo.gif</file>
         <file>res/logobig.gif</file>
+        <file>res/silentdragonlite-animated.gif</file>
+        <file>res/silentdragonlite-animated-dark.gif</file>
+        <file>res/silentdragonlite-animated-startup.gif</file>
+        <file>res/silentdragonlite-animated-startup-dark.gif</file>
     </qresource>
     <qresource prefix="/translations">
     <file>res/silentdragonlite_de.qm</file>
