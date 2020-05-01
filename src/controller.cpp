@@ -943,8 +943,13 @@ void Controller::refreshTransactions() {
                 if (memo.startsWith("{")) {
                     cid =  memo.mid(14,36);
                     chatModel->addCid(txid, cid);
-                }else{ cid = "";}
-                   
+                }else{
+                    if(chatModel->getCidByTx(txid) != QString("0xdeadbeef"))
+                        cid = chatModel->getCidByTx(txid);
+
+                    cid = "";
+                }
+                    
                     ChatItem item = ChatItem(
                                 datetime,
                                 address,
@@ -953,9 +958,7 @@ void Controller::refreshTransactions() {
                                 cid, // we have to set the cid here, its included in the headermemo
                                 txid
                             );
-                        qDebug()<<cid;
-                        qDebug()<<txid;
-                        qDebug()<<memo;
+                    qDebug()<< "Message CID: " << cid;
                     chatModel->addMessage(item);
 
             }
