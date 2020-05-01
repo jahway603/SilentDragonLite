@@ -131,6 +131,9 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListWidget *view)
             for(auto &p : AddressBook::getInstance()->getAllAddressLabels()){
              if ((p.getCid() == c.second.getCid())){
           line+= QString("[") + "Verified Message" + QString("]");     ////Todo: Render a green checkmark instead of QString
+           }else{
+
+              // line+= QString("[") + "Warning. Not verified!" + QString("]");
            }
         }
         line += QString("[") + myDateTime.toString("dd.MM.yyyy hh:mm:ss ") +  QString("] ");
@@ -234,7 +237,7 @@ Tx MainWindow::createTxFromChatPage() {
 }
 
 void MainWindow::sendChatButton() {
-      ////////////////////////////Todo: Check if its a zaddr//////////
+      ////////////////////////////Todo: Check if a Contact is selected//////////
 
     // Create a Tx from the values on the send tab. Note that this Tx object
     // might not be valid yet.
@@ -242,17 +245,17 @@ void MainWindow::sendChatButton() {
     // Memos can only be used with zAddrs. So check that first
    // for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
 
-   //  if (ui->ContactZaddr->text().trimmed() == c.getName()) {
+      if (ui->ContactZaddr->text().trimmed().isEmpty() || ui->memoTxtChat->toPlainText().trimmed().isEmpty()) {
      
   // auto addr = "";
   //  if (! Settings::isZAddress(AddressBook::addressFromAddressLabel(addr->text()))) {
-  //      QMessageBox msg(QMessageBox::Critical, tr("Memos can only be used with z-addresses"),
-  //      tr("The memo field can only be used with a z-address.\n") + addr->text() + tr("\ndoesn't look like a z-address"),
-  //      QMessageBox::Ok, this);
+        QMessageBox msg(QMessageBox::Critical, tr("You have to select a contact and insert a Memo"),
+        tr("You have selected no Contact from Contactlist,\n")  + tr("\nor your Memo is empty"),
+        QMessageBox::Ok, this);
 
- //       msg.exec();
- //       return;
-  //  }
+        msg.exec();
+        return;
+    }
 
     Tx tx = createTxFromChatPage();
 
