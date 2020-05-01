@@ -151,7 +151,7 @@ QString ChatModel::getCidByTx(QString tx)
     {
         qDebug() << "TXID=" << pair.first << " CID=" << pair.second;
     }
-    
+
     if(this->cidMap.count(tx) > 0)
     {
         return this->cidMap[tx];

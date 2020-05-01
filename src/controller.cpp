@@ -947,7 +947,8 @@ void Controller::refreshTransactions() {
                     if(chatModel->getCidByTx(txid) != QString("0xdeadbeef"))
                         cid = chatModel->getCidByTx(txid);
 
-                    //cid = "";
+                    else
+                        cid = "";
                 }
                     
                     ChatItem item = ChatItem(
