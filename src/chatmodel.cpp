@@ -14,7 +14,7 @@
 using namespace std; 
 using namespace boost;
 
-ChatModel::ChatModel(std::map<long, ChatItem> chatItems)
+ChatModel::ChatModel(std::map<QString, ChatItem> chatItems)
 {
     this->chatItems = chatItems;
 }
@@ -24,12 +24,26 @@ ChatModel::ChatModel(std::vector<ChatItem> chatItems)
    this->setItems(chatItems);
 }
 
-std::map<long, ChatItem> ChatModel::getItems()
+QString ChatModel::generateChatItemID(ChatItem item)
+{
+    QString key = QString::number(item.getTimestamp()) +  QString("-");
+    key += QString(QCryptographicHash::hash(
+        QString(
+            QString::number(item.getTimestamp()) +  
+            item.getAddress() + 
+            item.getContact() + 
+            item.getMemo()
+        ).toUtf8()
+        ,QCryptographicHash::Md5).toHex());
+    return key;
+}
+
+std::map<QString, ChatItem> ChatModel::getItems()
 {
     return this->chatItems;
 }
 
-void ChatModel::setItems(std::map<long, ChatItem> items)
+void ChatModel::setItems(std::map<QString, ChatItem> items)
 {
     this->chatItems = chatItems;
 }
@@ -38,7 +52,7 @@ void ChatModel::setItems(std::vector<ChatItem> items)
 {
     for(ChatItem c : items)
     {
-        this->chatItems[c.getTimestamp()] = c;
+        this->chatItems[this->generateChatItemID(c)] = c;
         
     }
 }
@@ -50,12 +64,16 @@ void ChatModel::clear()
 
 void ChatModel::addMessage(ChatItem item)
 {
-    this->chatItems[item.getTimestamp()] = item;
+    QString key = this->generateChatItemID(item);
+    qDebug() << "inserting chatitem with id: " << key;
+    this->chatItems[key] = item;
 }
 
-void ChatModel::addMessage(long timestamp, ChatItem item)
+void ChatModel::addMessage(QString timestamp, ChatItem item)
 {
-    this->chatItems[timestamp] = item;
+    QString key = this->generateChatItemID(item);
+    timestamp = "0";
+    this->chatItems[key] = item;
 }
 
 void ChatModel::showMessages()
@@ -118,6 +136,26 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListWidget *view)
 
     }
  
+}
+
+void ChatModel::addCid(QString tx, QString cid)
+{
+    this->cidMap[tx] = cid;
+}
+
+QString ChatModel::getCidByTx(QString tx)
+{
+    if(this->cidMap.count(tx) > 0)
+    {
+        return this->cidMap[tx];
+    }
+
+    return QString("0xdeadbeef");
+}
+
+void ChatModel::killCidCache()
+{
+    this->cidMap.clear();
 }
 
 QString MainWindow::createHeaderMemo(QString type, QString cid, QString zaddr,  int version=0, int headerNumber=1)

@@ -73,7 +73,7 @@ class ChatItem
             return _cid;
         }
 
-         QString getTxid()
+        QString getTxid()
         {
             return _txid;
         }
@@ -130,17 +130,19 @@ class ChatItem
 class ChatModel
 {
     private:
-        std::map<long, ChatItem> chatItems; 
+        std::map<QString, ChatItem> chatItems; 
         QTableView* parent;
         Ui::MainWindow*             ui;
         MainWindow*                 main;
+        std::map<QString, QString> cidMap;
 
     public:
         ChatModel() {};
-        ChatModel(std::map<long, ChatItem> chatItems);
+        ChatModel(std::map<QString, ChatItem> chatItems);
         ChatModel(std::vector<ChatItem> chatItems);
-        std::map<long, ChatItem> getItems();
-        void setItems(std::map<long, ChatItem> items);
+        QString generateChatItemID(ChatItem item);
+        std::map<QString, ChatItem> getItems();
+        void setItems(std::map<QString, ChatItem> items);
         QString zaddr();
         void setItems(std::vector<ChatItem> items);
         void renderChatBox(Ui::MainWindow* ui, QListWidget &view);
@@ -148,7 +150,10 @@ class ChatModel
         void showMessages();
         void clear();
         void addMessage(ChatItem item);
-        void addMessage(long timestamp, ChatItem item);
+        void addMessage(QString timestamp, ChatItem item);
+        void addCid(QString tx, QString cid);
+        QString getCidByTx(QString tx);
+        void killCidCache();
 };
 
 #endif

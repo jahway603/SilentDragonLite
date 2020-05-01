@@ -940,11 +940,10 @@ void Controller::refreshTransactions() {
                 txdata.push_back(tx);
 
                     QString cid = "";
-            //    if (memo.startsWith("{")) {
-
-              //  cid =  memo.mid(14,36);
-
-                // }else{ cid = "";}
+                if (memo.startsWith("{")) {
+                    cid =  memo.mid(14,36);
+                    chatModel->addCid(txid, cid);
+                }else{ cid = "";}
                    
                     ChatItem item = ChatItem(
                                 datetime,
