@@ -895,26 +895,27 @@ void Controller::refreshTransactions() {
                     
                     items.push_back(TransactionItemDetail{address, amount, memo});
                     total_amount = total_amount + amount;
-              //  }
+                }
 
-              //  {
+                {
+                     QList<QString> addresses;
+                    for (auto item : items) {
                     // Concat all the addresses
-                  
-                //    QList<QString> addresses;
-                  //  for (auto item : items) {
+                    if (item.amount == 0)  {
+
+                    }else{
+                    
   
-                 //  addresses.push_back(item.address);
+                   addresses.push_back(item.address);   }
                   
-                 
+                    }
                 
-                //  }
-                
-               // }
+                  }
+                        
  
                 txdata.push_back(TransactionItem{
                    "send", datetime, address, txid,confirmations, items
                 });
-            }
             } else {
                 // Incoming Transaction
                 address = (it["address"].is_null() ? "" : QString::fromStdString(it["address"]));
@@ -925,6 +926,12 @@ void Controller::refreshTransactions() {
                     memo = QString::fromStdString(it["memo"]);
                 }
 
+                    items.push_back(TransactionItemDetail{
+                    address,
+                    CAmount::fromqint64(it["amount"].get<json::number_integer_t>()),
+                    memo
+                });
+                
                 TransactionItem tx{
                     "Receive", datetime, address, txid,confirmations, items
                 };
