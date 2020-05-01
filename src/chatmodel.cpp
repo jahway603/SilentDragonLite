@@ -117,6 +117,7 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListWidget *view)
         //  if (c.second.getMemo.find())
         line += QString("[") + myDateTime.toString("dd.MM.yyyy hh:mm:ss ") +  QString("] ");
         line += QString("<") + QString("Outgoing") + QString("> :\n");
+        line += QString("<") + c.second.getCid() + QString("> :\n");
         line += QString(c.second.getMemo()) + QString("\n");      
         view->addItem(line);
         line ="";
@@ -129,6 +130,7 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListWidget *view)
         if ((ui->MyZaddr->text().trimmed() == c.second.getAddress()) && (c.second.getMemo().startsWith("{") == false) && (c.second.getMemo().isEmpty() == false)){
         line += QString("[") + myDateTime.toString("dd.MM.yyyy hh:mm:ss ") +  QString("] ");
         line += QString("<") + QString("incoming") + QString("> :\n");
+        line += QString("<") + c.second.getCid() + QString("> :\n");
         line += QString(c.second.getMemo()) + QString("\n");      
         view->addItem(line);
         line ="";
@@ -149,7 +151,7 @@ QString ChatModel::getCidByTx(QString tx)
     {
         qDebug() << "TXID=" << pair.first << " CID=" << pair.second;
     }
-    
+
     if(this->cidMap.count(tx) > 0)
     {
         return this->cidMap[tx];
