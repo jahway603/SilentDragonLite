@@ -100,6 +100,10 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListWidget *view)
         line += QString(c.second.getMemo()) + QString("\n");      
         view->addItem(line);
         line ="";
+
+       ////////////////////////////////// Todo : Render green checkmark for contacts if cid = cid - We have to search for cid in txid/cid list
+        QString cid = c.second.getCid();
+
         }else{}
 
         if ((ui->MyZaddr->text().trimmed() == c.second.getAddress()) && (c.second.getMemo().startsWith("{") == false) && (c.second.getMemo().isEmpty() == false)){

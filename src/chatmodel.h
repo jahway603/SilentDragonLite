@@ -75,7 +75,7 @@ class ChatItem
 
          QString getTxid()
         {
-            return _cid;
+            return _txid;
         }
 
         bool isOutgoing()
