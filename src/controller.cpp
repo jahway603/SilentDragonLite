@@ -884,7 +884,9 @@ void Controller::refreshTransactions() {
                                 datetime,
                                 address,
                                 QString(""),
-                                memo
+                                memo,
+                                "", // we have to set the cid here,
+                                txid
                                // true // is an outgoing message
                             );
                         chatModel->addMessage(item);
@@ -933,7 +935,9 @@ void Controller::refreshTransactions() {
                                 datetime,
                                 address,
                                 QString(""),
-                                memo
+                                memo,
+                                 "", // we have to set the cid here
+                                txid
                             );
                     chatModel->addMessage(item);
 

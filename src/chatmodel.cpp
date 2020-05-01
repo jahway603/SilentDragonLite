@@ -8,8 +8,11 @@
 #include "ui_memodialog.h"
 #include "addressbook.h"
 #include <QUuid>
+#include <bits/stdc++.h> 
+#include <boost/algorithm/string.hpp> 
 
-
+using namespace std; 
+using namespace boost;
 
 ChatModel::ChatModel(std::map<long, ChatItem> chatItems)
 {
@@ -89,8 +92,9 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListWidget *view)
  
         myDateTime.setTime_t(c.second.getTimestamp());
         
-        //////Render only Memos for selected contacts. Do not render empty Memos
+        //////Render only Memos for selected contacts. Do not render empty Memos //// Render only memos where cid=cid
         if ((ui->ContactZaddr->text().trimmed() == c.second.getAddress())  && (c.second.getMemo().startsWith("{") == false) && (c.second.getMemo().isEmpty() == false)) {
+        //  if (c.second.getMemo.find())
         line += QString("[") + myDateTime.toString("dd.MM.yyyy hh:mm:ss ") +  QString("] ");
         line += QString("<") + QString("Outgoing") + QString("> :\n");
         line += QString(c.second.getMemo()) + QString("\n");      
