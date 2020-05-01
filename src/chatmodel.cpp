@@ -129,8 +129,9 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListWidget *view)
         
         if ((ui->MyZaddr->text().trimmed() == c.second.getAddress()) && (c.second.getMemo().startsWith("{") == false) && (c.second.getMemo().isEmpty() == false)){
             for(auto &p : AddressBook::getInstance()->getAllAddressLabels()){
-             if (p.getCid() == c.second.getCid()){
-           line += QString("<") + "verified" + QString("> :\n");}
+             if ((p.getCid() == c.second.getCid())){
+          line+= QString("[") + "Verified Message" + QString("]");     ////Todo: Render a green checkmark instead of QString
+           }
         }
         line += QString("[") + myDateTime.toString("dd.MM.yyyy hh:mm:ss ") +  QString("] ");
         line += QString("<") + QString("incoming") + QString("> :\n");
@@ -152,7 +153,7 @@ QString ChatModel::getCidByTx(QString tx)
 {
     for(auto& pair : this->cidMap)
     {
-        qDebug() << "TXID=" << pair.first << " CID=" << pair.second;
+     //   qDebug() << "TXID=" << pair.first << " CID=" << pair.second;
     }
 
     if(this->cidMap.count(tx) > 0)

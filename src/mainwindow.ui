@@ -1393,9 +1393,9 @@
        <widget class="QLabel" name="contactNameMemo">
         <property name="geometry">
          <rect>
-          <x>720</x>
+          <x>350</x>
           <y>50</y>
-          <width>481</width>
+          <width>291</width>
           <height>20</height>
          </rect>
         </property>
@@ -1527,14 +1527,27 @@
        <widget class="QLabel" name="contactCid">
         <property name="geometry">
          <rect>
-          <x>870</x>
-          <y>90</y>
+          <x>820</x>
+          <y>60</y>
           <width>331</width>
           <height>20</height>
          </rect>
         </property>
         <property name="text">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="contactNameMemo_2">
+        <property name="geometry">
+         <rect>
+          <x>690</x>
+          <y>60</y>
+          <width>131</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Conversation ID:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </widget>
