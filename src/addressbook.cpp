@@ -168,9 +168,9 @@ void AddressBook::open(MainWindow* parent, QLineEdit* target)
         auto addr = ab.addr->text().trimmed();
         auto myAddr = ab.addr_chat->text().trimmed();
         QString newLabel = ab.label->text();
-        QString cid = QUuid::createUuid().toString(QUuid::WithoutBraces);
+       // QString cid = QUuid::createUuid().toString(QUuid::WithoutBraces);
 
-        
+        QString cid = ab.cid->text();
 
         if (addr.isEmpty() || newLabel.isEmpty()) 
         {
