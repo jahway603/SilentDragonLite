@@ -65,7 +65,7 @@ void ChatModel::clear()
 void ChatModel::addMessage(ChatItem item)
 {
     QString key = this->generateChatItemID(item);
-    qDebug() << "inserting chatitem with id: " << key;
+  //  qDebug() << "inserting chatitem with id: " << key;
     this->chatItems[key] = item;
 }
 

@@ -966,7 +966,7 @@ void Controller::refreshTransactions() {
                                 cid, // we have to set the cid here, its included in the headermemo
                                 txid
                             );
-                    qDebug()<< "Message CID: " << cid;
+                //    qDebug()<< "Message CID: " << cid;
                     chatModel->addMessage(item);
 
             }
@@ -1006,7 +1006,6 @@ void Controller::refreshChat(QListWidget *listWidget)
 
 void Controller::refreshContacts(QListWidget *listWidget)
 {
-    qDebug() << "Called Controller::refreshContacts(QListWidget *listWidget)";
     contactModel->renderContactList(listWidget);
 }
 
