@@ -882,7 +882,7 @@ void Controller::refreshTransactions() {
 
                         QString cid;
                     for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
-                     if (ui->ContactZaddr->text().trimmed() == c.getPartnerAddress()) {
+                     if ((ui->ContactZaddr->text().trimmed() == c.getPartnerAddress()) || (ui->MyZaddr->text().trimmed() == c.getMyAddress())) {
 
                          cid = c.getCid();
                      }else {cid = "";} 

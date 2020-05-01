@@ -117,23 +117,26 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListWidget *view)
         //  if (c.second.getMemo.find())
         line += QString("[") + myDateTime.toString("dd.MM.yyyy hh:mm:ss ") +  QString("] ");
         line += QString("<") + QString("Outgoing") + QString("> :\n");
-        line += QString("<") + c.second.getCid() + QString("> :\n");
         line += QString(c.second.getMemo()) + QString("\n");      
         view->addItem(line);
         line ="";
+
 
        ////////////////////////////////// Todo : Render green checkmark for contacts if cid = cid - We have to search for cid in txid/cid list
       //  QString cid = c.second.getCid();
 
-        }else{}
-
+        }
+        
         if ((ui->MyZaddr->text().trimmed() == c.second.getAddress()) && (c.second.getMemo().startsWith("{") == false) && (c.second.getMemo().isEmpty() == false)){
+            for(auto &p : AddressBook::getInstance()->getAllAddressLabels()){
+             if (p.getCid() == c.second.getCid()){
+           line += QString("<") + "verified" + QString("> :\n");}
+        }
         line += QString("[") + myDateTime.toString("dd.MM.yyyy hh:mm:ss ") +  QString("] ");
         line += QString("<") + QString("incoming") + QString("> :\n");
-        line += QString("<") + c.second.getCid() + QString("> :\n");
         line += QString(c.second.getMemo()) + QString("\n");      
         view->addItem(line);
-        line ="";
+        line ="";       
         }else{}
 
     }
