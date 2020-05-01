@@ -129,23 +129,33 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListWidget *view)
         
         if ((ui->MyZaddr->text().trimmed() == c.second.getAddress()) && (c.second.getMemo().startsWith("{") == false) && (c.second.getMemo().isEmpty() == false)){
             for(auto &p : AddressBook::getInstance()->getAllAddressLabels()){
-             if ((p.getCid() == c.second.getCid())){
-          line+= QString("[") + "Verified Message" + QString("]");     ////Todo: Render a green checkmark instead of QString
-           }else{
+    
+           if ((ui->checkBox->isChecked() == true) && (p.getCid() != c.second.getCid()))
+           {
+
+
+            }else{
 
               // line+= QString("[") + "Warning. Not verified!" + QString("]");
-           }
-        }
+           
+        
         line += QString("[") + myDateTime.toString("dd.MM.yyyy hh:mm:ss ") +  QString("] ");
         line += QString("<") + QString("incoming") + QString("> :\n");
         line += QString(c.second.getMemo()) + QString("\n");      
         view->addItem(line);
-        line ="";       
-        }else{}
+        line ="";  
+        }     
+
+
+        }
+
 
     }
+    
+        }
  
 }
+
 
 void ChatModel::addCid(QString tx, QString cid)
 {
