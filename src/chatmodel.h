@@ -61,9 +61,9 @@ inline void ListViewDelegate::paint(QPainter *painter, QStyleOptionViewItem cons
     painter->translate(option.rect.left() + d_horizontalmargin, option.rect.top() + ((index.row() == 0) ? d_verticalmargin : 0));
 
     // background color for chat bubble
-    QColor bgcolor("fbffff");
+    QColor bgcolor("#535353");
     if (outgoing)
-        bgcolor = "#fffcfb";
+        bgcolor = "#eeeeee";
 
     // create chat bubble
     QPainterPath pointie;
