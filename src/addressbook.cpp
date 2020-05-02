@@ -142,16 +142,15 @@ void AddressBook::open(MainWindow* parent, QLineEdit* target)
         bool sapling = true;
         rpc->createNewZaddr(sapling, [=] (json reply) {
             QString myAddr = QString::fromStdString(reply.get<json::array_t>()[0]);
-         // QString myAddr = "zs1flslqurcnummsw37mfxkhx6d7uwpevlc78cdjyqrgng7357t8f3stm9fneeqtuupfnrt7f933a9";
             QString message = QString("New Chat Address for your partner: ") + myAddr;
+            QString cid = QUuid::createUuid().toString(QUuid::WithoutBraces);
            
             parent->ui->listReceiveAddresses->insertItem(0, myAddr); 
             parent->ui->listReceiveAddresses->setCurrentIndex(0);
-           // ab.addr_chat->setText(myAddr);
+
             qDebug() << "new generated myAddr" << myAddr;
-             // 
+            ab.cid->setText(cid);
             ab.addr_chat->setText(myAddr);
-           // AddressBook::getInstance()->addAddressLabel(newLabel, ab.addr->text(), myAddr, cid);
         });
         model.updateUi(); //todo fix updating gui after adding 
         rpc->refresh(true);
@@ -168,8 +167,6 @@ void AddressBook::open(MainWindow* parent, QLineEdit* target)
         auto addr = ab.addr->text().trimmed();
         auto myAddr = ab.addr_chat->text().trimmed();
         QString newLabel = ab.label->text();
-       // QString cid = QUuid::createUuid().toString(QUuid::WithoutBraces);
-
         QString cid = ab.cid->text();
 
         if (addr.isEmpty() || newLabel.isEmpty()) 

@@ -12,6 +12,10 @@
     <qresource prefix="/img">
         <file>res/hushdlogo.gif</file>
         <file>res/logobig.gif</file>
+        <file>res/silentdragonlite-animated.gif</file>
+        <file>res/silentdragonlite-animated-dark.gif</file>
+        <file>res/silentdragonlite-animated-startup.gif</file>
+        <file>res/silentdragonlite-animated-startup-dark.gif</file>
     </qresource>
     <qresource prefix="/translations">
     <file>res/silentdragonlite_de.qm</file>
@@ -27,6 +31,7 @@
         <file>res/css/dark.css</file>
         <file>res/css/default.css</file>
         <file>res/css/light.css</file>
+        <file>res/css/midnight.css</file>
     </qresource>
     <qresource prefix="/images/blue">
         <file>res/images/blue/unchecked.png</file>

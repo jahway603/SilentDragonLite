@@ -65,7 +65,7 @@ void ChatModel::clear()
 void ChatModel::addMessage(ChatItem item)
 {
     QString key = this->generateChatItemID(item);
-    qDebug() << "inserting chatitem with id: " << key;
+  //  qDebug() << "inserting chatitem with id: " << key;
     this->chatItems[key] = item;
 }
 
@@ -129,19 +129,33 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListWidget *view)
         
         if ((ui->MyZaddr->text().trimmed() == c.second.getAddress()) && (c.second.getMemo().startsWith("{") == false) && (c.second.getMemo().isEmpty() == false)){
             for(auto &p : AddressBook::getInstance()->getAllAddressLabels()){
-             if (p.getCid() == c.second.getCid()){
-           line += QString("<") + "verified" + QString("> :\n");}
-        }
+    
+           if ((ui->checkBox->isChecked() == true) && (p.getCid() != c.second.getCid()))
+           {
+
+
+            }else{
+
+              // line+= QString("[") + "Warning. Not verified!" + QString("]");
+           
+        
         line += QString("[") + myDateTime.toString("dd.MM.yyyy hh:mm:ss ") +  QString("] ");
         line += QString("<") + QString("incoming") + QString("> :\n");
         line += QString(c.second.getMemo()) + QString("\n");      
         view->addItem(line);
-        line ="";       
-        }else{}
+        line ="";  
+        }     
+
+
+        }
+
 
     }
+    
+        }
  
 }
+
 
 void ChatModel::addCid(QString tx, QString cid)
 {
@@ -152,7 +166,7 @@ QString ChatModel::getCidByTx(QString tx)
 {
     for(auto& pair : this->cidMap)
     {
-        qDebug() << "TXID=" << pair.first << " CID=" << pair.second;
+     //   qDebug() << "TXID=" << pair.first << " CID=" << pair.second;
     }
 
     if(this->cidMap.count(tx) > 0)
@@ -233,7 +247,7 @@ Tx MainWindow::createTxFromChatPage() {
 }
 
 void MainWindow::sendChatButton() {
-      ////////////////////////////Todo: Check if its a zaddr//////////
+      ////////////////////////////Todo: Check if a Contact is selected//////////
 
     // Create a Tx from the values on the send tab. Note that this Tx object
     // might not be valid yet.
@@ -241,17 +255,17 @@ void MainWindow::sendChatButton() {
     // Memos can only be used with zAddrs. So check that first
    // for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
 
-   //  if (ui->ContactZaddr->text().trimmed() == c.getName()) {
+      if (ui->ContactZaddr->text().trimmed().isEmpty() || ui->memoTxtChat->toPlainText().trimmed().isEmpty()) {
      
   // auto addr = "";
   //  if (! Settings::isZAddress(AddressBook::addressFromAddressLabel(addr->text()))) {
-  //      QMessageBox msg(QMessageBox::Critical, tr("Memos can only be used with z-addresses"),
-  //      tr("The memo field can only be used with a z-address.\n") + addr->text() + tr("\ndoesn't look like a z-address"),
-  //      QMessageBox::Ok, this);
+        QMessageBox msg(QMessageBox::Critical, tr("You have to select a contact and insert a Memo"),
+        tr("You have selected no Contact from Contactlist,\n")  + tr("\nor your Memo is empty"),
+        QMessageBox::Ok, this);
 
- //       msg.exec();
- //       return;
-  //  }
+        msg.exec();
+        return;
+    }
 
     Tx tx = createTxFromChatPage();
 
@@ -273,8 +287,18 @@ void MainWindow::sendChatButton() {
         auto d = new QDialog(this);
         auto connD = new Ui_ConnectionDialog();
         connD->setupUi(d);
-        QPixmap logo(":/img/res/logobig.gif");
-        connD->topIcon->setBasePixmap(logo.scaled(256, 256, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        QMovie *movie1 = new QMovie(":/img/res/silentdragonlite-animated.gif");;
+        QMovie *movie2 = new QMovie(":/img/res/silentdragonlite-animated-dark.gif");;
+        auto theme = Settings::getInstance()->get_theme_name();
+        if (theme == "dark" || theme == "midnight") {
+            movie2->setScaledSize(QSize(512,512));
+            connD->topIcon->setMovie(movie2);
+            movie2->start();
+        } else {
+            movie1->setScaledSize(QSize(512,512));
+            connD->topIcon->setMovie(movie1);
+            movie1->start();
+        }
 
         connD->status->setText(tr("Please wait..."));
         connD->statusDetail->setText(tr("Your Message will be send"));

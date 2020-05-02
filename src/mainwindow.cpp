@@ -39,6 +39,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
  
     ui->setupUi(this);
+    ui->checkBox->setChecked(true);
     logger = new Logger(this, QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("silentdragonlite-wallet.log"));
 
     // Status Bar
