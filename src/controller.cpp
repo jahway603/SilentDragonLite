@@ -893,8 +893,8 @@ void Controller::refreshTransactions() {
                                 QString(""),
                                 memo,
                                 cid, // we have to set the cid here, its included in our Addressbook for this contact
-                                txid
-                               // true // is an outgoing message
+                                txid,
+                                true // is an outgoing message
                             );
                         chatModel->addMessage(item);
                      }
@@ -964,7 +964,8 @@ void Controller::refreshTransactions() {
                                 QString(""),
                                 memo,
                                 cid, // we have to set the cid here, its included in the headermemo
-                                txid
+                                txid,
+                                false
                             );
                 //    qDebug()<< "Message CID: " << cid;
                     chatModel->addMessage(item);
@@ -990,7 +991,7 @@ void Controller::refreshTransactions() {
 
          // Update model data, which updates the table view
         transactionsTableModel->replaceData(txdata);    
-        chatModel->renderChatBox(ui, ui->listChatMemo);    
+        chatModel->renderChatBox(ui, ui->listChat);   
         refreshContacts(
             ui->listContactWidget
             
@@ -998,7 +999,7 @@ void Controller::refreshTransactions() {
          });
 }
 
-void Controller::refreshChat(QListWidget *listWidget)
+void Controller::refreshChat(QListView *listWidget)
 {
     chatModel->renderChatBox(ui, listWidget);
   

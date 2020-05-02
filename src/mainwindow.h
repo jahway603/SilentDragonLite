@@ -54,6 +54,7 @@ public:
     bool isWebsocketListening();
     void createWebsocket(QString wormholecode);
     void stopWebsocket();
+    
 
     void balancesReady();
     void payhushURI(QString uri = "", QString myAddr = "");
@@ -92,8 +93,9 @@ private:
     void setupBalancesTab();
     void setuphushdTab();
     void setupchatTab();
-    void updateChat();
+    
     void updateContacts();
+    void updateChat();
 
     void setupSettingsModal();
     void setupStatusBar();

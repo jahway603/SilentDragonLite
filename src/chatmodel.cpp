@@ -10,6 +10,7 @@
 #include <QUuid>
 #include <bits/stdc++.h> 
 #include <boost/algorithm/string.hpp> 
+#include <QtWidgets>
 
 using namespace std; 
 using namespace boost;
@@ -80,11 +81,11 @@ void ChatModel::showMessages()
 {
     for(auto &c : this->chatItems)
     {
-        qDebug() << "[" << c.second.getTimestamp() << "] " << "<" << c.second.getAddress() << "> :" << c.second.getMemo(); 
+        qDebug() << c.second.toChatLine();
     }
 }
 
-void ChatModel::renderChatBox(Ui::MainWindow* ui, QListWidget &view)
+void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView &view)
 {
     /*for(auto &c : this->chatItems)
     {
@@ -94,66 +95,68 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListWidget &view)
     //todo render items to view
 }
 
-void ChatModel::renderChatBox(Ui::MainWindow* ui, QListWidget *view)
+void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
 {
-
-    while(view->count() > 0)
+         //  QStandardItemModel mymodel;
+   // QStandardItem* Items = new QStandardItem(myString);
+    QStandardItemModel* myModel = new QStandardItemModel();
+    for(auto &c : this->chatItems)
     {
-        view->takeItem(0);
-    }
-
-    QString line = "";
-    
-    for(auto &c : this->chatItems){
-   
-                 QDateTime myDateTime;
- 
-        myDateTime.setTime_t(c.second.getTimestamp());
-        
         //////Render only Memos for selected contacts. Do not render empty Memos //// Render only memos where cid=cid
 
         /// 
-        if ((ui->ContactZaddr->text().trimmed() == c.second.getAddress()) && (c.second.getMemo().startsWith("{") == false) && (c.second.getMemo().isEmpty() == false)) {   
-        //  if (c.second.getMemo.find())
-        line += QString("[") + myDateTime.toString("dd.MM.yyyy hh:mm:ss ") +  QString("] ");
-        line += QString("<") + QString("Outgoing") + QString("> :\n");
-        line += QString(c.second.getMemo()) + QString("\n");      
-        view->addItem(line);
-        line ="";
+        if (
+            (ui->ContactZaddr->text().trimmed() == c.second.getAddress()) && 
+            (c.second.getMemo().startsWith("{") == false) && 
+            (c.second.getMemo().isEmpty() == false) 
+        ) 
+        {   
 
-
-       ////////////////////////////////// Todo : Render green checkmark for contacts if cid = cid - We have to search for cid in txid/cid list
-      //  QString cid = c.second.getCid();
-
-        }
-        
-        if ((ui->MyZaddr->text().trimmed() == c.second.getAddress()) && (c.second.getMemo().startsWith("{") == false) && (c.second.getMemo().isEmpty() == false)){
-            for(auto &p : AddressBook::getInstance()->getAllAddressLabels()){
-    
-           if ((ui->checkBox->isChecked() == true) && (p.getCid() != c.second.getCid()))
-           {
-
-
-            }else{
-
-              // line+= QString("[") + "Warning. Not verified!" + QString("]");
-           
-        
-        line += QString("[") + myDateTime.toString("dd.MM.yyyy hh:mm:ss ") +  QString("] ");
-        line += QString("<") + QString("incoming") + QString("> :\n");
-        line += QString(c.second.getMemo()) + QString("\n");      
-        view->addItem(line);
-        line ="";  
-        }     
-
-
+            QStandardItem* Items = new QStandardItem(c.second.toChatLine());
+            Items->setData("Incoming", Qt::UserRole +1);
+            myModel->appendRow(Items);
+            qDebug()<<Items->text();
+            ui->listChat->setModel(myModel);
+            ui->listChat->setMinimumSize(200,350);
+            ui->listChat->setItemDelegate(new ListViewDelegate());
+            ui->listChat->show();
         }
 
 
+
+        if (
+            (ui->MyZaddr->text().trimmed() == c.second.getAddress()) && 
+            (c.second.getMemo().startsWith("{") == false) && 
+            (c.second.getMemo().isEmpty() == false)  
+
+        )
+        {
+
+            QStandardItem* Items1 = new QStandardItem(c.second.toChatLine());
+            Items1->setData("Outgoing", Qt::UserRole +1);
+            myModel->appendRow(Items1);
+            qDebug()<<Items1->text();
+        }
+             ui->listChat->setModel(myModel);
+             ui->listChat->setMinimumSize(200,350);
+             ui->listChat->setItemDelegate(new ListViewDelegate());
+             ui->listChat->show();
     }
+        
+       
+          /////////////////////////Render only when CID=CID?
+   
+        //    for(auto &p : AddressBook::getInstance()->getAllAddressLabels())
+         //   {
     
-        }
- 
+               // if ((ui->checkBox->isChecked() == true) && (p.getCid() != c.second.getCid()))
+              //  {
+
+
+                //}
+              // 
+
+
 }
 
 
@@ -247,6 +250,9 @@ Tx MainWindow::createTxFromChatPage() {
 }
 
 void MainWindow::sendChatButton() {
+
+
+
       ////////////////////////////Todo: Check if a Contact is selected//////////
 
     // Create a Tx from the values on the send tab. Note that this Tx object
@@ -419,6 +425,9 @@ Tx MainWindow::createTxForSafeContactRequest() {
 }
 //////////////////De-activated for now///////////////////
 void MainWindow::safeContactRequest() {
+
+
+ 
 
     ////////////////////////////Todo: Check if its a zaddr//////////
 

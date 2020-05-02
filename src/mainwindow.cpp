@@ -993,6 +993,92 @@ void MainWindow::setupchatTab() {
 ///////// Set selected Zaddr for Chat with Doubleklick
 
     QObject::connect(ui->listContactWidget, &QTableView::clicked, [=] () {
+
+         QStandardItemModel mymodel;
+    
+   // for(auto &c : this->chatItems)
+    //{
+        //////Render only Memos for selected contacts. Do not render empty Memos //// Render only memos where cid=cid
+
+        /// 
+      //  if (
+        //    (ui->ContactZaddr->text().trimmed() == c.second.getAddress()) && 
+          //  (c.second.getMemo().startsWith("{") == false) && 
+          //  (c.second.getMemo().isEmpty() == false)
+       // ) 
+       // {   
+            //  if (c.second.getMemo.find())
+            
+            //view->addItem(line);
+            
+           // QStandardItem *item1 = new QStandardItem(c.second.toChatLine());
+           // item1->setData("Incoming", Qt::UserRole + 1);
+           // model.appendRow(item1);
+
+            QStandardItem *item1 = new QStandardItem("Kacke Hier");
+            item1->setData("Incoming", Qt::UserRole +1);
+            mymodel.appendRow(item1);
+            qDebug()<<item1->text();
+
+
+            QStandardItem *item2 = new QStandardItem("This is item one");
+            item2->setData("Outgoing", Qt::UserRole +1);
+            mymodel.appendRow(item2);
+            qDebug()<<item2->text();
+
+            QStandardItem *item3 = new QStandardItem("This is item one");
+            item3->setData("Outgoing", Qt::UserRole +1);
+            mymodel.appendRow(item3);
+            qDebug()<<item3->text();
+
+           // QStandardItem *item2 = new QStandardItem("Hallo");
+           // item1->setData("Outgoing", Qt::UserRole + 1);
+           // mymodel.appendRow(item2);
+           // qDebug()<<item2->text();
+
+           ////////////////////////////////// Todo : Render green checkmark for contacts if cid = cid - We have to search for cid in txid/cid list
+          //  QString cid = c.second.getCid();
+
+       // }
+        
+       // if (
+       //     (ui->MyZaddr->text().trimmed() == c.second.getAddress()) && 
+         //   (c.second.getMemo().startsWith("{") == false) && 
+         //   (c.second.getMemo().isEmpty() == false)
+       // )
+       // {
+          
+   
+        //    for(auto &p : AddressBook::getInstance()->getAllAddressLabels())
+         //   {
+    
+               // if ((ui->checkBox->isChecked() == true) && (p.getCid() != c.second.getCid()))
+              //  {
+
+
+                //}
+              //  else
+              //  {
+                      // line+= QString("[") + "Warning. Not verified!" + QString("]");
+             //       QStandardItem *item = new QStandardItem(c.second.toChatLine());   
+                    //view->addItem(line);
+             //       model.appendRow(item);
+             //   }     
+
+//            }
+
+        //}
+    
+   // }
+
+
+
+
+   ui->listChat->setModel(&mymodel);
+   ui->listChat->setItemDelegate(new ListViewDelegate());
+   ui->listChat->show();
+   //ui->listChat->update();
+
     
         QModelIndex index = ui->listContactWidget->currentIndex();
         QString label_contact = index.data(Qt::DisplayRole).toString();
@@ -1005,8 +1091,12 @@ void MainWindow::setupchatTab() {
         ui->contactCid->setText(p.getCid());
         
     rpc->refresh(true);
+    updateChat();
         }
    });
+
+     
+
 }
 
 ChatMemoEdit::ChatMemoEdit(QWidget* parent) : QPlainTextEdit(parent) {
@@ -1052,12 +1142,13 @@ void ChatMemoEdit::setSendChatButton(QPushButton* button) {
 
 void MainWindow::updateChat()
 {
-    rpc->refreshChat(ui->listChatMemo);
+    rpc->refreshChat(ui->listChat);
+    rpc->refresh(true);
+
 }
 
 void MainWindow::updateContacts()
 {
-    qDebug() << "Called MainWindow::updateContacts()";
     rpc->refreshContacts(ui->listContactWidget);
 }
 
