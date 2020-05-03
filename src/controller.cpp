@@ -954,22 +954,43 @@ void Controller::refreshTransactions() {
                 };
 
                 txdata.push_back(tx);
-
-                    QString cid = "";
+                
+                    QString type;
+                    QString cid;
                 if (memo.startsWith("{")) {
+
+                    type = memo.mid(75,4);
                     cid =  memo.mid(14,36);
+
+                    qDebug()<<type;
+                    qDebug()<<cid;
                     chatModel->addCid(txid, cid);
-                }else{
-                    if(chatModel->getCidByTx(txid) != QString("0xdeadbeef"))
+
+                }
+                if (type == "cont")
+                
+                {
+
+                  qDebug()<< "Als Request erkannt";
+               
+
+                }
+            
+                
+                if (chatModel->getCidByTx(txid) != QString("0xdeadbeef")){
+
                         cid = chatModel->getCidByTx(txid);
 
-                    else
-                        cid = "";
                 }
-                 
+                        
+
+                    else{
+
+                     cid = "";
+                    }
+                             
                 QString contact;
                 for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
-               // for (auto &p : this->chatItems)
                 {
             
                 if (address == c.getMyAddress()){
@@ -977,7 +998,7 @@ void Controller::refreshTransactions() {
                     qDebug()<< "Addressbuch Addresse: " << c.getMyAddress();
                     qDebug()<< "Addresse: " << address;
 
-                }else{ contact = "ELSE";}
+                }else{ contact = "";}
                  
                     ChatItem item = ChatItem(
                                 datetime,
@@ -988,9 +1009,6 @@ void Controller::refreshTransactions() {
                                 txid,
                                 false
                             );
-                //    qDebug()<< "KontaktName: " << contact;
-                    
-                   // qDebug()<< "Addressbuch Addresse: " << c.getMyAddress();
 
                     chatModel->addMessage(item);
 } 

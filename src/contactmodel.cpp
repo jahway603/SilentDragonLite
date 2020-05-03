@@ -10,13 +10,25 @@ void ContactModel::renderContactList(QListView* view)
     {
 
         //QStandardItem* Items = new QStandardItem();
-        QStandardItem* Items1 = new QStandardItem(QIcon("res/darkwing.png"),c.getName());
-       // contact->appendRow(Items);
+         auto theme = Settings::getInstance()->get_theme_name();
+    if ((theme == "dark" || theme == "midnight")) {
+        QStandardItem* Items1 = new QStandardItem(QIcon("res/sdlogo.png"),c.getName());
+             contact->appendRow(Items1);
+        view->setModel(contact);
+        view->setIconSize(QSize(80,100));
+        view->setUniformItemSizes(true);
+        view->setDragDropMode(QAbstractItemView::DropOnly);;
+    }
+    if (theme == "default" || theme == "blue"){
+
+        QStandardItem* Items1 = new QStandardItem(QIcon("res/sdlogo2.png"),c.getName());
         contact->appendRow(Items1);
         view->setModel(contact);
         view->setIconSize(QSize(80,100));
         view->setUniformItemSizes(true);
         view->setDragDropMode(QAbstractItemView::DropOnly);;
+
+    }
 
         
         
