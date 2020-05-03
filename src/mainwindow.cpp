@@ -14,6 +14,7 @@
 #include "settings.h"
 #include "version.h"
 #include "connection.h"
+#include "ui_contactrequest.h"
 #include "requestdialog.h"
 #include "websockets.h"
 #include <QRegularExpression>
@@ -1006,7 +1007,8 @@ void MainWindow::setupchatTab() {
        
 // Send button
     QObject::connect(ui->sendChatButton, &QPushButton::clicked, this, &MainWindow::sendChatButton);
-    QObject::connect(ui->safeContactRequest, &QPushButton::clicked, this, &MainWindow::safeContactRequest);
+    QObject::connect(ui->safeContactRequest, &QPushButton::clicked, this, &MainWindow::ContactRequest);
+    
 
 ///////// Set selected Zaddr for Chat with Doubleklick
 
@@ -1031,6 +1033,7 @@ void MainWindow::setupchatTab() {
     
 
 }
+
 
 ChatMemoEdit::ChatMemoEdit(QWidget* parent) : QPlainTextEdit(parent) {
     QObject::connect(this, &QPlainTextEdit::textChanged, this, &ChatMemoEdit::updateDisplay);

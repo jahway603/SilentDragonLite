@@ -377,12 +377,28 @@ QString MainWindow::doSendChatTxValidations(Tx tx) {
     return "";
 }
 
-// Create a Contact Request. 
+
+// Create a Tx from the current state of the Chat page. 
 Tx MainWindow::createTxForSafeContactRequest() {
-   Tx tx;
-    CAmount totalAmt;
-  {
+
+ Ui_Dialog request;
+    QDialog dialog(this);
+    request.setupUi(&dialog);
+    Settings::saveRestore(&dialog);
+dialog.exec();
+
+    Tx tx; 
     
+    QObject::connect(request.cancel, &QPushButton::clicked, [&] () {
+
+        dialog.close();
+    });
+
+
+    QObject::connect(request.sendRequestButton, &QPushButton::clicked, this, &MainWindow::ContactRequest);
+    // For each addr/amt in the Chat tab
+  {
+       CAmount totalAmt;
         QString amtStr = "0";
         CAmount amt;  
 
@@ -392,48 +408,46 @@ Tx MainWindow::createTxForSafeContactRequest() {
 
   
     for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
+     if (request.zaddr->text().trimmed() != c.getPartnerAddress()) {
 
-     if (ui->contactNameMemo->text().trimmed() == c.getName()) {
-     
-           // QString cid = c.getCid();            // This has to be a new cid for the contact
-           // QString myAddr = c.getMyAddress();   //  this should be a new HushChat zaddr
-          //  QString addr = c.getPartnerAddress(); //  this address will be insert by the user
-          QString cid = c.getCid();
-          QString myAddr = c.getMyAddress();
-          QString addr = c.getPartnerAddress();
-          QString type = "cont";
           
-          
-    
+            QString cid = c.getCid();
+            QString myAddr = c.getMyAddress();
+            QString type = "cont";
+            QString addr = request.zaddr->text();
+
+           
      
-        QString hmemo= createHeaderMemo(type,cid,myAddr);
-     
-     tx.toAddrs.push_back(ToFields{addr, amt, hmemo}) ;
+            QString hmemo= createHeaderMemo(type,cid,myAddr,0,0);
+            QString memo = request.requestmemo->toPlainText().trimmed();
 
-         qDebug() << "pushback chattx";
-   }
-}
+            
+            tx.toAddrs.push_back(ToFields{addr, amt, hmemo});
+            tx.toAddrs.push_back(ToFields{addr, amt, memo});
 
-
-    tx.fee = Settings::getMinerFee();
+                qDebug() << "pushback chattx";
+            tx.fee = Settings::getMinerFee();
 
      return tx;
 
      qDebug() << "ChatTx created";
+   } if (request.zaddr->text().trimmed().isEmpty() == false){
+
+    QMessageBox msg(QMessageBox::Critical, tr("Please insert a contact Address"), request.zaddr->text(),
+                        QMessageBox::Ok, this);
+
+        msg.exec();
+
+   }
+
+  }
+
 }
-//////////////////De-activated for now///////////////////
-void MainWindow::safeContactRequest() {
+void MainWindow::ContactRequest() {
 
 
-   // Ui_ContactRequest contactRequest;
-  //  QDialog dialog(this);
-  //  contactRequest.setupUi(&dialog);
-  //  Settings::saveRestore(&dialog);
 
-  //  memoDialog.memoTxt->setLenDisplayLabel(memoDialog.memoSize);
-  //  memoDialog.memoTxt->setAcceptButton(memoDialog.buttonBox->button(QDialogButtonBox::Ok));
-
-    ////////////////////////////Todo: Check if its a zaddr//////////
+      ////////////////////////////Todo: Check if a Contact is selected//////////
 
     // Create a Tx from the values on the send tab. Note that this Tx object
     // might not be valid yet.
@@ -441,21 +455,24 @@ void MainWindow::safeContactRequest() {
     // Memos can only be used with zAddrs. So check that first
    // for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
 
-   //  if (ui->ContactZaddr->text().trimmed() == c.getName()) {
+    //  if (ui->contactNameMemo->text().trimmed().isEmpty() || ui->memoTxtChat->toPlainText().trimmed().isEmpty()) {
      
   // auto addr = "";
   //  if (! Settings::isZAddress(AddressBook::addressFromAddressLabel(addr->text()))) {
-  //      QMessageBox msg(QMessageBox::Critical, tr("Contact requests can only be used with z-addresses"),
-  //      tr("The memo field can only be used with a z-address.\n") + addr->text() + tr("\ndoesn't look like a z-address"),
-  //      QMessageBox::Ok, this);
+     //   QMessageBox msg(QMessageBox::Critical, tr("You have to select a contact and insert a Memo"),
+     //   tr("You have selected no Contact from Contactlist,\n")  + tr("\nor your Memo is empty"),
+     //   QMessageBox::Ok, this);
 
- //       msg.exec();
- //       return;
+    //    msg.exec();
+    //    return;
   //  }
 
-    Tx tx = createTxForSafeContactRequest();
+      
+//};
 
-    QString error = doSendRequestTxValidations(tx);
+  Tx tx = createTxForSafeContactRequest();
+
+    QString error = doSendChatTxValidations(tx);
 
     if (!error.isEmpty()) {
         // Something went wrong, so show an error and exit
@@ -469,7 +486,6 @@ void MainWindow::safeContactRequest() {
         qDebug() << "Tx aborted";
     }
 
-        // Create a new Dialog to show that we are computing/sending the Tx
         // Create a new Dialog to show that we are computing/sending the Tx
         auto d = new QDialog(this);
         auto connD = new Ui_ConnectionDialog();
@@ -488,9 +504,10 @@ void MainWindow::safeContactRequest() {
         }
 
         connD->status->setText(tr("Please wait..."));
-        connD->statusDetail->setText(tr("Your Contact Request will be send"));
+        connD->statusDetail->setText(tr("Your Message will be send"));
 
         d->show();
+        ui->memoTxtChat->clear();
 
         // And send the Tx
         rpc->executeTransaction(tx, 
@@ -509,7 +526,8 @@ void MainWindow::safeContactRequest() {
                   });
                 
                 // Force a UI update so we get the unconfirmed Tx
-                rpc->refresh(true);
+              //  rpc->refresh(true);
+                ui->memoTxtChat->clear();
 
             },
             // Errored out
@@ -527,7 +545,8 @@ void MainWindow::safeContactRequest() {
                 QMessageBox::critical(this, QObject::tr("Transaction Error"), errStr, QMessageBox::Ok);            
             }
         );
-    }       
+       
+    }        
 
 
 QString MainWindow::doSendRequestTxValidations(Tx tx) {

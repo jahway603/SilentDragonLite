@@ -108,13 +108,14 @@ private:
     Tx   createTxFromChatPage();
     Tx   createTxForSafeContactRequest();
 
+
     void encryptWallet();
     void removeWalletEncryption();
 
     void cancelButton();
     void sendButton();
     void sendChatButton();
-    void safeContactRequest();
+    void ContactRequest();
     void addAddressSection();
     void maxAmountChecked(int checked);
 
