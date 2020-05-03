@@ -905,6 +905,17 @@ void MainWindow::setupTransactionsTab() {
     });
 
     // Set up context menu on transactions tab
+    auto theme = Settings::getInstance()->get_theme_name();
+     if (theme == "dark"){
+    ui->listChat->setStyleSheet("background-image: url(res/sdlogo.png) ;background-attachment: fixed ;background-position: center center ;background-repeat: no-repeat;background-size: cover");
+     }else{ui->listChat->setStyleSheet("background-image: url(res/sdlogo2.png) ;background-attachment: fixed ;background-position: center center ;background-repeat: no-repeat;background-size: cover");}
+    ui->listChat->setResizeMode(QListView::Adjust);
+    ui->listChat->setWordWrap(true);
+    ui->listChat->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    ui->listChat->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->listChat->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->listChat->setMinimumSize(200,350);
+    ui->listChat->show();
     ui->transactionsTable->setContextMenuPolicy(Qt::CustomContextMenu);
     // Table right click
     QObject::connect(ui->transactionsTable, &QTableView::customContextMenuRequested, [=] (QPoint pos) {
@@ -1014,6 +1025,8 @@ void MainWindow::setupchatTab() {
         }
    });
 
+    
+
 }
 
 ChatMemoEdit::ChatMemoEdit(QWidget* parent) : QPlainTextEdit(parent) {
@@ -1066,7 +1079,7 @@ void MainWindow::updateChat()
 
 void MainWindow::updateContacts()
 {
-    rpc->refreshContacts(ui->listContactWidget);
+    //rpc->refreshContacts(ui->listContactWidget);
 }
 
 void MainWindow::addNewZaddr(bool sapling) {

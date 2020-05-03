@@ -123,17 +123,9 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
             Items->setData("Incoming", Qt::UserRole +1);
             chat->appendRow(Items);
          
-
-             ui->listChat->setResizeMode(QListView::Adjust);
-             ui->listChat->setWordWrap(true);
-             ui->listChat->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-             ui->listChat->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-             ui->listChat->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-             ui->listChat->setModel(chat);
-             ui->listChat->setMinimumSize(200,350);
+             ui->listChat->setModel(chat);          
              ui->listChat->setItemDelegate(new ListViewDelegate());
-          //   ui->listChat->setStyleSheet("background-image: url(res/hushdark.png)");  /////Todo set an png as Watermark backgroung in listChat
-             ui->listChat->show();
+             
             }
     
 
@@ -149,18 +141,11 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
             QStandardItem* Items1 = new QStandardItem(c.second.toChatLine());
             Items1->setData("Outgoing", Qt::UserRole +1);
             chat->appendRow(Items1);
-            qDebug()<<Items1->text();
         }
 
-             ui->listChat->setResizeMode(QListView::Adjust);
-             ui->listChat->setWordWrap(true);
-             ui->listChat->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-             ui->listChat->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-             ui->listChat->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
              ui->listChat->setModel(chat);
-             ui->listChat->setMinimumSize(200,350);
              ui->listChat->setItemDelegate(new ListViewDelegate());
-             ui->listChat->show();
+            
     
     }
  
