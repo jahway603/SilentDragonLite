@@ -1,3 +1,5 @@
+// Copyright 2019-2020 The Hush developers
+// GPLv3
 #include "chatmodel.h"
 #include "settings.h"
 #include "ui_confirm.h"
@@ -395,15 +397,17 @@ Tx MainWindow::createTxForSafeContactRequest() {
            // QString cid = c.getCid();            // This has to be a new cid for the contact
            // QString myAddr = c.getMyAddress();   //  this should be a new HushChat zaddr
           //  QString addr = c.getPartnerAddress(); //  this address will be insert by the user
-          QString cid = "";
-          QString myAddr = "";
-          QString addr = "";
-          QString type = "Request";
+          QString cid = c.getCid();
+          QString myAddr = c.getMyAddress();
+          QString addr = c.getPartnerAddress();
+          QString type = "cont";
+          
+          
     
      
         QString hmemo= createHeaderMemo(type,cid,myAddr);
      
-   //  tx.toAddrs.push_back(ToFields{addr, amt, hmemo}) ;
+     tx.toAddrs.push_back(ToFields{addr, amt, hmemo}) ;
 
          qDebug() << "pushback chattx";
    }
@@ -439,7 +443,7 @@ void MainWindow::safeContactRequest() {
  //       return;
   //  }
 
-  /*  Tx tx = createTxForSafeContactRequest();
+    Tx tx = createTxForSafeContactRequest();
 
     QString error = doSendRequestTxValidations(tx);
 
@@ -456,14 +460,25 @@ void MainWindow::safeContactRequest() {
     }
 
         // Create a new Dialog to show that we are computing/sending the Tx
+        // Create a new Dialog to show that we are computing/sending the Tx
         auto d = new QDialog(this);
         auto connD = new Ui_ConnectionDialog();
         connD->setupUi(d);
-        QPixmap logo(":/img/res/logobig.gif");
-        connD->topIcon->setBasePixmap(logo.scaled(256, 256, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        QMovie *movie1 = new QMovie(":/img/res/silentdragonlite-animated.gif");;
+        QMovie *movie2 = new QMovie(":/img/res/silentdragonlite-animated-dark.gif");;
+        auto theme = Settings::getInstance()->get_theme_name();
+        if (theme == "dark" || theme == "midnight") {
+            movie2->setScaledSize(QSize(512,512));
+            connD->topIcon->setMovie(movie2);
+            movie2->start();
+        } else {
+            movie1->setScaledSize(QSize(512,512));
+            connD->topIcon->setMovie(movie1);
+            movie1->start();
+        }
 
         connD->status->setText(tr("Please wait..."));
-        connD->statusDetail->setText(tr("Your Safe Contact Request will be send"));
+        connD->statusDetail->setText(tr("Your Contact Request will be send"));
 
         d->show();
 
@@ -501,14 +516,14 @@ void MainWindow::safeContactRequest() {
 
                 QMessageBox::critical(this, QObject::tr("Transaction Error"), errStr, QMessageBox::Ok);            
             }
-        );*/
+        );
     }       
 
 
 QString MainWindow::doSendRequestTxValidations(Tx tx) {
     // Check to see if we have enough verified funds to send the Tx.
 
- /*   CAmount total;
+    CAmount total;
     for (auto toAddr : tx.toAddrs) {
         if (!Settings::isValidAddress(toAddr.addr)) {
             QString addr = (toAddr.addr.length() > 100 ? toAddr.addr.left(100) + "..." : toAddr.addr);
@@ -532,5 +547,5 @@ QString MainWindow::doSendRequestTxValidations(Tx tx) {
             .arg(available.toDecimalhushString(), total.toDecimalhushString());
     }
 
-    return "";*/
+    return "";
 }
