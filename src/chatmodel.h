@@ -13,6 +13,7 @@
 #include "settings.h"
 #include "camount.h"
 
+
 class ListViewDelegate : public QAbstractItemDelegate
 {
     int d_radius;
@@ -267,8 +268,8 @@ class ChatItem
         {
             QDateTime myDateTime;  
             myDateTime.setTime_t(_timestamp);
-            QString line = QString("[") + myDateTime.toString("dd.MM.yyyy hh:mm:ss ") +  QString("] ");
-            line += QString(_memo) + QString("\n");      
+            QString line = QString("[") + myDateTime.toString("d.M.yy hh:mm") + QString("] ") ;
+            line += QString("") + QString(_memo) + QString("\n\n");      
             return line;
         }
 

@@ -117,27 +117,22 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
             (p.getPartnerAddress() == c.second.getAddress())
             
         ) 
-        {
-
-      //  for (auto &p : AddressBook::getInstance()->getAllAddressLabels())
-
-      
-      //  {
-      //  if ((ui->checkBox->isChecked() == true) && (p.getCid() != c.second.getCid()))
-
-       //     {
-
-         //   }
-            
+        {       
             
             QStandardItem* Items = new QStandardItem(c.second.toChatLine());
             Items->setData("Incoming", Qt::UserRole +1);
             myModel->appendRow(Items);
-            qDebug()<<Items->text();
-            ui->listChat->setModel(myModel);
-            ui->listChat->setMinimumSize(200,350);
-            ui->listChat->setItemDelegate(new ListViewDelegate());
-            ui->listChat->show();
+         
+
+             ui->listChat->setResizeMode(QListView::Adjust);
+             ui->listChat->setWordWrap(true);
+             ui->listChat->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+             ui->listChat->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+             ui->listChat->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+             ui->listChat->setModel(myModel);
+             ui->listChat->setMinimumSize(200,350);
+             ui->listChat->setItemDelegate(new ListViewDelegate());
+             ui->listChat->show();
             }
     
 
@@ -155,6 +150,12 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
             myModel->appendRow(Items1);
             qDebug()<<Items1->text();
         }
+
+             ui->listChat->setResizeMode(QListView::Adjust);
+             ui->listChat->setWordWrap(true);
+             ui->listChat->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+             ui->listChat->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+             ui->listChat->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
              ui->listChat->setModel(myModel);
              ui->listChat->setMinimumSize(200,350);
              ui->listChat->setItemDelegate(new ListViewDelegate());
