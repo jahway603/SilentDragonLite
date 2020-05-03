@@ -8,6 +8,9 @@
         <file>res/paymentreq.gif</file>
         <file>res/icon.ico</file>
         <file>res/mail.png</file>
+        <file>res/darkwing.png</file>
+        <file>res/sdlogo.png</file>
+        <file>res/sdlogo2.png</file>
     </qresource>
     <qresource prefix="/img">
         <file>res/hushdlogo.gif</file>

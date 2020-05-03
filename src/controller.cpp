@@ -881,24 +881,34 @@ void Controller::refreshTransactions() {
                         memo = QString::fromStdString(o["memo"]);
 
                         QString cid;
+                        QString contact;
+
                     for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
-                     if ((ui->ContactZaddr->text().trimmed() == c.getPartnerAddress()) || (ui->MyZaddr->text().trimmed() == c.getMyAddress())) {
+                    {
+                     if (ui->contactNameMemo->text().trimmed() == c.getName()) {
 
                          cid = c.getCid();
-                     }else {cid = "";} 
+                     }else {cid = "";}
+
+                      if (address == c.getPartnerAddress()){
+                          contact = c.getName();
+                     }else{ contact = "";}      
+                                   
 
                         ChatItem item = ChatItem(
                                 datetime,
                                 address,
-                                QString(""),
+                                contact,
                                 memo,
                                 cid, // we have to set the cid here, its included in our Addressbook for this contact
-                                txid
-                               // true // is an outgoing message
+                                txid,
+                                true // is an outgoing message
                             );
                         chatModel->addMessage(item);
-                     }
-                      
+                    
+                    }
+                    
+                                                }       
                     
                     items.push_back(TransactionItemDetail{address, amount, memo});
                     total_amount = total_amount + amount;
@@ -912,7 +922,6 @@ void Controller::refreshTransactions() {
 
                     }else{
                     
-  
                    addresses.push_back(item.address);   }
                   
                     }
@@ -957,18 +966,34 @@ void Controller::refreshTransactions() {
                     else
                         cid = "";
                 }
-                    
+                 
+                QString contact;
+                for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
+               // for (auto &p : this->chatItems)
+                {
+            
+                if (address == c.getMyAddress()){
+                    contact = c.getName();
+                    qDebug()<< "Addressbuch Addresse: " << c.getMyAddress();
+                    qDebug()<< "Addresse: " << address;
+
+                }else{ contact = "ELSE";}
+                 
                     ChatItem item = ChatItem(
                                 datetime,
                                 address,
-                                QString(""),
+                                contact,
                                 memo,
                                 cid, // we have to set the cid here, its included in the headermemo
-                                txid
+                                txid,
+                                false
                             );
-                //    qDebug()<< "Message CID: " << cid;
-                    chatModel->addMessage(item);
+                //    qDebug()<< "KontaktName: " << contact;
+                    
+                   // qDebug()<< "Addressbuch Addresse: " << c.getMyAddress();
 
+                    chatModel->addMessage(item);
+} 
             }
             
         }
@@ -990,7 +1015,7 @@ void Controller::refreshTransactions() {
 
          // Update model data, which updates the table view
         transactionsTableModel->replaceData(txdata);    
-        chatModel->renderChatBox(ui, ui->listChatMemo);    
+        chatModel->renderChatBox(ui, ui->listChat);   
         refreshContacts(
             ui->listContactWidget
             
@@ -998,13 +1023,13 @@ void Controller::refreshTransactions() {
          });
 }
 
-void Controller::refreshChat(QListWidget *listWidget)
+void Controller::refreshChat(QListView *listWidget)
 {
     chatModel->renderChatBox(ui, listWidget);
   
 }
 
-void Controller::refreshContacts(QListWidget *listWidget)
+void Controller::refreshContacts(QListView *listWidget)
 {
     contactModel->renderContactList(listWidget);
 }

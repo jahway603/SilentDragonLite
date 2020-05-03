@@ -39,8 +39,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
  
     ui->setupUi(this);
-    ui->checkBox->setChecked(true);
+  //  ui->checkBox->setChecked(true);
     logger = new Logger(this, QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("silentdragonlite-wallet.log"));
+     ui->memoTxtChat->setAutoFillBackground(false);
+   //  ui->memoTxtChat->setStyleSheet(QString::fromUtf8("background-color: rgb(224, 224, 224);"));
+     ui->memoTxtChat->setPlaceholderText("Send Message");
+     ui->memoTxtChat->setTextColor(Qt::white);
 
     // Status Bar
     setupStatusBar();
@@ -901,6 +905,17 @@ void MainWindow::setupTransactionsTab() {
     });
 
     // Set up context menu on transactions tab
+    auto theme = Settings::getInstance()->get_theme_name();
+     if (theme == "dark"){
+    ui->listChat->setStyleSheet("background-image: url(res/sdlogo.png) ;background-attachment: fixed ;background-position: center center ;background-repeat: no-repeat;background-size: cover");
+     }else{ui->listChat->setStyleSheet("background-image: url(res/sdlogo2.png) ;background-attachment: fixed ;background-position: center center ;background-repeat: no-repeat;background-size: cover");}
+    ui->listChat->setResizeMode(QListView::Adjust);
+    ui->listChat->setWordWrap(true);
+    ui->listChat->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    ui->listChat->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->listChat->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->listChat->setMinimumSize(200,350);
+    ui->listChat->show();
     ui->transactionsTable->setContextMenuPolicy(Qt::CustomContextMenu);
     // Table right click
     QObject::connect(ui->transactionsTable, &QTableView::customContextMenuRequested, [=] (QPoint pos) {
@@ -993,20 +1008,25 @@ void MainWindow::setupchatTab() {
 ///////// Set selected Zaddr for Chat with Doubleklick
 
     QObject::connect(ui->listContactWidget, &QTableView::clicked, [=] () {
+
     
         QModelIndex index = ui->listContactWidget->currentIndex();
         QString label_contact = index.data(Qt::DisplayRole).toString();
         
         for(auto &p : AddressBook::getInstance()->getAllAddressLabels())
         if (label_contact == p.getName()) {
-        ui->ContactZaddr->setText(p.getPartnerAddress());
-        ui->MyZaddr->setText(p.getMyAddress());
+       // ui->ContactZaddr->setText(p.getPartnerAddress());
+      //  ui->MyZaddr->setText(p.getMyAddress());
         ui->contactNameMemo->setText(p.getName());
-        ui->contactCid->setText(p.getCid());
+        ui->memoTxtChat->clear();
         
     rpc->refresh(true);
+   // updateChat();
         }
    });
+
+    
+
 }
 
 ChatMemoEdit::ChatMemoEdit(QWidget* parent) : QPlainTextEdit(parent) {
@@ -1052,13 +1072,14 @@ void ChatMemoEdit::setSendChatButton(QPushButton* button) {
 
 void MainWindow::updateChat()
 {
-    rpc->refreshChat(ui->listChatMemo);
+    rpc->refreshChat(ui->listChat);
+    rpc->refresh(true);
+
 }
 
 void MainWindow::updateContacts()
 {
-    qDebug() << "Called MainWindow::updateContacts()";
-    rpc->refreshContacts(ui->listContactWidget);
+    //rpc->refreshContacts(ui->listContactWidget);
 }
 
 void MainWindow::addNewZaddr(bool sapling) {

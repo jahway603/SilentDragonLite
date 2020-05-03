@@ -1328,7 +1328,7 @@
        <attribute name="title">
         <string>HushChat</string>
        </attribute>
-       <widget class="QListWidget" name="listContactWidget">
+       <widget class="QListView" name="listContactWidget">
         <property name="geometry">
          <rect>
           <x>0</x>
@@ -1351,21 +1351,24 @@
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Hushchat Contactlist&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
-       <widget class="MemoEdit" name="memoTxtChat">
+       <widget class="QTextEdit" name="memoTxtChat">
         <property name="geometry">
          <rect>
           <x>340</x>
-          <y>410</y>
+          <y>460</y>
           <width>921</width>
-          <height>128</height>
+          <height>131</height>
          </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">font: 11pt &quot;Noto Color Emoji&quot;;</string>
         </property>
        </widget>
        <widget class="QLabel" name="memoSizeChat">
         <property name="geometry">
          <rect>
-          <x>1200</x>
-          <y>540</y>
+          <x>1190</x>
+          <y>610</y>
           <width>47</width>
           <height>17</height>
          </rect>
@@ -1390,36 +1393,11 @@
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
-       <widget class="QListWidget" name="listChatMemo">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>340</x>
-          <y>40</y>
-          <width>921</width>
-          <height>371</height>
-         </rect>
-        </property>
-        <property name="editTriggers">
-         <set>QAbstractItemView::NoEditTriggers</set>
-        </property>
-        <property name="showDropIndicator" stdset="0">
-         <bool>false</bool>
-        </property>
-        <property name="defaultDropAction">
-         <enum>Qt::IgnoreAction</enum>
-        </property>
-        <property name="selectionMode">
-         <enum>QAbstractItemView::NoSelection</enum>
-        </property>
-       </widget>
        <widget class="QPushButton" name="sendChatButton">
         <property name="geometry">
          <rect>
-          <x>1130</x>
-          <y>590</y>
+          <x>710</x>
+          <y>610</y>
           <width>114</width>
           <height>25</height>
          </rect>
@@ -1435,45 +1413,6 @@
         </property>
         <property name="flat">
          <bool>false</bool>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_42">
-        <property name="geometry">
-         <rect>
-          <x>350</x>
-          <y>550</y>
-          <width>81</width>
-          <height>17</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Send To   :</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="ContactName">
-        <property name="geometry">
-         <rect>
-          <x>350</x>
-          <y>580</y>
-          <width>81</width>
-          <height>17</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;My zaddr :&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="ContactZaddr">
-        <property name="geometry">
-         <rect>
-          <x>420</x>
-          <y>550</y>
-          <width>691</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string/>
         </property>
        </widget>
        <widget class="QPushButton" name="safeContactRequest">
@@ -1498,58 +1437,6 @@
          <bool>false</bool>
         </property>
        </widget>
-       <widget class="QLabel" name="MyZaddr">
-        <property name="geometry">
-         <rect>
-          <x>420</x>
-          <y>580</y>
-          <width>691</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-       <widget class="QLabel" name="contactCid">
-        <property name="geometry">
-         <rect>
-          <x>720</x>
-          <y>20</y>
-          <width>331</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="contactNameMemo_2">
-        <property name="geometry">
-         <rect>
-          <x>590</x>
-          <y>20</y>
-          <width>131</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Conversation ID:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-       </widget>
-       <widget class="QCheckBox" name="checkBox">
-        <property name="geometry">
-         <rect>
-          <x>980</x>
-          <y>0</y>
-          <width>271</width>
-          <height>23</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Render only authenticated messages</string>
-        </property>
-       </widget>
        <widget class="QLabel" name="contactNameMemo_3">
         <property name="geometry">
          <rect>
@@ -1561,6 +1448,40 @@
         </property>
         <property name="text">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Contact Name:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+       <widget class="QListView" name="listChat">
+        <property name="geometry">
+         <rect>
+          <x>340</x>
+          <y>40</y>
+          <width>921</width>
+          <height>421</height>
+         </rect>
+        </property>
+        <property name="verticalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="sizeAdjustPolicy">
+         <enum>QAbstractScrollArea::AdjustToContents</enum>
+        </property>
+        <property name="editTriggers">
+         <set>QAbstractItemView::NoEditTriggers</set>
+        </property>
+        <property name="resizeMode">
+         <enum>QListView::Adjust</enum>
+        </property>
+        <property name="modelColumn">
+         <number>0</number>
+        </property>
+        <property name="uniformItemSizes">
+         <bool>false</bool>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
         </property>
        </widget>
       </widget>
@@ -1734,11 +1655,6 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
-  <customwidget>
-   <class>MemoEdit</class>
-   <extends>QPlainTextEdit</extends>
-   <header>memoedit.h</header>
-  </customwidget>
   <customwidget>
    <class>AddressCombo</class>
    <extends>QComboBox</extends>

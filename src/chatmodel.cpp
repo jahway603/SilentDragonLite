@@ -10,6 +10,7 @@
 #include <QUuid>
 #include <bits/stdc++.h> 
 #include <boost/algorithm/string.hpp> 
+#include <QtWidgets>
 
 using namespace std; 
 using namespace boost;
@@ -80,11 +81,11 @@ void ChatModel::showMessages()
 {
     for(auto &c : this->chatItems)
     {
-        qDebug() << "[" << c.second.getTimestamp() << "] " << "<" << c.second.getAddress() << "> :" << c.second.getMemo(); 
+        qDebug() << c.second.toChatLine();
     }
 }
 
-void ChatModel::renderChatBox(Ui::MainWindow* ui, QListWidget &view)
+void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView &view)
 {
     /*for(auto &c : this->chatItems)
     {
@@ -94,65 +95,59 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListWidget &view)
     //todo render items to view
 }
 
-void ChatModel::renderChatBox(Ui::MainWindow* ui, QListWidget *view)
+void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
 {
-
-    while(view->count() > 0)
-    {
-        view->takeItem(0);
-    }
-
-    QString line = "";
-    
-    for(auto &c : this->chatItems){
-   
-                 QDateTime myDateTime;
- 
-        myDateTime.setTime_t(c.second.getTimestamp());
         
+
+        QStandardItemModel* chat = new QStandardItemModel();
+         
+    
+        for (auto &c : this->chatItems)
+        for (auto &p : AddressBook::getInstance()->getAllAddressLabels())
+    {
+       
+
+   
         //////Render only Memos for selected contacts. Do not render empty Memos //// Render only memos where cid=cid
 
-        /// 
-        if ((ui->ContactZaddr->text().trimmed() == c.second.getAddress()) && (c.second.getMemo().startsWith("{") == false) && (c.second.getMemo().isEmpty() == false)) {   
-        //  if (c.second.getMemo.find())
-        line += QString("[") + myDateTime.toString("dd.MM.yyyy hh:mm:ss ") +  QString("] ");
-        line += QString("<") + QString("Outgoing") + QString("> :\n");
-        line += QString(c.second.getMemo()) + QString("\n");      
-        view->addItem(line);
-        line ="";
-
-
-       ////////////////////////////////// Todo : Render green checkmark for contacts if cid = cid - We have to search for cid in txid/cid list
-      //  QString cid = c.second.getCid();
-
-        }
-        
-        if ((ui->MyZaddr->text().trimmed() == c.second.getAddress()) && (c.second.getMemo().startsWith("{") == false) && (c.second.getMemo().isEmpty() == false)){
-            for(auto &p : AddressBook::getInstance()->getAllAddressLabels()){
+        if (
+            (ui->contactNameMemo->text().trimmed() == c.second.getContact()) && 
+            (c.second.getMemo().startsWith("{") == false) &&  
+            (c.second.getMemo().isEmpty() == false) && 
+            (p.getPartnerAddress() == c.second.getAddress())
+            
+        ) 
+        {       
+            
+            QStandardItem* Items = new QStandardItem(c.second.toChatLine());
+            Items->setData("Incoming", Qt::UserRole +1);
+            chat->appendRow(Items);
+         
+             ui->listChat->setModel(chat);          
+             ui->listChat->setItemDelegate(new ListViewDelegate());
+             
+            }
     
-           if ((ui->checkBox->isChecked() == true) && (p.getCid() != c.second.getCid()))
-           {
 
+        if (
+            (ui->contactNameMemo->text().trimmed() == c.second.getContact()) && 
+            (c.second.getMemo().startsWith("{") == false) && 
+            (c.second.getMemo().isEmpty() == false) &&
+            (p.getMyAddress() == c.second.getAddress())
 
-            }else{
+        )
+        {
 
-              // line+= QString("[") + "Warning. Not verified!" + QString("]");
-           
-        
-        line += QString("[") + myDateTime.toString("dd.MM.yyyy hh:mm:ss ") +  QString("] ");
-        line += QString("<") + QString("incoming") + QString("> :\n");
-        line += QString(c.second.getMemo()) + QString("\n");      
-        view->addItem(line);
-        line ="";  
-        }     
-
-
+            QStandardItem* Items1 = new QStandardItem(c.second.toChatLine());
+            Items1->setData("Outgoing", Qt::UserRole +1);
+            chat->appendRow(Items1);
         }
 
-
+             ui->listChat->setModel(chat);
+             ui->listChat->setItemDelegate(new ListViewDelegate());
+            
+    
     }
-    
-        }
  
 }
 
@@ -220,7 +215,7 @@ Tx MainWindow::createTxFromChatPage() {
   
     for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
 
-     if (ui->ContactZaddr->text().trimmed() == c.getPartnerAddress()) {
+     if (ui->contactNameMemo->text().trimmed() == c.getName()) {
      
             QString cid = c.getCid();
             QString myAddr = c.getMyAddress();
@@ -230,6 +225,7 @@ Tx MainWindow::createTxFromChatPage() {
      
         QString hmemo= createHeaderMemo(type,cid,myAddr);
         QString memo = ui->memoTxtChat->toPlainText().trimmed();
+
         // ui->memoSizeChat->setLenDisplayLabel();// Todo -> activate lendisplay for chat
             
      tx.toAddrs.push_back(ToFields{addr, amt, hmemo}) ;
@@ -247,6 +243,9 @@ Tx MainWindow::createTxFromChatPage() {
 }
 
 void MainWindow::sendChatButton() {
+
+
+
       ////////////////////////////Todo: Check if a Contact is selected//////////
 
     // Create a Tx from the values on the send tab. Note that this Tx object
@@ -255,7 +254,7 @@ void MainWindow::sendChatButton() {
     // Memos can only be used with zAddrs. So check that first
    // for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
 
-      if (ui->ContactZaddr->text().trimmed().isEmpty() || ui->memoTxtChat->toPlainText().trimmed().isEmpty()) {
+      if (ui->contactNameMemo->text().trimmed().isEmpty() || ui->memoTxtChat->toPlainText().trimmed().isEmpty()) {
      
   // auto addr = "";
   //  if (! Settings::isZAddress(AddressBook::addressFromAddressLabel(addr->text()))) {
@@ -391,7 +390,7 @@ Tx MainWindow::createTxForSafeContactRequest() {
   
     for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
 
-     if (ui->ContactZaddr->text().trimmed() == c.getName()) {
+     if (ui->contactNameMemo->text().trimmed() == c.getName()) {
      
            // QString cid = c.getCid();            // This has to be a new cid for the contact
            // QString myAddr = c.getMyAddress();   //  this should be a new HushChat zaddr
