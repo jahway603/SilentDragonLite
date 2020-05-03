@@ -8,6 +8,7 @@
 #include "ui_mainwindow.h"
 #include "addressbook.h"
 #include "ui_memodialog.h"
+#include "ui_contactrequest.h"
 #include "addressbook.h"
 #include <QUuid>
 #include <bits/stdc++.h> 
@@ -122,7 +123,7 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
         {       
             
             QStandardItem* Items = new QStandardItem(c.second.toChatLine());
-            Items->setData("Incoming", Qt::UserRole +1);
+            Items->setData("Outgoing", Qt::UserRole +1);
             chat->appendRow(Items);
          
              ui->listChat->setModel(chat);          
@@ -141,7 +142,7 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
         {
 
             QStandardItem* Items1 = new QStandardItem(c.second.toChatLine());
-            Items1->setData("Outgoing", Qt::UserRole +1);
+            Items1->setData("Incoming", Qt::UserRole +1);
             chat->appendRow(Items1);
         }
 
@@ -422,6 +423,15 @@ Tx MainWindow::createTxForSafeContactRequest() {
 }
 //////////////////De-activated for now///////////////////
 void MainWindow::safeContactRequest() {
+
+
+   // Ui_ContactRequest contactRequest;
+  //  QDialog dialog(this);
+  //  contactRequest.setupUi(&dialog);
+  //  Settings::saveRestore(&dialog);
+
+  //  memoDialog.memoTxt->setLenDisplayLabel(memoDialog.memoSize);
+  //  memoDialog.memoTxt->setAcceptButton(memoDialog.buttonBox->button(QDialogButtonBox::Ok));
 
     ////////////////////////////Todo: Check if its a zaddr//////////
 
