@@ -132,6 +132,7 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
              ui->listChat->setModel(myModel);
              ui->listChat->setMinimumSize(200,350);
              ui->listChat->setItemDelegate(new ListViewDelegate());
+          //   ui->listChat->setStyleSheet("background-image: url(res/hushdark.png)");  /////Todo set an png as Watermark backgroung in listChat
              ui->listChat->show();
             }
     
