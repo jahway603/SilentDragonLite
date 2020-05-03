@@ -15,7 +15,7 @@ void ContactModel::renderContactList(QListView* view)
         QStandardItem* Items1 = new QStandardItem(QIcon("res/sdlogo.png"),c.getName());
              contact->appendRow(Items1);
         view->setModel(contact);
-        view->setIconSize(QSize(80,100));
+        view->setIconSize(QSize(60,70));
         view->setUniformItemSizes(true);
         view->setDragDropMode(QAbstractItemView::DropOnly);;
     }
@@ -24,7 +24,7 @@ void ContactModel::renderContactList(QListView* view)
         QStandardItem* Items1 = new QStandardItem(QIcon("res/sdlogo2.png"),c.getName());
         contact->appendRow(Items1);
         view->setModel(contact);
-        view->setIconSize(QSize(80,100));
+        view->setIconSize(QSize(60,70));
         view->setUniformItemSizes(true);
         view->setDragDropMode(QAbstractItemView::DropOnly);;
 
