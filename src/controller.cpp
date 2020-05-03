@@ -1029,7 +1029,7 @@ void Controller::refreshChat(QListView *listWidget)
   
 }
 
-void Controller::refreshContacts(QListWidget *listWidget)
+void Controller::refreshContacts(QListView *listWidget)
 {
     contactModel->renderContactList(listWidget);
 }

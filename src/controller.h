@@ -73,7 +73,7 @@ public:
     void refreshAUDCAP();
     
     void refreshChat(QListView *listWidget);
-    void refreshContacts(QListWidget *listWidget);
+    void refreshContacts(QListView *listWidget);
     
     void executeStandardUITransaction(Tx tx); 
 

@@ -74,7 +74,7 @@ class ContactModel
 {
 	public:
 		ContactModel() {}
-		void renderContactList(QListWidget* view);
+		void renderContactList(QListView* view);
 };
 
 #endif

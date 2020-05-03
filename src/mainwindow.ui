@@ -1328,7 +1328,7 @@
        <attribute name="title">
         <string>HushChat</string>
        </attribute>
-       <widget class="QListWidget" name="listContactWidget">
+       <widget class="QListView" name="listContactWidget">
         <property name="geometry">
          <rect>
           <x>0</x>

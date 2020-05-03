@@ -99,7 +99,7 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
 {
         
 
-        QStandardItemModel* myModel = new QStandardItemModel();
+        QStandardItemModel* chat = new QStandardItemModel();
          
     
         for (auto &c : this->chatItems)
@@ -121,7 +121,7 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
             
             QStandardItem* Items = new QStandardItem(c.second.toChatLine());
             Items->setData("Incoming", Qt::UserRole +1);
-            myModel->appendRow(Items);
+            chat->appendRow(Items);
          
 
              ui->listChat->setResizeMode(QListView::Adjust);
@@ -129,7 +129,7 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
              ui->listChat->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
              ui->listChat->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
              ui->listChat->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-             ui->listChat->setModel(myModel);
+             ui->listChat->setModel(chat);
              ui->listChat->setMinimumSize(200,350);
              ui->listChat->setItemDelegate(new ListViewDelegate());
           //   ui->listChat->setStyleSheet("background-image: url(res/hushdark.png)");  /////Todo set an png as Watermark backgroung in listChat
@@ -148,7 +148,7 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
 
             QStandardItem* Items1 = new QStandardItem(c.second.toChatLine());
             Items1->setData("Outgoing", Qt::UserRole +1);
-            myModel->appendRow(Items1);
+            chat->appendRow(Items1);
             qDebug()<<Items1->text();
         }
 
@@ -157,7 +157,7 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
              ui->listChat->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
              ui->listChat->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
              ui->listChat->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-             ui->listChat->setModel(myModel);
+             ui->listChat->setModel(chat);
              ui->listChat->setMinimumSize(200,350);
              ui->listChat->setItemDelegate(new ListViewDelegate());
              ui->listChat->show();
