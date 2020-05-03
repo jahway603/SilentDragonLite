@@ -97,21 +97,39 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView &view)
 
 void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
 {
-         //  QStandardItemModel mymodel;
-   // QStandardItem* Items = new QStandardItem(myString);
-    QStandardItemModel* myModel = new QStandardItemModel();
-    for(auto &c : this->chatItems)
+        
+
+        QStandardItemModel* myModel = new QStandardItemModel();
+         
+    
+        for (auto &c : this->chatItems)
+        for (auto &p : AddressBook::getInstance()->getAllAddressLabels())
     {
+       
+
+   
         //////Render only Memos for selected contacts. Do not render empty Memos //// Render only memos where cid=cid
 
-        /// 
         if (
-            (ui->ContactZaddr->text().trimmed() == c.second.getAddress()) && 
-            (c.second.getMemo().startsWith("{") == false) && 
-            (c.second.getMemo().isEmpty() == false) 
+            (ui->contactNameMemo->text().trimmed() == c.second.getContact()) && 
+            (c.second.getMemo().startsWith("{") == false) &&  
+            (c.second.getMemo().isEmpty() == false) && 
+            (p.getPartnerAddress() == c.second.getAddress())
+            
         ) 
-        {   
+        {
 
+      //  for (auto &p : AddressBook::getInstance()->getAllAddressLabels())
+
+      
+      //  {
+      //  if ((ui->checkBox->isChecked() == true) && (p.getCid() != c.second.getCid()))
+
+       //     {
+
+         //   }
+            
+            
             QStandardItem* Items = new QStandardItem(c.second.toChatLine());
             Items->setData("Incoming", Qt::UserRole +1);
             myModel->appendRow(Items);
@@ -120,14 +138,14 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
             ui->listChat->setMinimumSize(200,350);
             ui->listChat->setItemDelegate(new ListViewDelegate());
             ui->listChat->show();
-        }
-
-
+            }
+    
 
         if (
-            (ui->MyZaddr->text().trimmed() == c.second.getAddress()) && 
+            (ui->contactNameMemo->text().trimmed() == c.second.getContact()) && 
             (c.second.getMemo().startsWith("{") == false) && 
-            (c.second.getMemo().isEmpty() == false)  
+            (c.second.getMemo().isEmpty() == false) &&
+            (p.getMyAddress() == c.second.getAddress())
 
         )
         {
@@ -141,22 +159,9 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
              ui->listChat->setMinimumSize(200,350);
              ui->listChat->setItemDelegate(new ListViewDelegate());
              ui->listChat->show();
-    }
-        
-       
-          /////////////////////////Render only when CID=CID?
-   
-        //    for(auto &p : AddressBook::getInstance()->getAllAddressLabels())
-         //   {
     
-               // if ((ui->checkBox->isChecked() == true) && (p.getCid() != c.second.getCid()))
-              //  {
-
-
-                //}
-              // 
-
-
+    }
+ 
 }
 
 
@@ -223,7 +228,7 @@ Tx MainWindow::createTxFromChatPage() {
   
     for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
 
-     if (ui->ContactZaddr->text().trimmed() == c.getPartnerAddress()) {
+     if (ui->contactNameMemo->text().trimmed() == c.getName()) {
      
             QString cid = c.getCid();
             QString myAddr = c.getMyAddress();
@@ -233,6 +238,7 @@ Tx MainWindow::createTxFromChatPage() {
      
         QString hmemo= createHeaderMemo(type,cid,myAddr);
         QString memo = ui->memoTxtChat->toPlainText().trimmed();
+
         // ui->memoSizeChat->setLenDisplayLabel();// Todo -> activate lendisplay for chat
             
      tx.toAddrs.push_back(ToFields{addr, amt, hmemo}) ;
@@ -261,7 +267,7 @@ void MainWindow::sendChatButton() {
     // Memos can only be used with zAddrs. So check that first
    // for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
 
-      if (ui->ContactZaddr->text().trimmed().isEmpty() || ui->memoTxtChat->toPlainText().trimmed().isEmpty()) {
+      if (ui->contactNameMemo->text().trimmed().isEmpty() || ui->memoTxtChat->toPlainText().trimmed().isEmpty()) {
      
   // auto addr = "";
   //  if (! Settings::isZAddress(AddressBook::addressFromAddressLabel(addr->text()))) {
@@ -397,7 +403,7 @@ Tx MainWindow::createTxForSafeContactRequest() {
   
     for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
 
-     if (ui->ContactZaddr->text().trimmed() == c.getName()) {
+     if (ui->contactNameMemo->text().trimmed() == c.getName()) {
      
            // QString cid = c.getCid();            // This has to be a new cid for the contact
            // QString myAddr = c.getMyAddress();   //  this should be a new HushChat zaddr
@@ -425,9 +431,6 @@ Tx MainWindow::createTxForSafeContactRequest() {
 }
 //////////////////De-activated for now///////////////////
 void MainWindow::safeContactRequest() {
-
-
- 
 
     ////////////////////////////Todo: Check if its a zaddr//////////
 
