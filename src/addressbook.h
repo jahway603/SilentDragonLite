@@ -12,7 +12,7 @@ public:
     AddressBookModel(QTableView* parent);
     ~AddressBookModel();
 
-    void                    addNewLabel(QString label, QString address, QString myAddr, QString cid);
+    void                    addNewLabel(QString label, QString address, QString myAddr, QString cid, QString avatar);
     void updateUi();
     void                    removeItemAt(int row);
     //QPair<QString, QString> itemAt(int row);
@@ -43,10 +43,10 @@ public:
     static QString addressFromAddressLabel(const QString& lblAddr);
 
     // Add a new address/label to the database
-    void addAddressLabel(QString label, QString address, QString myAddr, QString cid);
+    void addAddressLabel(QString label, QString address, QString myAddr, QString cid, QString avatar);
 
     // Remove a new address/label from the database
-    void removeAddressLabel(QString label, QString address, QString myAddr, QString cid);
+    void removeAddressLabel(QString label, QString address, QString myAddr, QString cid, QString avatar);
 
     // Update a label/address
     void updateLabel(QString oldlabel, QString address, QString newlabel);

@@ -30,7 +30,7 @@
       <item row="0" column="1">
        <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>Nickname</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;Nickname :&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
@@ -51,8 +51,129 @@
         </property>
        </widget>
       </item>
+      <item row="2" column="1">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;Avatar :&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+      </item>
       <item row="3" column="0">
        <widget class="QLineEdit" name="addr_chat"/>
+      </item>
+      <item row="3" column="1">
+       <widget class="QComboBox" name="comboBoxAvatar">
+        <item>
+         <property name="text">
+          <string>Stag</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <activeon>:/icons/res/hirsch.png</activeon>
+          </iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Denio</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <activeon>:/icons/res/denio.png</activeon>
+          </iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Duke</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <activeon>:/icons/res/duke.png</activeon>
+          </iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Yoda</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <activeon>:/icons/res/yoda.png</activeon>
+          </iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Berg</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <activeon>:/icons/res/Berg.png</activeon>
+          </iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Sharpee</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <activeon>:/icons/res/sharpee.png</activeon>
+          </iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Garflied</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <activeon>:/icons/res/garfield.png</activeon>
+          </iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Snoopy</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <activeon>:/icons/res/snoopy.png</activeon>
+          </iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Popey</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <activeon>:/icons/res/popey.png</activeon>
+          </iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Pinguin</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <activeon>:/icons/res/pinguin.png</activeon>
+          </iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>SDLogo</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <activeon>:/icons/res/sdlogo2.png</activeon>
+          </iconset>
+         </property>
+        </item>
+       </widget>
       </item>
       <item row="4" column="0">
        <widget class="QLabel" name="label_4">

@@ -14,15 +14,17 @@ class ContactItem
 		QString _partnerAddress;
 		QString _name;
 		QString _cid;
+		QString _avatar;
 
 	public:
 		ContactItem();
-		ContactItem(QString name, QString partnerAddress, QString myAddress, QString cid)
+		ContactItem(QString name, QString partnerAddress, QString myAddress, QString cid, QString avatar)
 		{
 			_name = name;
 			_myAddress = myAddress;
 			_partnerAddress = partnerAddress;
 			_cid = cid;
+			_avatar = avatar;
 		}
 
 		QString getName() const
@@ -45,6 +47,11 @@ class ContactItem
 			return _cid;
 		}
 
+		QString getAvatar() const
+		{
+			return _avatar;
+		}
+
 		void setName(QString name)
 		{
 			_name = name;
@@ -64,10 +71,14 @@ class ContactItem
 		{
 			_cid = cid;
 		}
+		void setAvatar(QString avatar)
+		{
+			_avatar = avatar;
+		}
 
 		QString toQTString()
 		{
-			return _name +  "|" +  _partnerAddress + "|" + _myAddress + "|" + _cid;
+			return _name +  "|" +  _partnerAddress + "|" + _myAddress + "|" + _cid + "|"+ _avatar;
 		}
 
 };
