@@ -1077,10 +1077,6 @@ void ChatMemoEdit::setMaxLen(int len) {
     updateDisplay();
 }
 
-void ChatMemoEdit::setLenDisplayLabel(QLabel* label_40) {
-    this->lenDisplayLabel = label_40;
-}
-
 void ChatMemoEdit::setSendChatButton(QPushButton* button) {
     this->sendChatButton = button;
 }

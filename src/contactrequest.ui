@@ -28,7 +28,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="1" colspan="2">
+   <item row="1" column="1">
     <widget class="QComboBox" name="comboBoxAvatar">
      <item>
       <property name="text">
@@ -37,6 +37,16 @@
       <property name="icon">
        <iconset>
         <activeon>:/icons/res/Stag.png</activeon>
+       </iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Elsa</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normalon>:/icons/res/Elsa.png</normalon>
        </iconset>
       </property>
      </item>
@@ -162,7 +172,7 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0" colspan="3">
+   <item row="4" column="0">
     <widget class="QLineEdit" name="zaddr"/>
    </item>
    <item row="5" column="0">
@@ -172,12 +182,8 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="0" colspan="3">
-    <widget class="QLabel" name="myzaddr">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
+   <item row="6" column="0">
+    <widget class="QLineEdit" name="myzaddr"/>
    </item>
    <item row="7" column="0">
     <widget class="QLabel" name="label_5">

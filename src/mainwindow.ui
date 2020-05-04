@@ -1337,6 +1337,18 @@
           <height>601</height>
          </rect>
         </property>
+        <property name="mouseTracking">
+         <bool>true</bool>
+        </property>
+        <property name="editTriggers">
+         <set>QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
+        </property>
+        <property name="alternatingRowColors">
+         <bool>false</bool>
+        </property>
+        <property name="selectionMode">
+         <enum>QAbstractItemView::SingleSelection</enum>
+        </property>
        </widget>
        <widget class="QLabel" name="label_39">
         <property name="geometry">
@@ -1362,22 +1374,6 @@
         </property>
         <property name="styleSheet">
          <string notr="true">font: 11pt &quot;Noto Color Emoji&quot;;</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="memoSizeChat">
-        <property name="geometry">
-         <rect>
-          <x>1190</x>
-          <y>650</y>
-          <width>47</width>
-          <height>17</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string notr="true">0 / 512</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
        <widget class="QLabel" name="contactNameMemo">

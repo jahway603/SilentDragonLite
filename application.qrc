@@ -22,10 +22,10 @@
         <file>res/Garfield.png</file>
         <file>res/Pinguin.png</file>
         <file>res/Stag.png</file>
+        <file>res/Elsa.png</file>
     </qresource>
     <qresource prefix="/img">
         <file>res/hushdlogo.gif</file>
-        <file>res/logobig.gif</file>
         <file>res/silentdragonlite-animated.gif</file>
         <file>res/silentdragonlite-animated-dark.gif</file>
         <file>res/silentdragonlite-animated-startup.gif</file>

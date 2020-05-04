@@ -228,12 +228,13 @@ Tx MainWindow::createTxFromChatPage() {
      
         QString hmemo= createHeaderMemo(type,cid,myAddr);
         QString memo = ui->memoTxtChat->toPlainText().trimmed();
+        
 
-        // ui->memoSizeChat->setLenDisplayLabel();// Todo -> activate lendisplay for chat
-            
-     tx.toAddrs.push_back(ToFields{addr, amt, hmemo}) ;
-
+       // ui->memoSizeChat->setLenDisplayLabel();// Todo -> activate lendisplay for chat
      tx.toAddrs.push_back(ToFields{addr, amt, memo});
+     tx.toAddrs.push_back(ToFields{addr, amt, hmemo});
+
+     
 
          qDebug() << "pushback chattx";
    } }
@@ -472,9 +473,9 @@ Tx MainWindow::createTxForSafeContactRequest() {
             QString hmemo= createHeaderMemo(type,cid,myAddr);
             QString memo = ui->memoTxtChat->toPlainText().trimmed();
 
-            
-            tx.toAddrs.push_back(ToFields{addr, amt, hmemo});
             tx.toAddrs.push_back(ToFields{addr, amt, memo});
+            tx.toAddrs.push_back(ToFields{addr, amt, hmemo});
+            
 
                 qDebug() << "pushback chattx";
             
