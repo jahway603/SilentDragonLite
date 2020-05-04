@@ -22,6 +22,7 @@ public:
     int      columnCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+  
 
 private:
     void loadData();
@@ -58,6 +59,14 @@ public:
     QString getLabelForAddress(QString address);
     // Get a Label's address
     QString getAddressForLabel(QString label);
+
+    QString get_avatar_name();
+    void set_avatar_name(QString avatar_name);
+    
+    
+
+    
+
 private:
     AddressBook();
 

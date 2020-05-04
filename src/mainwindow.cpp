@@ -436,7 +436,9 @@ void MainWindow::setupSettingsModal() {
 
     this->slot_change_currency(currency_name);
 
-    ;
+    // Include Avatar
+
+
 
 
         // Setup theme combo
@@ -461,7 +463,7 @@ void MainWindow::setupSettingsModal() {
              // Tell the user to restart
             QMessageBox::information(this, tr("Currency Change"), tr("This change can take a few seconds."), QMessageBox::Ok);  
              });
-      
+
         // Check for updates
         settings.chkCheckUpdates->setChecked(Settings::getInstance()->getCheckForUpdates());
 
@@ -1465,6 +1467,26 @@ void MainWindow::slot_change_currency(const QString& currency_name)
     catch (...)
     {
         saved_currency_name = "USD";
+        
+    }
+}
+void MainWindow::slot_change_avatar(const QString& avatar_name)
+
+{
+    
+    AddressBook::getInstance()->set_avatar_name(avatar_name);
+
+    // Include currency
+
+    QString saved_avatar_name;
+    try
+    {
+       saved_avatar_name = AddressBook::getInstance()->get_avatar_name();
+       
+    }
+    catch (...)
+    {
+        saved_avatar_name = "Yoda";
         
     }
 }

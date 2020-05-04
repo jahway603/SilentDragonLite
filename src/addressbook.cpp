@@ -169,7 +169,10 @@ void AddressBook::open(MainWindow* parent, QLineEdit* target)
         auto myAddr = ab.addr_chat->text().trimmed();
         QString newLabel = ab.label->text();
         QString cid = ab.cid->text();
-        QString avatar = "res/yoda.png";
+        
+        
+        QString avatar = QString("res/") + ab.comboBoxAvatar->currentText() + QString(".png");
+        qDebug()<<"AVATAR NAME : " << avatar;
 
         if (addr.isEmpty() || newLabel.isEmpty()) 
         {
@@ -332,10 +335,33 @@ void AddressBook::open(MainWindow* parent, QLineEdit* target)
         }
     };
 
+    // Get Avatar Data   
+            
+
+       // int avatar_index = ab.comboBoxAvatar->findText(AddressBook::getInstance()->get_avatar_name(), Qt::MatchExactly);
+       // ab.comboBoxAvatar->setCurrentIndex(avatar_index);
+
+      //  QObject::connect(ab.comboBoxAvatar, &QComboBox::currentTextChanged, [=] (QString avatar_name) {
+      //      parent->slot_change_avatar(avatar_name);
+       //     rpc->refresh(true);
+        //     });
+
     // Refresh after the dialog is closed to update the labels everywhere.
     parent->getRPC()->refresh(true);
     model.updateUi(); //todo fix updating gui after adding 
 }
+
+QString AddressBook::get_avatar_name() {
+    // Load from the QT Settings.
+   // QString avatar = ab.comboBoxAvatar.text();
+  //  return QString()
+}
+
+void AddressBook::set_avatar_name(QString avatar_name) {
+    avatar_name =  "abs.comboBoxAvatar.text()";
+}
+
+
 
 //=============
 // AddressBook singleton class
@@ -514,6 +540,8 @@ QString AddressBook::addLabelToAddress(QString addr)
     else
         return addr;
 }
+
+
 
 QString AddressBook::addressFromAddressLabel(const QString& lblAddr) 
 { 
