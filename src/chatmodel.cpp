@@ -164,7 +164,7 @@ QString ChatModel::getCidByTx(QString tx)
 {
     for(auto& pair : this->cidMap)
     {
-     //   qDebug() << "TXID=" << pair.first << " CID=" << pair.second;
+
     }
 
     if(this->cidMap.count(tx) > 0)
@@ -247,9 +247,7 @@ Tx MainWindow::createTxFromChatPage() {
 
 void MainWindow::sendChatButton() {
 
-
-
-      ////////////////////////////Todo: Check if a Contact is selected//////////
+////////////////////////////Todo: Check if a Contact is selected//////////
 
     // Create a Tx from the values on the send tab. Note that this Tx object
     // might not be valid yet.
@@ -377,25 +375,80 @@ QString MainWindow::doSendChatTxValidations(Tx tx) {
     return "";
 }
 
+void::MainWindow::addContact() {
 
-// Create a Tx from the current state of the Chat page. 
-Tx MainWindow::createTxForSafeContactRequest() {
-
- Ui_Dialog request;
+    Ui_Dialog request;
     QDialog dialog(this);
     request.setupUi(&dialog);
     Settings::saveRestore(&dialog);
-dialog.exec();
-
-    Tx tx; 
     
-    QObject::connect(request.cancel, &QPushButton::clicked, [&] () {
+        bool sapling = true;
+        rpc->createNewZaddr(sapling, [=] (json reply) {
+            QString myAddr = QString::fromStdString(reply.get<json::array_t>()[0]);
+            QString cid = QUuid::createUuid().toString(QUuid::WithoutBraces);
+            ui->listReceiveAddresses->insertItem(0, myAddr); 
+            ui->listReceiveAddresses->setCurrentIndex(0);
 
-        dialog.close();
+            qDebug() << "new generated myAddr" << myAddr;
+            request.myzaddr->setText(myAddr);
+            request.cid->setText(cid);
+
+            });
+            
+
+     QObject::connect(request.sendRequestButton, &QPushButton::clicked, [&] () {
+
+            QString cid = request.cid->text();
+            auto addr = request.zaddr->text().trimmed();
+            QString newLabel = request.labelRequest->text().trimmed();
+            auto myAddr = request.myzaddr->text().trimmed();
+
+            QString avatar = QString("res/") + request.comboBoxAvatar->currentText() + QString(".png");
+
+             if (addr.isEmpty() || newLabel.isEmpty()) 
+        {
+             QMessageBox::critical(
+                this, 
+                QObject::tr("Address or Label Error"), 
+                QObject::tr("Address or Label cannot be empty"), 
+                QMessageBox::Ok
+                );
+            return;
+        }
+
+        // Test if address is valid.
+        if (!Settings::isValidAddress(addr)) 
+        {
+          QMessageBox::critical(
+                this, 
+                QObject::tr("Address Format Error"), 
+                QObject::tr("%1 doesn't seem to be a valid hush address.").arg(addr), 
+                QMessageBox::Ok
+            );
+            return;
+        } 
+
+        ////// We need a better popup here. 
+            AddressBook::getInstance()->addAddressLabel(newLabel, addr, myAddr, cid, avatar);
+           QMessageBox::critical(
+                this, 
+                QObject::tr("Add Successfully"), 
+                QObject::tr("juhu").arg(newLabel), 
+                QMessageBox::Ok
+            );
+            return;
+
     });
 
+       
+   dialog.exec();
+}
 
-    QObject::connect(request.sendRequestButton, &QPushButton::clicked, this, &MainWindow::ContactRequest);
+// Create a Tx for a contact Request 
+Tx MainWindow::createTxForSafeContactRequest() {
+
+    Tx tx; 
+        
     // For each addr/amt in the Chat tab
   {
        CAmount totalAmt;
@@ -408,71 +461,41 @@ dialog.exec();
 
   
     for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
-     if (request.zaddr->text().trimmed() != c.getPartnerAddress()) {
+    if (ui->contactNameMemo->text().trimmed() == c.getName()) {
 
           
             QString cid = c.getCid();
             QString myAddr = c.getMyAddress();
             QString type = "cont";
-            QString addr = request.zaddr->text();
-
-           
+            QString addr = c.getPartnerAddress();     
      
-            QString hmemo= createHeaderMemo(type,cid,myAddr,0,0);
-            QString memo = request.requestmemo->toPlainText().trimmed();
+            QString hmemo= createHeaderMemo(type,cid,myAddr);
+            QString memo = ui->memoTxtChat->toPlainText().trimmed();
 
             
             tx.toAddrs.push_back(ToFields{addr, amt, hmemo});
             tx.toAddrs.push_back(ToFields{addr, amt, memo});
 
                 qDebug() << "pushback chattx";
-            tx.fee = Settings::getMinerFee();
+            
+     }
+    
+      tx.fee = Settings::getMinerFee();
 
      return tx;
 
-     qDebug() << "ChatTx created";
-   } if (request.zaddr->text().trimmed().isEmpty() == false){
+     qDebug() << "RequestTx created";
 
-    QMessageBox msg(QMessageBox::Critical, tr("Please insert a contact Address"), request.zaddr->text(),
-                        QMessageBox::Ok, this);
-
-        msg.exec();
-
-   }
 
   }
-
+  
 }
+
 void MainWindow::ContactRequest() {
-
-
-
-      ////////////////////////////Todo: Check if a Contact is selected//////////
-
-    // Create a Tx from the values on the send tab. Note that this Tx object
-    // might not be valid yet.
-
-    // Memos can only be used with zAddrs. So check that first
-   // for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
-
-    //  if (ui->contactNameMemo->text().trimmed().isEmpty() || ui->memoTxtChat->toPlainText().trimmed().isEmpty()) {
-     
-  // auto addr = "";
-  //  if (! Settings::isZAddress(AddressBook::addressFromAddressLabel(addr->text()))) {
-     //   QMessageBox msg(QMessageBox::Critical, tr("You have to select a contact and insert a Memo"),
-     //   tr("You have selected no Contact from Contactlist,\n")  + tr("\nor your Memo is empty"),
-     //   QMessageBox::Ok, this);
-
-    //    msg.exec();
-    //    return;
-  //  }
-
-      
-//};
 
   Tx tx = createTxForSafeContactRequest();
 
-    QString error = doSendChatTxValidations(tx);
+    QString error = doSendRequestTxValidations(tx);
 
     if (!error.isEmpty()) {
         // Something went wrong, so show an error and exit
@@ -504,7 +527,7 @@ void MainWindow::ContactRequest() {
         }
 
         connD->status->setText(tr("Please wait..."));
-        connD->statusDetail->setText(tr("Your Message will be send"));
+        connD->statusDetail->setText(tr("Your Contact will be send"));
 
         d->show();
         ui->memoTxtChat->clear();

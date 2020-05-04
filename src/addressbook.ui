@@ -69,7 +69,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <activeon>:/icons/res/Hirsch.png</activeon>
+           <activeon>:/icons/res/Stag.png</activeon>
           </iconset>
          </property>
         </item>

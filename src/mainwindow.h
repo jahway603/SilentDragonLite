@@ -83,7 +83,6 @@ public:
 public slots:
     void slot_change_theme(const QString& themeName);
     void slot_change_currency(const QString& currencyName);
-    void slot_change_avatar(const QString& avatarName);
      
 private:    
     void closeEvent(QCloseEvent* event);
@@ -116,6 +115,7 @@ private:
     void cancelButton();
     void sendButton();
     void sendChatButton();
+    void addContact();
     void ContactRequest();
     void addAddressSection();
     void maxAmountChecked(int checked);
