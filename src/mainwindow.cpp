@@ -40,10 +40,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
  
     ui->setupUi(this);
-  //  ui->checkBox->setChecked(true);
+    ui->request->setChecked(true);
     logger = new Logger(this, QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("silentdragonlite-wallet.log"));
      ui->memoTxtChat->setAutoFillBackground(false);
-   //  ui->memoTxtChat->setStyleSheet(QString::fromUtf8("background-color: rgb(224, 224, 224);"));
      ui->memoTxtChat->setPlaceholderText("Send Message");
      ui->memoTxtChat->setTextColor(Qt::white);
 
@@ -435,11 +434,6 @@ void MainWindow::setupSettingsModal() {
     }
 
     this->slot_change_currency(currency_name);
-
-    // Include Avatar
-
-
-
 
         // Setup theme combo
         int theme_index = settings.comboBoxTheme->findText(Settings::getInstance()->get_theme_name(), Qt::MatchExactly);
@@ -1008,8 +1002,22 @@ void MainWindow::setupTransactionsTab() {
 void MainWindow::setupchatTab() {
        
 // Send button
-    QObject::connect(ui->sendChatButton, &QPushButton::clicked, this, &MainWindow::sendChatButton);
-    QObject::connect(ui->safeContactRequest, &QPushButton::clicked, this, &MainWindow::ContactRequest);
+
+  // Is request Contact checked?
+
+    if (ui->request->isChecked()) {
+
+
+        QObject::connect(ui->sendChatButton, &QPushButton::clicked, this, &MainWindow::ContactRequest);
+
+      //  qDebug() <<ui->request->isChecked()->text();
+    }else{
+
+        QObject::connect(ui->sendChatButton, &QPushButton::clicked, this, &MainWindow::sendChatButton);
+
+    }
+    
+    QObject::connect(ui->safeContactRequest, &QPushButton::clicked, this, &MainWindow::addContact);
     
 
 ///////// Set selected Zaddr for Chat with Doubleklick
@@ -1467,26 +1475,6 @@ void MainWindow::slot_change_currency(const QString& currency_name)
     catch (...)
     {
         saved_currency_name = "USD";
-        
-    }
-}
-void MainWindow::slot_change_avatar(const QString& avatar_name)
-
-{
-    
-    AddressBook::getInstance()->set_avatar_name(avatar_name);
-
-    // Include currency
-
-    QString saved_avatar_name;
-    try
-    {
-       saved_avatar_name = AddressBook::getInstance()->get_avatar_name();
-       
-    }
-    catch (...)
-    {
-        saved_avatar_name = "Yoda";
         
     }
 }

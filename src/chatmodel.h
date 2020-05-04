@@ -310,6 +310,7 @@ class ChatModel
         void addCid(QString tx, QString cid);
         QString getCidByTx(QString tx);
         void killCidCache();
+        
 };
 
 #endif

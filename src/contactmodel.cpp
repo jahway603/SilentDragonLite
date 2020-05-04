@@ -12,7 +12,6 @@ void ContactModel::renderContactList(QListView* view)
          auto theme = Settings::getInstance()->get_theme_name();
          if ((theme == "dark" || theme == "midnight")) {
 
-        // QIcon avatar = c.getAvatar();    
         QString avatar = c.getAvatar();
 
              QStandardItem* Items1 = new QStandardItem(QIcon(avatar) ,c.getName());
