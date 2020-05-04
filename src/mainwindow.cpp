@@ -14,6 +14,7 @@
 #include "settings.h"
 #include "version.h"
 #include "connection.h"
+#include "ui_contactrequest.h"
 #include "requestdialog.h"
 #include "websockets.h"
 #include <QRegularExpression>
@@ -1006,7 +1007,8 @@ void MainWindow::setupchatTab() {
        
 // Send button
     QObject::connect(ui->sendChatButton, &QPushButton::clicked, this, &MainWindow::sendChatButton);
-    QObject::connect(ui->safeContactRequest, &QPushButton::clicked, this, &MainWindow::safeContactRequest);
+    QObject::connect(ui->safeContactRequest, &QPushButton::clicked, this, &MainWindow::ContactRequest);
+    
 
 ///////// Set selected Zaddr for Chat with Doubleklick
 
@@ -1031,6 +1033,7 @@ void MainWindow::setupchatTab() {
     
 
 }
+
 
 ChatMemoEdit::ChatMemoEdit(QWidget* parent) : QPlainTextEdit(parent) {
     QObject::connect(this, &QPlainTextEdit::textChanged, this, &ChatMemoEdit::updateDisplay);
@@ -1316,6 +1319,7 @@ void MainWindow::setupReceiveTab() {
     // Receive tab add/update label
     QObject::connect(ui->rcvUpdateLabel, &QPushButton::clicked, [=]() {
         QString addr = ui->listReceiveAddresses->currentText();
+       
         if (addr.isEmpty())
             return;
 
@@ -1329,7 +1333,7 @@ void MainWindow::setupReceiveTab() {
 
         if (!curLabel.isEmpty() && label.isEmpty()) {
             info = "Removed Label '" % curLabel % "'";
-            AddressBook::getInstance()->removeAddressLabel(curLabel, addr, "", "");
+            AddressBook::getInstance()->removeAddressLabel(curLabel, addr, "", "","" );
         }
         else if (!curLabel.isEmpty() && !label.isEmpty()) {
             info = "Updated Label '" % curLabel % "' to '" % label % "'";
@@ -1337,7 +1341,7 @@ void MainWindow::setupReceiveTab() {
         }
         else if (curLabel.isEmpty() && !label.isEmpty()) {
             info = "Added Label '" % label % "'";
-            AddressBook::getInstance()->addAddressLabel(label, addr, "", "");
+            AddressBook::getInstance()->addAddressLabel(label, addr, "", "", "");
         }
 
         // Update labels everywhere on the UI

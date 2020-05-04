@@ -12,6 +12,7 @@ PRECOMPILED_HEADER = src/precompiled.h
 
 QT += widgets
 QT += websockets
+QT += qml quick
 
 TARGET = SilentDragonLite
 
@@ -32,6 +33,7 @@ mac: LIBS+= -Wl,-dead_strip_dylibs
 mac: LIBS+= -Wl,-bind_at_load
 
 RESOURCES     = application.qrc
+
 
 MOC_DIR = bin
 OBJECTS_DIR = bin
@@ -105,6 +107,7 @@ HEADERS += \
     src/contactmodel.h
 
 FORMS += \
+    src/contactrequest.ui \
     src/encryption.ui \
     src/mainwindow.ui \
     src/migration.ui \

@@ -11,6 +11,17 @@
         <file>res/darkwing.png</file>
         <file>res/sdlogo.png</file>
         <file>res/sdlogo2.png</file>
+        <file>res/Berg.png</file>
+        <file>res/denio.png</file>
+        <file>res/duke.png</file>
+        <file>res/sharpee.png</file>
+        <file>res/yoda.png</file>
+        <file>res/mickey.png</file>
+        <file>res/snoopy.png</file>
+        <file>res/popey.png</file>
+        <file>res/garfield.png</file>
+        <file>res/pinguin.png</file>
+        <file>res/hirsch.png</file>
     </qresource>
     <qresource prefix="/img">
         <file>res/hushdlogo.gif</file>
