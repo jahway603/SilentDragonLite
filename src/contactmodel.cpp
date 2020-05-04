@@ -13,7 +13,7 @@ void ContactModel::renderContactList(QListView* view)
          if ((theme == "dark" || theme == "midnight")) {
 
         // QIcon avatar = c.getAvatar();    
-        QString avatar = "res/yoda.png";
+        QString avatar = c.getAvatar();
 
              QStandardItem* Items1 = new QStandardItem(QIcon(avatar) ,c.getName());
              contact->appendRow(Items1); 

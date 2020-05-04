@@ -12,16 +12,16 @@
         <file>res/sdlogo.png</file>
         <file>res/sdlogo2.png</file>
         <file>res/Berg.png</file>
-        <file>res/denio.png</file>
-        <file>res/duke.png</file>
-        <file>res/sharpee.png</file>
-        <file>res/yoda.png</file>
-        <file>res/mickey.png</file>
-        <file>res/snoopy.png</file>
-        <file>res/popey.png</file>
-        <file>res/garfield.png</file>
-        <file>res/pinguin.png</file>
-        <file>res/hirsch.png</file>
+        <file>res/Denio.png</file>
+        <file>res/Duke.png</file>
+        <file>res/Sharpee.png</file>
+        <file>res/Yoda.png</file>
+        <file>res/Mickey.png</file>
+        <file>res/Snoopy.png</file>
+        <file>res/Popey.png</file>
+        <file>res/Garfield.png</file>
+        <file>res/Pinguin.png</file>
+        <file>res/Hirsch.png</file>
     </qresource>
     <qresource prefix="/img">
         <file>res/hushdlogo.gif</file>

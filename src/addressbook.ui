@@ -69,7 +69,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <activeon>:/icons/res/hirsch.png</activeon>
+           <activeon>:/icons/res/Hirsch.png</activeon>
           </iconset>
          </property>
         </item>
@@ -79,7 +79,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <activeon>:/icons/res/denio.png</activeon>
+           <activeon>:/icons/res/Denio.png</activeon>
           </iconset>
          </property>
         </item>
@@ -89,7 +89,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <activeon>:/icons/res/duke.png</activeon>
+           <activeon>:/icons/res/Duke.png</activeon>
           </iconset>
          </property>
         </item>
@@ -99,7 +99,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <activeon>:/icons/res/yoda.png</activeon>
+           <activeon>:/icons/res/Yoda.png</activeon>
           </iconset>
          </property>
         </item>
@@ -119,7 +119,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <activeon>:/icons/res/sharpee.png</activeon>
+           <activeon>:/icons/res/Sharpee.png</activeon>
           </iconset>
          </property>
         </item>
@@ -129,7 +129,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <activeon>:/icons/res/garfield.png</activeon>
+           <activeon>:/icons/res/Garfield.png</activeon>
           </iconset>
          </property>
         </item>
@@ -139,7 +139,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <activeon>:/icons/res/snoopy.png</activeon>
+           <activeon>:/icons/res/Snoopy.png</activeon>
           </iconset>
          </property>
         </item>
@@ -149,7 +149,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <activeon>:/icons/res/popey.png</activeon>
+           <activeon>:/icons/res/Popey.png</activeon>
           </iconset>
          </property>
         </item>
@@ -159,7 +159,17 @@
          </property>
          <property name="icon">
           <iconset>
-           <activeon>:/icons/res/pinguin.png</activeon>
+           <activeon>:/icons/res/Pinguin.png</activeon>
+          </iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Mickey</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <activeon>:/icons/res/Mickey.png</activeon>
           </iconset>
          </property>
         </item>
