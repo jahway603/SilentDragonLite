@@ -93,6 +93,7 @@ private:
     void setupBalancesTab();
     void setuphushdTab();
     void setupchatTab();
+    void setLenDisplayLabel(QLabel* label);
     
     void updateContacts();
     void updateChat();
@@ -168,7 +169,7 @@ public:
     ChatMemoEdit(QWidget* parent);
 
     void setMaxLen(int len);
-    void setLenDisplayLabel(QLabel* label_40);
+    
     void setSendChatButton(QPushButton* button);
     void includeReplyTo(QString replyToAddress);
     void updateDisplay();

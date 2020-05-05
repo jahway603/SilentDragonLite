@@ -75,6 +75,16 @@
         </item>
         <item>
          <property name="text">
+          <string>Elsa</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normalon>:/icons/res/Elsa.png</normalon>
+          </iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
           <string>Denio</string>
          </property>
          <property name="icon">

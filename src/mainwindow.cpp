@@ -40,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
  
     ui->setupUi(this);
-    ui->request->setChecked(true);
+    ui->request->setChecked(false);
     logger = new Logger(this, QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("silentdragonlite-wallet.log"));
      ui->memoTxtChat->setAutoFillBackground(false);
      ui->memoTxtChat->setPlaceholderText("Send Message");
@@ -1075,10 +1075,6 @@ void ChatMemoEdit::updateDisplay() {
 void ChatMemoEdit::setMaxLen(int len) {
     this->maxlen = len;
     updateDisplay();
-}
-
-void ChatMemoEdit::setLenDisplayLabel(QLabel* label_40) {
-    this->lenDisplayLabel = label_40;
 }
 
 void ChatMemoEdit::setSendChatButton(QPushButton* button) {

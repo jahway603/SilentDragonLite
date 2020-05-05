@@ -882,7 +882,7 @@ void Controller::refreshTransactions() {
 
                         QString cid;
                         QString contact;
-
+                   
                     for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
                     {
                      if (ui->contactNameMemo->text().trimmed() == c.getName()) {
@@ -894,7 +894,7 @@ void Controller::refreshTransactions() {
                           contact = c.getName();
                      }else{ contact = "";}      
                                    
-
+                    
                         ChatItem item = ChatItem(
                                 datetime,
                                 address,
@@ -905,6 +905,7 @@ void Controller::refreshTransactions() {
                                 true // is an outgoing message
                             );
                         chatModel->addMessage(item);
+                    
                     
                     }
                     
@@ -918,11 +919,9 @@ void Controller::refreshTransactions() {
                      QList<QString> addresses;
                     for (auto item : items) {
                     // Concat all the addresses
-                    if (item.amount == 0)  {
-
-                    }else{
+                   
                     
-                   addresses.push_back(item.address);   }
+                   addresses.push_back(item.address);   
                   
                     }
                 
@@ -932,6 +931,7 @@ void Controller::refreshTransactions() {
                 txdata.push_back(TransactionItem{
                    "send", datetime, address, txid,confirmations, items
                 });
+                
             } else {
                 // Incoming Transaction
                 address = (it["address"].is_null() ? "" : QString::fromStdString(it["address"]));
