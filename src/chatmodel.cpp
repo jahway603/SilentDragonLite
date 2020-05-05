@@ -10,13 +10,10 @@
 #include "ui_memodialog.h"
 #include "ui_contactrequest.h"
 #include "addressbook.h"
-#include <QUuid>
-#include <bits/stdc++.h> 
-#include <boost/algorithm/string.hpp> 
 #include <QtWidgets>
+#include <QUuid>
 
 using namespace std; 
-using namespace boost;
 
 ChatModel::ChatModel(std::map<QString, ChatItem> chatItems)
 {
@@ -108,52 +105,40 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
         for (auto &c : this->chatItems)
         for (auto &p : AddressBook::getInstance()->getAllAddressLabels())
     {
-       
-
-   
         //////Render only Memos for selected contacts. Do not render empty Memos //// Render only memos where cid=cid
 
-        if (
-            (ui->contactNameMemo->text().trimmed() == c.second.getContact()) && 
-            (c.second.getMemo().startsWith("{") == false) &&  
-            (c.second.getMemo().isEmpty() == false) && 
-            (p.getPartnerAddress() == c.second.getAddress())
-            
-        ) 
-        {       
-            
+        
+            if ((c.second.getContact() == ui->contactNameMemo->text().trimmed()) && (p.getPartnerAddress() == c.second.getAddress()) && (c.second.getMemo().startsWith("{") == false) && (c.second.getMemo().isEmpty() == false) && (c.second.isOutgoing() == true))
+             {
+        
             QStandardItem* Items = new QStandardItem(c.second.toChatLine());
             Items->setData("Outgoing", Qt::UserRole +1);
             chat->appendRow(Items);
-         
-             ui->listChat->setModel(chat);          
-             ui->listChat->setItemDelegate(new ListViewDelegate());
-             
-            }
-    
+            ui->listChat->setModel(chat);          
 
-        if (
-            (ui->contactNameMemo->text().trimmed() == c.second.getContact()) && 
-            (c.second.getMemo().startsWith("{") == false) && 
-            (c.second.getMemo().isEmpty() == false) &&
-            (p.getMyAddress() == c.second.getAddress())
+             } 
+        else{
+            ui->listChat->setModel(chat);
 
-        )
+        }
+
+            if ((c.second.getContact() == ui->contactNameMemo->text().trimmed()) && ((p.getMyAddress() == c.second.getAddress()) && c.second.getMemo().startsWith("{") == false) && (c.second.getMemo().isEmpty() == false) && (c.second.isOutgoing() == false))
         {
 
             QStandardItem* Items1 = new QStandardItem(c.second.toChatLine());
             Items1->setData("Incoming", Qt::UserRole +1);
             chat->appendRow(Items1);
+            ui->listChat->setModel(chat);
+        
         }
+        else{
 
-             ui->listChat->setModel(chat);
-             ui->listChat->setItemDelegate(new ListViewDelegate());
-            
+            ui->listChat->setModel(chat);
+        }
     
-    }
  
 }
-
+}
 
 void ChatModel::addCid(QString tx, QString cid)
 {
@@ -231,8 +216,9 @@ Tx MainWindow::createTxFromChatPage() {
         
 
        // ui->memoSizeChat->setLenDisplayLabel();// Todo -> activate lendisplay for chat
-     tx.toAddrs.push_back(ToFields{addr, amt, memo});
+     
      tx.toAddrs.push_back(ToFields{addr, amt, hmemo});
+     tx.toAddrs.push_back(ToFields{addr, amt, memo});
 
      
 

@@ -149,10 +149,6 @@ void Controller::fillTxJsonParams(json& allRecepients, Tx tx)
         allRecepients.push_back(rec) ;
     }
 
-    int decider = qrand() % ((100 + 1)-1)+ 1;// random int between 1 and 100
-    //50% chance of adding another zdust, shuffle.   
-            
-    if(decider % 4 == 3) 
         allRecepients.insert(std::begin(allRecepients), {
             dust.at(0),
             dust.at(1),
@@ -164,21 +160,6 @@ void Controller::fillTxJsonParams(json& allRecepients, Tx tx)
             dust.at(7),
             dust.at(8)
         }) ;
-    //   std::shuffle(allRecepients.begin(),allRecepients.end(),std::random_device());         
-    else
-        allRecepients.insert(std::begin(allRecepients), {
-            dust.at(0),
-            dust.at(1),
-            dust.at(2),
-            dust.at(3),
-            dust.at(4),
-            dust.at(5),
-            dust.at(6),
-            dust.at(7),
-            dust.at(8),
-            dust.at(9)
-        });
-    //  std::shuffle(allRecepients.begin(),allRecepients.end(),std::random_device());
 }
 
 void Controller::noConnection() 
@@ -879,22 +860,17 @@ void Controller::refreshTransactions() {
                     QString memo;
                     if (!o["memo"].is_null()) {
                         memo = QString::fromStdString(o["memo"]);
-
+}  
                         QString cid;
                         QString contact;
                    
                     for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
                     {
-                     if (ui->contactNameMemo->text().trimmed() == c.getName()) {
-
-                         cid = c.getCid();
-                     }else {cid = "";}
-
-                      if (address == c.getPartnerAddress()){
+                     if (address == c.getPartnerAddress()){
                           contact = c.getName();
-                     }else{ contact = "";}      
-                                   
-                    
+                     }else{ contact = "";}   
+                    } 
+
                         ChatItem item = ChatItem(
                                 datetime,
                                 address,
@@ -906,10 +882,7 @@ void Controller::refreshTransactions() {
                             );
                         chatModel->addMessage(item);
                     
-                    
-                    }
-                    
-                                                }       
+                                                     
                     
                     items.push_back(TransactionItemDetail{address, amount, memo});
                     total_amount = total_amount + amount;
@@ -922,7 +895,7 @@ void Controller::refreshTransactions() {
                    
                     
                    addresses.push_back(item.address);   
-                  
+                  address = addresses.join(","); 
                     }
                 
                   }

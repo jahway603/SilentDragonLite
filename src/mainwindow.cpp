@@ -914,6 +914,7 @@ void MainWindow::setupTransactionsTab() {
     ui->listChat->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->listChat->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->listChat->setMinimumSize(200,350);
+    ui->listChat->setItemDelegate(new ListViewDelegate());
     ui->listChat->show();
     ui->transactionsTable->setContextMenuPolicy(Qt::CustomContextMenu);
     // Table right click

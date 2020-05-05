@@ -20,6 +20,7 @@ void ContactModel::renderContactList(QListView* view)
              view->setIconSize(QSize(60,70));
              view->setUniformItemSizes(true);
              view->setDragDropMode(QAbstractItemView::DropOnly);      
+             view->show();
 
     }
    
