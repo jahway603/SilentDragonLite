@@ -1,6 +1,9 @@
+// Copyright 2019-2020 The Hush developers
+// GPLv3
 #include "contactmodel.h"
 #include "addressbook.h"
 #include "mainwindow.h"
+#include "chatmodel.h"
 
 void ContactModel::renderContactList(QListView* view)
 {    
@@ -12,7 +15,7 @@ void ContactModel::renderContactList(QListView* view)
          auto theme = Settings::getInstance()->get_theme_name();
          if ((theme == "dark" || theme == "midnight")) {
 
-        QString avatar = c.getAvatar();
+          QString avatar = c.getAvatar();
 
              QStandardItem* Items1 = new QStandardItem(QIcon(avatar) ,c.getName());
              contact->appendRow(Items1); 
@@ -22,10 +25,8 @@ void ContactModel::renderContactList(QListView* view)
              view->setDragDropMode(QAbstractItemView::DropOnly);      
              view->show();
 
+    }     
+        
     }
-   
 
-        
-        
-    }
 }

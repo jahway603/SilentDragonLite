@@ -6,6 +6,7 @@
 #include "controller.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "ui_requestContactDialog.h"
 #include "addressbook.h"
 #include "ui_memodialog.h"
 #include "ui_contactrequest.h"
@@ -83,6 +84,7 @@ void ChatModel::showMessages()
     {
         qDebug() << c.second.toChatLine();
     }
+          
 }
 
 void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView &view)
@@ -97,7 +99,10 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView &view)
 
 void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
 {
-        
+    QObject::connect(ui->pushContact, &QPushButton::clicked,[&] () 
+    {
+        renderContactRequest();
+    });
 
         QStandardItemModel* chat = new QStandardItemModel();
          
@@ -136,13 +141,96 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
             ui->listChat->setModel(chat);
         }
     
- 
+
+    }       
+    
 }
+
+void ChatModel::renderContactRequest(){
+
+        Ui_requestDialog requestContact;
+        QDialog dialog(main);
+        requestContact.setupUi(&dialog);
+        Settings::saveRestore(&dialog);
+
+      {
+        QStandardItemModel* contactRequest = new QStandardItemModel();
+
+     
+            for (auto &c : this->chatItems) {
+            if ((c.second.getType() == "cont") && (c.second.isOutgoing() == false) && (c.second.getMemo().startsWith("{"))) {
+
+        
+
+            QStandardItem* Items = new QStandardItem(c.second.getAddress());
+            contactRequest->appendRow(Items);
+            requestContact.requestContact->setModel(contactRequest);   
+           // requestContact.requestContact->show();
+      
+       
+             
+           }
+           }
+        } 
+     // }
+      
+
+        QObject::connect(requestContact.requestContact, &QTableView::clicked, [&] () {
+
+    for (auto &c : this->chatItems){
+        QModelIndex index = requestContact.requestContact->currentIndex();
+        QString label_contact = index.data(Qt::DisplayRole).toString();
+        QStandardItemModel* contactMemo = new QStandardItemModel();
+           
+        if  (c.second.isOutgoing() == false) {
+            if (label_contact == c.second.getAddress()) {
+                if(c.second.getMemo().startsWith("{")){
+
+                }else{
+        QStandardItem* Items = new QStandardItem(c.second.getMemo());
+         contactMemo->appendRow(Items);
+            requestContact.requestMemo->setModel(contactMemo);   
+            requestContact.requestMemo->show();
+
+            requestContact.requestZaddr->setText(c.second.getRequestZaddr());
+            requestContact.requestCID->setText(c.second.getCid());
+            requestContact.requestMyAddr->setText(c.second.getAddress());
+            }
+        }
+    }
+    
+            }
+   });
+   
+           
+
+  QObject::connect(requestContact.pushButton, &QPushButton::clicked, [&] () {
+
+            QString cid = requestContact.requestCID->text();
+            auto addr = requestContact.requestZaddr->text().trimmed();
+            QString newLabel = requestContact.requestLabel->text().trimmed();
+            auto myAddr = requestContact.requestMyAddr->text().trimmed();
+
+            QString avatar = QString("res/") + requestContact.comboBoxAvatar->currentText() + QString(".png");
+
+                qDebug()<<"Beginn kopiert" <<cid << addr << newLabel << myAddr;
+                AddressBook::getInstance()->addAddressLabel(newLabel, addr, myAddr, cid, avatar);
+    });
+       
+
+ dialog.exec();
 }
+
+
 
 void ChatModel::addCid(QString tx, QString cid)
 {
     this->cidMap[tx] = cid;
+}
+
+void ChatModel::addrequestZaddr(QString tx, QString requestZaddr)
+{
+    this->requestZaddrMap[tx] = requestZaddr;
 }
 
 QString ChatModel::getCidByTx(QString tx)
@@ -160,9 +248,29 @@ QString ChatModel::getCidByTx(QString tx)
     return QString("0xdeadbeef");
 }
 
+QString ChatModel::getrequestZaddrByTx(QString tx)
+{
+    for(auto& pair : this->requestZaddrMap)
+    {
+
+    }
+
+    if(this->requestZaddrMap.count(tx) > 0)
+    {
+        return this->requestZaddrMap[tx];
+    }
+
+    return QString("0xdeadbeef");
+}
+
 void ChatModel::killCidCache()
 {
     this->cidMap.clear();
+}
+
+void ChatModel::killrequestZaddrCache()
+{
+    this->requestZaddrMap.clear();
 }
 
 QString MainWindow::createHeaderMemo(QString type, QString cid, QString zaddr,  int version=0, int headerNumber=1)
@@ -183,6 +291,7 @@ QString MainWindow::createHeaderMemo(QString type, QString cid, QString zaddr,  
     header = j.toJson();
     qDebug() << "made header=" << header;
     return header;
+   
 }
 
 

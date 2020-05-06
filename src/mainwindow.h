@@ -6,6 +6,7 @@
 #include "logger.h"
 #include "recurring.h"
 
+
 // Forward declare to break circular dependency.
 class Controller;
 class Settings;
@@ -61,6 +62,10 @@ public:
 
     void updateLabels();
     void updateTAddrCombo(bool checked);
+  //  void setChatItem(ChatItem* item);
+    //void ChatItem* getChatItem();
+   
+    
 
     // Disable recurring on mainnet
     void disableRecurring();
@@ -74,6 +79,8 @@ public:
     QLabel*             statusIcon;
     QLabel*             loadingLabel;
     QWidget*            hushdtab;
+    //ChatItem* currentChatItem;
+    
 
     Logger*      logger;
 
@@ -83,8 +90,10 @@ public:
 public slots:
     void slot_change_theme(const QString& themeName);
     void slot_change_currency(const QString& currencyName);
+    
      
 private:    
+
     void closeEvent(QCloseEvent* event);
 
     void setupSendTab();
@@ -93,6 +102,7 @@ private:
     void setupBalancesTab();
     void setuphushdTab();
     void setupchatTab();
+    void renderContactRequest();
     void setLenDisplayLabel(QLabel* label);
     
     void updateContacts();
@@ -147,6 +157,9 @@ private:
     void restoreSavedStates();
     bool eventFilter(QObject *object, QEvent *event);
 
+  
+
+
     bool            uiPaymentsReady    = false;
     QString         pendingURIPayment;
 
@@ -154,6 +167,7 @@ private:
     WormholeClient* wormhole = nullptr;
 
     Controller*         rpc             = nullptr;
+    
     QCompleter*         labelCompleter  = nullptr;
     QRegExpValidator*   amtValidator    = nullptr;
     QRegExpValidator*   feesValidator   = nullptr;

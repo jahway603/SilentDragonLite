@@ -14,6 +14,7 @@
 #include "camount.h"
 
 
+
 class ListViewDelegate : public QAbstractItemDelegate
 {
     int d_radius;
@@ -163,7 +164,9 @@ class ChatItem
         long _timestamp;
         QString _address;
         QString _contact;
-        QString _memo; 
+        QString _memo;
+        QString _requestZaddr;
+        QString _type; 
         QString _cid;
         QString _txid;
         bool _outgoing = false;
@@ -171,24 +174,28 @@ class ChatItem
     public:
         ChatItem() {}
 
-        ChatItem(long timestamp, QString address, QString contact, QString memo, QString cid, QString txid)
+        ChatItem(long timestamp, QString address, QString contact, QString memo,QString requestZaddr, QString type, QString cid, QString txid)
         {
             _timestamp = timestamp;
             _address = address;
             _contact = contact;
             _memo = memo;
+            _requestZaddr = requestZaddr;
+            _type = type;
             _cid = cid;
             _txid = txid;
             _outgoing = false;
 
         }
 
-        ChatItem(long timestamp, QString address, QString contact, QString memo, QString cid, QString txid, bool outgoing)
+        ChatItem(long timestamp, QString address, QString contact, QString memo, QString requestZaddr, QString type,  QString cid, QString txid, bool outgoing)
         {
             _timestamp = timestamp;
             _address = address;
             _contact = contact;
             _memo = memo;
+            _requestZaddr = requestZaddr;
+            _type = type;
             _cid = cid;
             _txid = txid;
             _outgoing = outgoing;
@@ -215,6 +222,15 @@ class ChatItem
             return _memo;
         }
 
+        QString getRequestZaddr()
+        {
+            return _requestZaddr;
+        }
+          QString getType()
+        {
+            return _type;
+        }
+
         QString getCid()
         {
             return _cid;
@@ -224,6 +240,7 @@ class ChatItem
         {
             return _txid;
         }
+      
 
         bool isOutgoing()
         {
@@ -244,10 +261,20 @@ class ChatItem
         {
             _contact = contact;
         }
-
+       
         void setMemo(QString memo)
         {
             _memo = memo;
+        }
+
+         void setRequestZaddr(QString requestZaddr)
+        {
+            _requestZaddr = requestZaddr;
+        }
+
+          void setType(QString type)
+        {
+            _type = type;
         }
 
         void setCid(QString cid)
@@ -258,7 +285,7 @@ class ChatItem
         {
             _txid = txid;
         }
-
+       
         void toggleOutgo()
         {
             _outgoing = true;
@@ -291,6 +318,7 @@ class ChatModel
         Ui::MainWindow*             ui;
         MainWindow*                 main;
         std::map<QString, QString> cidMap;
+        std::map<QString, QString> requestZaddrMap;
 
     public:
         ChatModel() {};
@@ -303,13 +331,19 @@ class ChatModel
         void setItems(std::vector<ChatItem> items);
         void renderChatBox(Ui::MainWindow* ui, QListView &view);
         void renderChatBox(Ui::MainWindow* ui, QListView *view);
+        void renderContactRequest();
+        void triggerRequest();
         void showMessages();
         void clear();
+        //void renderContactRequest(Ui::MainWindow* ui, QListView *view);
         void addMessage(ChatItem item);
         void addMessage(QString timestamp, ChatItem item);
         void addCid(QString tx, QString cid);
+        void addrequestZaddr(QString tx, QString requestZaddr);
         QString getCidByTx(QString tx);
+        QString getrequestZaddrByTx(QString tx);
         void killCidCache();
+        void killrequestZaddrCache();
         
 };
 

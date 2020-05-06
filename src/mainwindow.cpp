@@ -1,3 +1,5 @@
+// Copyright 2019-2020 The Hush developers
+// GPLv3
 #include "mainwindow.h"
 #include "addressbook.h"
 #include "viewalladdresses.h"
@@ -15,6 +17,8 @@
 #include "version.h"
 #include "connection.h"
 #include "ui_contactrequest.h"
+#include "ui_requestContactDialog.h"
+#include "chatmodel.h"
 #include "requestdialog.h"
 #include "websockets.h"
 #include <QRegularExpression>
@@ -1006,22 +1010,21 @@ void MainWindow::setupchatTab() {
 
   // Is request Contact checked?
 
-    if (ui->request->isChecked()) {
+   // if (ui->request->isChecked()) {
 
 
-        QObject::connect(ui->sendChatButton, &QPushButton::clicked, this, &MainWindow::ContactRequest);
+      //  QObject::connect(ui->sendChatButton, &QPushButton::clicked, this, &MainWindow::ContactRequest);
 
       //  qDebug() <<ui->request->isChecked()->text();
-    }else{
+  //  }else{
 
         QObject::connect(ui->sendChatButton, &QPushButton::clicked, this, &MainWindow::sendChatButton);
 
-    }
+   // }
     
     QObject::connect(ui->safeContactRequest, &QPushButton::clicked, this, &MainWindow::addContact);
-    
 
-///////// Set selected Zaddr for Chat with Doubleklick
+///////// Set selected Zaddr for Chat with Klick
 
     QObject::connect(ui->listContactWidget, &QTableView::clicked, [=] () {
 
@@ -1044,7 +1047,6 @@ void MainWindow::setupchatTab() {
     
 
 }
-
 
 ChatMemoEdit::ChatMemoEdit(QWidget* parent) : QPlainTextEdit(parent) {
     QObject::connect(this, &QPlainTextEdit::textChanged, this, &ChatMemoEdit::updateDisplay);
