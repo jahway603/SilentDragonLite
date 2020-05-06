@@ -874,7 +874,7 @@ void Controller::refreshTransactions() {
                      if (address == c.getPartnerAddress()){
                           contact = c.getName();
                      }else{ contact = "";}   
-                    } 
+                    
 
                         ChatItem item = ChatItem(
                                 datetime,
@@ -889,7 +889,7 @@ void Controller::refreshTransactions() {
                             );
                         chatModel->addMessage(item);
                     
-                                                     
+                        }                              
                     
                     items.push_back(TransactionItemDetail{address, amount, memo});
                     total_amount = total_amount + amount;
@@ -980,7 +980,7 @@ void Controller::refreshTransactions() {
                     contact = c.getName();
 
                 }else{ contact = "";}
-                }
+                
                     ChatItem item = ChatItem(
                                 datetime,
                                 address,
@@ -994,7 +994,7 @@ void Controller::refreshTransactions() {
                             );
 
                     chatModel->addMessage(item);
-                 
+                 } 
             }
             
         }

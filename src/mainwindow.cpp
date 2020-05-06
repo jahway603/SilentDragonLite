@@ -1013,12 +1013,12 @@ void MainWindow::setupchatTab() {
    // if (ui->request->isChecked()) {
 
 
-        QObject::connect(ui->sendChatButton, &QPushButton::clicked, this, &MainWindow::ContactRequest);
+      //  QObject::connect(ui->sendChatButton, &QPushButton::clicked, this, &MainWindow::ContactRequest);
 
       //  qDebug() <<ui->request->isChecked()->text();
   //  }else{
 
-    //    QObject::connect(ui->sendChatButton, &QPushButton::clicked, this, &MainWindow::sendChatButton);
+        QObject::connect(ui->sendChatButton, &QPushButton::clicked, this, &MainWindow::sendChatButton);
 
    // }
     
@@ -1047,20 +1047,6 @@ void MainWindow::setupchatTab() {
     
 
 }
-
-
-
-/*
-void MainWindow::setChatItem(ChatItem * item)
-{
-    this->currentChatItem = item;
-}
-
-ChatItem* MainWindow::getChatItem()
-{
-    return this->currentChatItem;
-}*/
-
 
 ChatMemoEdit::ChatMemoEdit(QWidget* parent) : QPlainTextEdit(parent) {
     QObject::connect(this, &QPlainTextEdit::textChanged, this, &ChatMemoEdit::updateDisplay);
