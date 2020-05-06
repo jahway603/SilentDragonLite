@@ -1018,6 +1018,35 @@ void MainWindow::setupchatTab() {
       //  qDebug() <<ui->request->isChecked()->text();
   //  }else{
 
+      /////////////Setting Icons for Chattab and different themes
+
+      auto theme = Settings::getInstance()->get_theme_name();
+        if (theme == "dark" || theme == "midnight") {
+            QPixmap send(":/icons/res/send-new-white.png");
+            QIcon sendIcon(send);
+            ui->sendChatButton->setIcon(sendIcon);
+
+            QPixmap notification(":/icons/res/notification.png");
+            QIcon notificationIcon(notification);
+            ui->pushContact->setIcon(notificationIcon);
+
+            QPixmap addContact(":/icons/res/add_contact.png");
+            QIcon addContactIcon(addContact);
+            ui->safeContactRequest->setIcon(addContact);
+
+        }else{
+            QPixmap pixmap(":/icons/res/send-new.svg");
+            QIcon sendIcon(pixmap);
+            ui->sendChatButton->setIcon(sendIcon);
+
+            QPixmap notification(":/icons/res/notification.svg");
+            QIcon notificationIcon(notification);
+            ui->pushContact->setIcon(notificationIcon);
+
+            QPixmap addContact(":/icons/res/add_contact.svg");
+            QIcon addContactIcon(addContact);
+            ui->safeContactRequest->setIcon(addContact);
+        }
         QObject::connect(ui->sendChatButton, &QPushButton::clicked, this, &MainWindow::sendChatButton);
 
    // }

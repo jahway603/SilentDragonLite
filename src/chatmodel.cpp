@@ -105,8 +105,10 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
     });
 
         QStandardItemModel* chat = new QStandardItemModel();
-         
-    
+            ui->lcdNumber->setStyleSheet("background-color: red");
+            ui->lcdNumber->setPalette(Qt::red);
+            ui->lcdNumber->display("1");
+
         for (auto &c : this->chatItems)
         for (auto &p : AddressBook::getInstance()->getAllAddressLabels())
     {
@@ -157,23 +159,32 @@ void ChatModel::renderContactRequest(){
         QStandardItemModel* contactRequest = new QStandardItemModel();
 
      
-            for (auto &c : this->chatItems) {
+            for (auto &c : this->chatItems)
+            for (auto &p : AddressBook::getInstance()->getAllAddressLabels()) {
+                
             if ((c.second.getType() == "cont") && (c.second.isOutgoing() == false) && (c.second.getMemo().startsWith("{"))) {
 
-        
 
+                 
+
+
+           
             QStandardItem* Items = new QStandardItem(c.second.getAddress());
             contactRequest->appendRow(Items);
             requestContact.requestContact->setModel(contactRequest);   
-           // requestContact.requestContact->show();
+            requestContact.requestContact->show();
       
        
-             
+                    }
+
+                   
            }
+
+
            }
-        } 
-     // }
-      
+
+            
+      //  } 
 
         QObject::connect(requestContact.requestContact, &QTableView::clicked, [&] () {
 
@@ -187,10 +198,11 @@ void ChatModel::renderContactRequest(){
                 if(c.second.getMemo().startsWith("{")){
 
                 }else{
-        QStandardItem* Items = new QStandardItem(c.second.getMemo());
+          QStandardItem* Items = new QStandardItem(c.second.getMemo());
          contactMemo->appendRow(Items);
             requestContact.requestMemo->setModel(contactMemo);   
             requestContact.requestMemo->show();
+           
 
             requestContact.requestZaddr->setText(c.second.getRequestZaddr());
             requestContact.requestCID->setText(c.second.getCid());

@@ -1417,8 +1417,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>61</width>
-          <height>62</height>
+          <width>41</width>
+          <height>49</height>
          </size>
         </property>
         <property name="default">
@@ -1479,7 +1479,7 @@
         <property name="geometry">
          <rect>
           <x>340</x>
-          <y>640</y>
+          <y>650</y>
           <width>261</width>
           <height>23</height>
          </rect>
@@ -1491,10 +1491,10 @@
        <widget class="QPushButton" name="safeContactRequest">
         <property name="geometry">
          <rect>
-          <x>90</x>
-          <y>0</y>
-          <width>71</width>
-          <height>61</height>
+          <x>270</x>
+          <y>580</y>
+          <width>51</width>
+          <height>51</height>
          </rect>
         </property>
         <property name="baseSize">
@@ -1507,8 +1507,9 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../application.qrc">
-          <normaloff>:/icons/res/add_contact.png</normaloff>:/icons/res/add_contact.png</iconset>
+         <iconset theme="Dark">
+          <normalon>:/icons/res/add_contact.png</normalon>
+         </iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -1523,10 +1524,10 @@
        <widget class="QPushButton" name="pushContact">
         <property name="geometry">
          <rect>
-          <x>170</x>
-          <y>0</y>
-          <width>71</width>
-          <height>61</height>
+          <x>10</x>
+          <y>30</y>
+          <width>41</width>
+          <height>41</height>
          </rect>
         </property>
         <property name="baseSize">
@@ -1547,14 +1548,47 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>43</width>
-          <height>49</height>
+          <width>33</width>
+          <height>35</height>
          </size>
         </property>
         <property name="flat">
          <bool>true</bool>
         </property>
        </widget>
+       <widget class="QLCDNumber" name="lcdNumber">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>20</y>
+          <width>31</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="digitCount">
+         <number>1</number>
+        </property>
+        <property name="segmentStyle">
+         <enum>QLCDNumber::Flat</enum>
+        </property>
+        <property name="value" stdset="0">
+         <double>0.000000000000000</double>
+        </property>
+       </widget>
+       <zorder>lcdNumber</zorder>
+       <zorder>listContactWidget</zorder>
+       <zorder>label_39</zorder>
+       <zorder>memoTxtChat</zorder>
+       <zorder>contactNameMemo</zorder>
+       <zorder>sendChatButton</zorder>
+       <zorder>contactNameMemo_3</zorder>
+       <zorder>listChat</zorder>
+       <zorder>request</zorder>
+       <zorder>safeContactRequest</zorder>
+       <zorder>pushContact</zorder>
       </widget>
      </widget>
     </item>
