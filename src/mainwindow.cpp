@@ -1,4 +1,4 @@
-// Copyright 2019-2020 The Hush developers
+﻿// Copyright 2019-2020 The Hush developers
 // GPLv3
 #include "mainwindow.h"
 #include "addressbook.h"
@@ -44,7 +44,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
  
     ui->setupUi(this);
-    ui->request->setChecked(false);
+
     logger = new Logger(this, QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("silentdragonlite-wallet.log"));
      ui->memoTxtChat->setAutoFillBackground(false);
      ui->memoTxtChat->setPlaceholderText("Send Message");
@@ -1005,22 +1005,10 @@ void MainWindow::setupTransactionsTab() {
 }
 
 void MainWindow::setupchatTab() {
+
+          /////////////Setting Icons for Chattab and different themes
        
-// Send button
-
-  // Is request Contact checked?
-
-   // if (ui->request->isChecked()) {
-
-
-      //  QObject::connect(ui->sendChatButton, &QPushButton::clicked, this, &MainWindow::ContactRequest);
-
-      //  qDebug() <<ui->request->isChecked()->text();
-  //  }else{
-
-      /////////////Setting Icons for Chattab and different themes
-
-      auto theme = Settings::getInstance()->get_theme_name();
+  auto theme = Settings::getInstance()->get_theme_name();
         if (theme == "dark" || theme == "midnight") {
             QPixmap send(":/icons/res/send-new-white.png");
             QIcon sendIcon(send);
@@ -1032,8 +1020,15 @@ void MainWindow::setupchatTab() {
 
             QPixmap addContact(":/icons/res/add_contact.png");
             QIcon addContactIcon(addContact);
-            ui->safeContactRequest->setIcon(addContact);
+            ui->safeContactRequest->setIcon(addContactIcon);
 
+            /*QPixmap rahmen(":/icons/res/rahmen-message.png");
+            QIcon addRahmenIcon(rahmen);
+            ui->lcdNumber->setIcon(addRahmenIcon);*/
+
+            QPixmap sendContact(":/icons/res/upload.png");
+            QIcon addSendContactIcon(sendContact);
+            ui->sendContact->setIcon(addSendContactIcon);
         }else{
             QPixmap pixmap(":/icons/res/send-new.svg");
             QIcon sendIcon(pixmap);
@@ -1046,11 +1041,21 @@ void MainWindow::setupchatTab() {
             QPixmap addContact(":/icons/res/add_contact.svg");
             QIcon addContactIcon(addContact);
             ui->safeContactRequest->setIcon(addContact);
-        }
-        QObject::connect(ui->sendChatButton, &QPushButton::clicked, this, &MainWindow::sendChatButton);
 
-   // }
-    
+            /*QPixmap rahmen(":/icons/res/message-icon.svg");
+            QIcon addRahmenIcon(rahmen);
+            ui->lcdNumber->setIcon(addRahmenIcon);*/
+
+            QPixmap sendContact(":/icons/res/upload.svg");
+            QIcon addSendContactIcon(sendContact);
+            ui->sendContact->setIcon(addSendContactIcon);
+        }
+
+  
+
+
+    QObject::connect(ui->sendChatButton, &QPushButton::clicked, this, &MainWindow::sendChatButton);
+    QObject::connect(ui->sendContact, &QPushButton::clicked, this, &MainWindow::ContactRequest);
     QObject::connect(ui->safeContactRequest, &QPushButton::clicked, this, &MainWindow::addContact);
 
 ///////// Set selected Zaddr for Chat with Klick

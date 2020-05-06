@@ -1360,7 +1360,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Hushchat Contactlist&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline;&quot;&gt;Contactlist&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
        <widget class="QTextEdit" name="memoTxtChat">
@@ -1438,7 +1438,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Contact Name:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Contact Name :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
        <widget class="QListView" name="listChat">
@@ -1473,19 +1473,6 @@
         </property>
         <property name="wordWrap">
          <bool>true</bool>
-        </property>
-       </widget>
-       <widget class="QCheckBox" name="request">
-        <property name="geometry">
-         <rect>
-          <x>340</x>
-          <y>650</y>
-          <width>261</width>
-          <height>23</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Is this message a contact request?</string>
         </property>
        </widget>
        <widget class="QPushButton" name="safeContactRequest">
@@ -1578,6 +1565,39 @@
          <double>0.000000000000000</double>
         </property>
        </widget>
+       <widget class="QPushButton" name="sendContact">
+        <property name="geometry">
+         <rect>
+          <x>270</x>
+          <y>510</y>
+          <width>51</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="baseSize">
+         <size>
+          <width>100</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset theme="Dark">
+          <normalon>:/icons/res/add_contact.png</normalon>
+         </iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>43</width>
+          <height>49</height>
+         </size>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
        <zorder>lcdNumber</zorder>
        <zorder>listContactWidget</zorder>
        <zorder>label_39</zorder>
@@ -1586,9 +1606,9 @@
        <zorder>sendChatButton</zorder>
        <zorder>contactNameMemo_3</zorder>
        <zorder>listChat</zorder>
-       <zorder>request</zorder>
        <zorder>safeContactRequest</zorder>
        <zorder>pushContact</zorder>
+       <zorder>sendContact</zorder>
       </widget>
      </widget>
     </item>
@@ -1799,22 +1819,5 @@
  <resources>
   <include location="../application.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>request</sender>
-   <signal>stateChanged(int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>update()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>481</x>
-     <y>721</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>636</x>
-     <y>389</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

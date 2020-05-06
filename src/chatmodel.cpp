@@ -155,7 +155,7 @@ void ChatModel::renderContactRequest(){
         requestContact.setupUi(&dialog);
         Settings::saveRestore(&dialog);
 
-      {
+     /* {
         QStandardItemModel* contactRequest = new QStandardItemModel();
 
      
@@ -183,8 +183,7 @@ void ChatModel::renderContactRequest(){
 
            }
 
-            
-      //  } 
+        
 
         QObject::connect(requestContact.requestContact, &QTableView::clicked, [&] () {
 
@@ -228,7 +227,7 @@ void ChatModel::renderContactRequest(){
                 qDebug()<<"Beginn kopiert" <<cid << addr << newLabel << myAddr;
                 AddressBook::getInstance()->addAddressLabel(newLabel, addr, myAddr, cid, avatar);
     });
-       
+   */    
 
  dialog.exec();
 }
@@ -476,7 +475,7 @@ QString MainWindow::doSendChatTxValidations(Tx tx) {
     auto available = rpc->getModel()->getAvailableBalance();
 
     if (available < total) {
-        return tr("Not enough available funds to send this transaction\n\nHave: %1\nNeed: %2\n\nNote: Funds need 5 confirmations before they can be spent")
+        return tr("Not enough available funds to send this transaction\n\nHave: %1\nNeed: %2\n\nNote: Funds need 3 confirmations before they can be spent")
             .arg(available.toDecimalhushString(), total.toDecimalhushString());
     }
 
@@ -601,6 +600,18 @@ Tx MainWindow::createTxForSafeContactRequest() {
 
 void MainWindow::ContactRequest() {
 
+    if (ui->contactNameMemo->text().trimmed().isEmpty() || ui->memoTxtChat->toPlainText().trimmed().isEmpty()) {
+     
+  // auto addr = "";
+  //  if (! Settings::isZAddress(AddressBook::addressFromAddressLabel(addr->text()))) {
+        QMessageBox msg(QMessageBox::Critical, tr("You have to select a contact and insert a Memo"),
+        tr("You have selected no Contact from Contactlist,\n")  + tr("\nor your Memo is empty"),
+        QMessageBox::Ok, this);
+
+        msg.exec();
+        return;
+    }
+
   Tx tx = createTxForSafeContactRequest();
 
     QString error = doSendRequestTxValidations(tx);
@@ -659,6 +670,7 @@ void MainWindow::ContactRequest() {
                 // Force a UI update so we get the unconfirmed Tx
               //  rpc->refresh(true);
                 ui->memoTxtChat->clear();
+                rpc->refresh(true);
 
             },
             // Errored out
