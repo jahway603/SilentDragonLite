@@ -1,3 +1,6 @@
+// Copyright 2019-2020 The Hush developers
+// GPLv3
+
 #include "controller.h"
 #include "mainwindow.h"
 #include "addressbook.h"
@@ -6,6 +9,7 @@
 #include "camount.h"
 #include "websockets.h"
 #include "DataStore.h"
+
 template<>
 DataStore<QString>* DataStore<QString>::instance = nullptr;
 template<>
@@ -860,7 +864,8 @@ void Controller::refreshTransactions() {
                     QString memo;
                     if (!o["memo"].is_null()) {
                         memo = QString::fromStdString(o["memo"]);
-}  
+                    }  
+
                         QString cid;
                         QString contact;
                    
@@ -876,6 +881,8 @@ void Controller::refreshTransactions() {
                                 address,
                                 contact,
                                 memo,
+                                QString(""),
+                                QString(""),
                                 cid, // we have to set the cid here, its included in our Addressbook for this contact
                                 txid,
                                 true // is an outgoing message
@@ -930,37 +937,40 @@ void Controller::refreshTransactions() {
                 
                     QString type;
                     QString cid;
+                    QString requestZaddr1;
+                    QString requestZaddr;
+
                 if (memo.startsWith("{")) {
 
                     type = memo.mid(75,4);
                     cid =  memo.mid(14,36);
+                    requestZaddr1 = memo.right(82);
+                    requestZaddr = requestZaddr1.left(78);
 
-                    qDebug()<<type;
-                    qDebug()<<cid;
                     chatModel->addCid(txid, cid);
+                    chatModel->addrequestZaddr(txid, requestZaddr);
 
                 }
-                if (type == "cont")
-                
-                {
-
-                  qDebug()<< "Als Request erkannt";
-               
-
-                }
-            
-                
+             
                 if (chatModel->getCidByTx(txid) != QString("0xdeadbeef")){
 
                         cid = chatModel->getCidByTx(txid);
 
                 }
-                        
-
                     else{
 
                      cid = "";
                     }
+    
+                if (chatModel->getrequestZaddrByTx(txid) != QString("0xdeadbeef")){
+
+                        requestZaddr = chatModel->getrequestZaddrByTx(txid);
+
+                }
+                  
+                    else{
+                            requestZaddr = "";
+                    }                 
                              
                 QString contact;
                 for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
@@ -968,23 +978,23 @@ void Controller::refreshTransactions() {
             
                 if (address == c.getMyAddress()){
                     contact = c.getName();
-                    qDebug()<< "Addressbuch Addresse: " << c.getMyAddress();
-                    qDebug()<< "Addresse: " << address;
 
                 }else{ contact = "";}
-                 
+                }
                     ChatItem item = ChatItem(
                                 datetime,
                                 address,
                                 contact,
                                 memo,
+                                requestZaddr,
+                                type,
                                 cid, // we have to set the cid here, its included in the headermemo
                                 txid,
                                 false
                             );
 
                     chatModel->addMessage(item);
-} 
+                 
             }
             
         }

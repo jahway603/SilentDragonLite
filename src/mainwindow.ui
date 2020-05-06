@@ -1414,9 +1414,9 @@
        <widget class="QPushButton" name="safeContactRequest">
         <property name="geometry">
          <rect>
-          <x>30</x>
+          <x>0</x>
           <y>640</y>
-          <width>211</width>
+          <width>91</width>
           <height>25</height>
          </rect>
         </property>
@@ -1427,7 +1427,7 @@
          </size>
         </property>
         <property name="text">
-         <string>Add conversation contact</string>
+         <string>Add contact</string>
         </property>
         <property name="flat">
          <bool>false</bool>
@@ -1491,6 +1491,19 @@
         </property>
         <property name="text">
          <string>Is this message a contact request?</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushContact">
+        <property name="geometry">
+         <rect>
+          <x>110</x>
+          <y>640</y>
+          <width>191</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Incoming contact request</string>
         </property>
        </widget>
       </widget>
@@ -1667,7 +1680,7 @@
   <customwidget>
    <class>AddressCombo</class>
    <extends>QComboBox</extends>
-   <header>addresscombo.h</header>
+   <header location="global">addresscombo.h</header>
   </customwidget>
   <customwidget>
    <class>QRCodeLabel</class>

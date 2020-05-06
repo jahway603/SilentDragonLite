@@ -126,6 +126,7 @@ FORMS += \
     src/mobileappconnector.ui \
     src/createhushconfdialog.ui \
     src/recurringdialog.ui \
+    src/requestContactDialog.ui \
     src/newrecurring.ui \
     src/requestdialog.ui \
     src/recurringmultiple.ui \ 
