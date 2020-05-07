@@ -1555,3 +1555,14 @@ MainWindow::~MainWindow()
     delete wsserver;
     delete wormhole;
 }
+void MainWindow::on_givemeZaddr_clicked()
+{
+
+    bool sapling = true;
+    rpc->createNewZaddr(sapling, [=] (json reply) {
+                QString hushchataddr = QString::fromStdString(reply.get<json::array_t>()[0]);
+                QMessageBox::information(this, "Your new Hushchataddress",hushchataddr);
+            //    ui->listReceiveAddresses->insertItem(0, hushchataddr);
+              //  ui->listReceiveAddresses->setCurrentIndex(0);
+                });
+}

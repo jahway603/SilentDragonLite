@@ -535,12 +535,14 @@ void::MainWindow::addContact() {
             return;
         } 
 
-        ////// We need a better popup here. 
+        ///////Todo: Test if label allready exist!
+
+        ////// Success, so show it
             AddressBook::getInstance()->addAddressLabel(newLabel, addr, myAddr, cid, avatar);
-           QMessageBox::critical(
+              QMessageBox::information(
                 this, 
-                QObject::tr("Add Successfully"), 
-                QObject::tr("juhu").arg(newLabel), 
+                QObject::tr("Added Contact"), 
+                QObject::tr("successfully added your new contact").arg(newLabel), 
                 QMessageBox::Ok
             );
             return;

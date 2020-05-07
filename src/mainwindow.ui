@@ -1598,6 +1598,32 @@
          <bool>true</bool>
         </property>
        </widget>
+       <widget class="QPushButton" name="givemeZaddr">
+        <property name="geometry">
+         <rect>
+          <x>80</x>
+          <y>10</y>
+          <width>211</width>
+          <height>41</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>New HushChat Address</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../application.qrc">
+          <normaloff>:/icons/res/message-icon.svg</normaloff>:/icons/res/message-icon.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>33</width>
+          <height>29</height>
+         </size>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
        <zorder>lcdNumber</zorder>
        <zorder>listContactWidget</zorder>
        <zorder>label_39</zorder>
@@ -1609,6 +1635,7 @@
        <zorder>safeContactRequest</zorder>
        <zorder>pushContact</zorder>
        <zorder>sendContact</zorder>
+       <zorder>givemeZaddr</zorder>
       </widget>
      </widget>
     </item>

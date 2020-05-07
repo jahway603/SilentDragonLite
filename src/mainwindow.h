@@ -95,6 +95,8 @@ public slots:
 private slots:
     
 
+    void on_givemeZaddr_clicked();
+
 private:
 
     void closeEvent(QCloseEvent* event);
