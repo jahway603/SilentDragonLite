@@ -105,9 +105,9 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
     });
 
         QStandardItemModel* chat = new QStandardItemModel();
-            ui->lcdNumber->setStyleSheet("background-color: red");
-            ui->lcdNumber->setPalette(Qt::red);
-            ui->lcdNumber->display("1");
+        //    ui->lcdNumber->setStyleSheet("background-color: red");
+        //    ui->lcdNumber->setPalette(Qt::red);
+        //    ui->lcdNumber->display("1");
 
         for (auto &c : this->chatItems)
         for (auto &p : AddressBook::getInstance()->getAllAddressLabels())
