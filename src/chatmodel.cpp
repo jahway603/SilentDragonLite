@@ -160,7 +160,7 @@ void ChatModel::renderContactRequest(){
 
      
             for (auto &c : this->chatItems)
-            for (auto &p : AddressBook::getInstance()->getAllAddressLabels()) {
+          {
                 
             if ((c.second.getType() == "cont") && (c.second.isOutgoing() == false) && (c.second.getMemo().startsWith("{"))) {
 
