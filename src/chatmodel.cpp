@@ -510,7 +510,7 @@ void::MainWindow::addContact() {
             QString newLabel = request.labelRequest->text().trimmed();
             auto myAddr = request.myzaddr->text().trimmed();
 
-            QString avatar = QString("res/") + request.comboBoxAvatar->currentText() + QString(".png");
+            QString avatar = QString(":/icons/res/") + request.comboBoxAvatar->currentText() + QString(".png");
 
              if (addr.isEmpty() || newLabel.isEmpty()) 
         {

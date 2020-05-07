@@ -173,7 +173,7 @@ void AddressBook::open(MainWindow* parent, QLineEdit* target)
         QString cid = ab.cid->text();
         
         
-        QString avatar = QString("res/") + ab.comboBoxAvatar->currentText() + QString(".png");
+        QString avatar = QString(":/icons/res/") + ab.comboBoxAvatar->currentText() + QString(".png");
         qDebug()<<"AVATAR NAME : " << avatar;
 
         if (addr.isEmpty() || newLabel.isEmpty()) 
