@@ -155,7 +155,7 @@ void ChatModel::renderContactRequest(){
         requestContact.setupUi(&dialog);
         Settings::saveRestore(&dialog);
 
-     /* {
+      {
         QStandardItemModel* contactRequest = new QStandardItemModel();
 
      
@@ -222,12 +222,17 @@ void ChatModel::renderContactRequest(){
             QString newLabel = requestContact.requestLabel->text().trimmed();
             auto myAddr = requestContact.requestMyAddr->text().trimmed();
 
-            QString avatar = QString("res/") + requestContact.comboBoxAvatar->currentText() + QString(".png");
+            QString avatar = QString(":/icons/res/") + requestContact.comboBoxAvatar->currentText() + QString(".png");
 
                 qDebug()<<"Beginn kopiert" <<cid << addr << newLabel << myAddr;
                 AddressBook::getInstance()->addAddressLabel(newLabel, addr, myAddr, cid, avatar);
+
+                  QMessageBox::information(main, "Added Contact","successfully added your new contact. You can now Chat with this contact");
+               
+          
+            
     });
-   */    
+       
 
  dialog.exec();
 }
