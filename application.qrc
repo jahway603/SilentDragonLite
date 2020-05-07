@@ -32,6 +32,10 @@
         <file>res/send-new-white.png</file>
         <file>res/add_contact.png</file>
         <file>res/notification.png</file>
+        <file>res/rahmen-message.png</file>
+        <file>res/upload.png</file>
+        <file>res/upload.svg</file>
+        <file>res/message-icon.svg</file>
     </qresource>
     <qresource prefix="/img">
         <file>res/hushdlogo.gif</file>

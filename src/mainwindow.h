@@ -92,9 +92,13 @@ public slots:
     void slot_change_currency(const QString& currencyName);
     
      
-private:    
+private slots:
+    
+
+private:
 
     void closeEvent(QCloseEvent* event);
+
 
     void setupSendTab();
     void setupTransactionsTab();
