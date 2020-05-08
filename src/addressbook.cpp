@@ -10,7 +10,7 @@
 
 AddressBookModel::AddressBookModel(QTableView *parent) : QAbstractTableModel(parent) 
 {
-    headers << tr("Label") << tr("Address") << tr("HushChatAddress") << tr("CID");
+    headers << tr("Avatar")<< tr("Label") << tr("Address") << tr("HushChatAddress") << tr("CID");
     this->parent = parent;
     loadData();
 }
