@@ -329,7 +329,7 @@ class ChatModel
         void setItems(std::vector<ChatItem> items);
         void renderChatBox(Ui::MainWindow* ui, QListView &view);
         void renderChatBox(Ui::MainWindow* ui, QListView *view);
-        void renderContactRequest();
+       // void renderContactRequest();
         void triggerRequest();
         void showMessages();
         void clear();

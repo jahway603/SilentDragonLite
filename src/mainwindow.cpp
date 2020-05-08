@@ -1057,6 +1057,7 @@ void MainWindow::setupchatTab() {
     QObject::connect(ui->sendChatButton, &QPushButton::clicked, this, &MainWindow::sendChatButton);
     QObject::connect(ui->sendContact, &QPushButton::clicked, this, &MainWindow::ContactRequest);
     QObject::connect(ui->safeContactRequest, &QPushButton::clicked, this, &MainWindow::addContact);
+    QObject::connect(ui->pushContact, &QPushButton::clicked, this , &MainWindow::renderContactRequest);
 
 ///////// Set selected Zaddr for Chat with Klick
 

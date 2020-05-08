@@ -100,10 +100,7 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView &view)
 
 void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
 {
-    QObject::connect(ui->pushContact, &QPushButton::clicked,[&] () 
-    {
-        renderContactRequest();
-    });
+
 
         QStandardItemModel* chat = new QStandardItemModel();
         //    ui->lcdNumber->setStyleSheet("background-color: red");
@@ -149,17 +146,17 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
     
 }
 
-void ChatModel::renderContactRequest(){
+void MainWindow::renderContactRequest(){
 
         Ui_requestDialog requestContact;
-        QDialog dialog(main);
+        QDialog dialog(this);
         requestContact.setupUi(&dialog);
         Settings::saveRestore(&dialog);
 
       {
         QStandardItemModel* contactRequest = new QStandardItemModel();
 
-     
+            
             for (auto &c : DataStore::getChatDataStore()->getAllRawChatItems())//this->chatItems)
           {
                 
@@ -214,8 +211,6 @@ void ChatModel::renderContactRequest(){
             }
    });
    
-           
-
   QObject::connect(requestContact.pushButton, &QPushButton::clicked, [&] () {
 
             QString cid = requestContact.requestCID->text();
@@ -228,7 +223,7 @@ void ChatModel::renderContactRequest(){
                 qDebug()<<"Beginn kopiert" <<cid << addr << newLabel << myAddr;
                 AddressBook::getInstance()->addAddressLabel(newLabel, addr, myAddr, cid, avatar);
 
-                  QMessageBox::information(main, "Added Contact","successfully added your new contact. You can now Chat with this contact");
+                  QMessageBox::information(this, "Added Contact","successfully added your new contact. You can now Chat with this contact");
                
           
             
@@ -237,8 +232,6 @@ void ChatModel::renderContactRequest(){
 
  dialog.exec();
 }
-
-
 
 void ChatModel::addCid(QString tx, QString cid)
 {
