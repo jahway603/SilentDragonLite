@@ -8,7 +8,7 @@
 #include "version.h"
 #include "camount.h"
 #include "websockets.h"
-#include "DataStore.h"
+#include "DataStore/DataStore.h"
 
 template<>
 DataStore<QString>* DataStore<QString>::instance = nullptr;
