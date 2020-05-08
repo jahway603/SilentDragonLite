@@ -100,23 +100,27 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView &view)
 
 void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
 {
-    QObject::connect(ui->pushContact, &QPushButton::clicked,[&] () 
-    {
-        renderContactRequest();
-    });
+
 
         QStandardItemModel* chat = new QStandardItemModel();
         //    ui->lcdNumber->setStyleSheet("background-color: red");
         //    ui->lcdNumber->setPalette(Qt::red);
         //    ui->lcdNumber->display("1");
 
-        for (auto &c : DataStore::getChatDataStore()->getAllRawChatItems())//this->chatItems)
+
+        
+        
         for (auto &p : AddressBook::getInstance()->getAllAddressLabels())
-    {
+        for (auto &c : DataStore::getChatDataStore()->getAllMemos())
+        {
         //////Render only Memos for selected contacts. Do not render empty Memos //// Render only memos where cid=cid
 
         
-            if ((c.second.getContact() == ui->contactNameMemo->text().trimmed()) && (p.getPartnerAddress() == c.second.getAddress()) && (c.second.getMemo().startsWith("{") == false) && (c.second.getMemo().isEmpty() == false) && (c.second.isOutgoing() == true))
+            if (
+                (c.second.getContact() == ui->contactNameMemo->text().trimmed()) &&
+                (p.getPartnerAddress() == c.second.getAddress()) &&
+                (c.second.isOutgoing() == true)
+                )
              {
         
             QStandardItem* Items = new QStandardItem(c.second.toChatLine());
@@ -129,8 +133,13 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
             ui->listChat->setModel(chat);
 
         }
-
-            if ((c.second.getContact() == ui->contactNameMemo->text().trimmed()) && ((p.getMyAddress() == c.second.getAddress()) && c.second.getMemo().startsWith("{") == false) && (c.second.getMemo().isEmpty() == false) && (c.second.isOutgoing() == false))
+        
+            if (
+            (c.second.getContact() == ui->contactNameMemo->text().trimmed()) && 
+            (p.getMyAddress() == c.second.getAddress()) &&
+            (c.second.isOutgoing() == false)
+            )
+            
         {
 
             QStandardItem* Items1 = new QStandardItem(c.second.toChatLine());
@@ -143,48 +152,33 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
 
             ui->listChat->setModel(chat);
         }
+
+        } 
+    
+     
+}    
     
 
-    }       
-    
-}
 
-void ChatModel::renderContactRequest(){
+void MainWindow::renderContactRequest(){
 
         Ui_requestDialog requestContact;
-        QDialog dialog(main);
+        QDialog dialog(this);
         requestContact.setupUi(&dialog);
         Settings::saveRestore(&dialog);
 
-      {
-        QStandardItemModel* contactRequest = new QStandardItemModel();
+       QStandardItemModel* contactRequest = new QStandardItemModel();
 
-     
-            for (auto &c : DataStore::getChatDataStore()->getAllRawChatItems())//this->chatItems)
-          {
-                
-            if ((c.second.getType() == "cont") && (c.second.isOutgoing() == false) && (c.second.getMemo().startsWith("{"))) {
+    {
+            for (auto &c : DataStore::getChatDataStore()->getAllContactRequests())
+            {
 
-
-                 
-
-
-           
-            QStandardItem* Items = new QStandardItem(c.second.getAddress());
-            contactRequest->appendRow(Items);
-            requestContact.requestContact->setModel(contactRequest);   
-            requestContact.requestContact->show();
-      
-       
-                    }
-
-                   
-           }
-
-
-           }
-
-        
+                QStandardItem* Items = new QStandardItem(c.second.getAddress());
+                contactRequest->appendRow(Items);
+                requestContact.requestContact->setModel(contactRequest);
+                requestContact.requestContact->show();
+            }
+        }
 
         QObject::connect(requestContact.requestContact, &QTableView::clicked, [&] () {
 
@@ -214,8 +208,6 @@ void ChatModel::renderContactRequest(){
             }
    });
    
-           
-
   QObject::connect(requestContact.pushButton, &QPushButton::clicked, [&] () {
 
             QString cid = requestContact.requestCID->text();
@@ -225,20 +217,39 @@ void ChatModel::renderContactRequest(){
 
             QString avatar = QString(":/icons/res/") + requestContact.comboBoxAvatar->currentText() + QString(".png");
 
+             if (addr.isEmpty() || newLabel.isEmpty()) 
+        {
+             QMessageBox::critical(
+                this, 
+                QObject::tr("Address or Label Error"), 
+                QObject::tr("Address or Label cannot be empty"), 
+                QMessageBox::Ok
+                );
+            return;
+        }
+
+        // Test if address is valid.
+        if (!Settings::isValidAddress(addr)) 
+        {
+          QMessageBox::critical(
+                this, 
+                QObject::tr("Address Format Error"), 
+                QObject::tr("%1 doesn't seem to be a valid hush address.").arg(addr), 
+                QMessageBox::Ok
+            );
+            return;
+        } 
+
                 qDebug()<<"Beginn kopiert" <<cid << addr << newLabel << myAddr;
                 AddressBook::getInstance()->addAddressLabel(newLabel, addr, myAddr, cid, avatar);
 
-                  QMessageBox::information(main, "Added Contact","successfully added your new contact. You can now Chat with this contact");
-               
-          
+                  QMessageBox::information(this, "Added Contact","successfully added your new contact. You can now Chat with this contact");      
             
     });
        
 
  dialog.exec();
 }
-
-
 
 void ChatModel::addCid(QString tx, QString cid)
 {

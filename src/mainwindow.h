@@ -62,6 +62,7 @@ public:
 
     void updateLabels();
     void updateTAddrCombo(bool checked);
+  //  void renderContactRequest();
   //  void setChatItem(ChatItem* item);
     //void ChatItem* getChatItem();
    
