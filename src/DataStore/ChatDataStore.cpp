@@ -37,6 +37,42 @@ std::map<QString, ChatItem> ChatDataStore::getAllRawChatItems()
     return this->data;
 }
 
+std::map<QString, ChatItem> ChatDataStore::getAllContactRequests()
+{
+    std::map<QString, ChatItem> filteredItems;
+    for(auto &c: this->data)
+    {
+        if (
+            (c.second.getType() == "cont") && 
+            (c.second.isOutgoing() == false) && 
+            (c.second.getMemo().startsWith("{"))
+        ) 
+        {
+            filteredItems[c.first] = c.second;
+        }
+    }
+    return filteredItems;
+}
+
+
+std::map<QString, ChatItem> ChatDataStore::getAllMemos()
+{
+    std::map<QString, ChatItem> filteredItems;
+    for(auto &c: this->data)
+    {
+        if (
+
+            (c.second.getMemo().startsWith("{") == false) &&
+            (c.second.getMemo().isEmpty() == false) 
+               
+        ) 
+        {
+            filteredItems[c.first] = c.second;
+        }
+    }
+    return filteredItems;
+}
+
 
 ChatDataStore* ChatDataStore::instance = nullptr;
 bool ChatDataStore::instanced = false;
