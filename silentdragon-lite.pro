@@ -71,7 +71,10 @@ SOURCES += \
     src/chatbubbleme.cpp \
     src/chatbubblepartner.cpp \
     src/chatmodel.cpp \
-    src/contactmodel.cpp
+    src/contactmodel.cpp \
+    src/DataStore/DataStore.cpp \
+    src/DataStore/ChatDataStore.cpp \
+    src/DataStore/SietchDataStore.cpp
 
 HEADERS += \
     src/firsttimewizard.h \

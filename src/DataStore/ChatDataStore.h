@@ -1,6 +1,6 @@
 #ifndef CHATDATASTORE_H
 #define CHATDATASTORE_H
-
+#include "../chatmodel.h"
 using json = nlohmann::json;
 
 class ChatDataStore
@@ -15,20 +15,11 @@ class ChatDataStore
         }
 
     public:
-        static ChatDataStore* getInstance()
-        {
-            if(!ChatDataStore::instanced)
-            {
-                ChatDataStore::instanced = true;
-                ChatDataStore::instance = new ChatDataStore();
-            }
-                
-            return ChatDataStore::instance;
-        }
-
+        static ChatDataStore* getInstance();
         void clear();
         void setData(QString key, ChatItem value);
         ChatItem getData(QString key);
+        std::map<QString, ChatItem> getAllRawChatItems();
         QString dump();
 
         ~ChatDataStore()
@@ -38,28 +29,6 @@ class ChatDataStore
         }
 };
 
-void ChatDataStore::clear()
-{
-    this->data.clear();
-}
 
-
-void ChatDataStore::setData(QString key, ChatItem value)
-{
-    this->data[key] = value;
-}
-
-ChatItem ChatDataStore::getData(QString key)
-{
-    return this->data[key];
-}
-
-QString ChatDataStore::dump()
-{
-	return "";
-}
-
-ChatDataStore* ChatDataStore::instance = nullptr;
-bool ChatDataStore::instanced = false;
 
 #endif

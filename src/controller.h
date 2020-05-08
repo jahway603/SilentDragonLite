@@ -13,7 +13,6 @@
 #include "connection.h"
 #include "chatmodel.h"
 #include "contactmodel.h"
-
 using json = nlohmann::json;
 
 struct WatchedTx {

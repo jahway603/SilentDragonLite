@@ -13,6 +13,7 @@
 #include "addressbook.h"
 #include <QtWidgets>
 #include <QUuid>
+#include "DataStore/DataStore.h"
 
 using namespace std; 
 
@@ -109,7 +110,7 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
         //    ui->lcdNumber->setPalette(Qt::red);
         //    ui->lcdNumber->display("1");
 
-        for (auto &c : this->chatItems)
+        for (auto &c : DataStore::getChatDataStore()->getAllRawChatItems())//this->chatItems)
         for (auto &p : AddressBook::getInstance()->getAllAddressLabels())
     {
         //////Render only Memos for selected contacts. Do not render empty Memos //// Render only memos where cid=cid
@@ -159,7 +160,7 @@ void ChatModel::renderContactRequest(){
         QStandardItemModel* contactRequest = new QStandardItemModel();
 
      
-            for (auto &c : this->chatItems)
+            for (auto &c : DataStore::getChatDataStore()->getAllRawChatItems())//this->chatItems)
           {
                 
             if ((c.second.getType() == "cont") && (c.second.isOutgoing() == false) && (c.second.getMemo().startsWith("{"))) {
@@ -187,7 +188,7 @@ void ChatModel::renderContactRequest(){
 
         QObject::connect(requestContact.requestContact, &QTableView::clicked, [&] () {
 
-    for (auto &c : this->chatItems){
+    for (auto &c : DataStore::getChatDataStore()->getAllRawChatItems()){//this->chatItems){
         QModelIndex index = requestContact.requestContact->currentIndex();
         QString label_contact = index.data(Qt::DisplayRole).toString();
         QStandardItemModel* contactMemo = new QStandardItemModel();
