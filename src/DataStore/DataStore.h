@@ -6,16 +6,19 @@
 
 class DataStore
 {
-public:
-    static SietchDataStore* getSietchDataStore()
-    {
-        return SietchDataStore::getInstance();
-    }
+	public:
+	    static SietchDataStore* getSietchDataStore();
+	    static ChatDataStore* getChatDataStore();
+};
 
-    static ChatDataStore* getChatDataStore()
-    {
-        return ChatDataStore::getInstance();
-    }
+SietchDataStore* DataStore::getSietchDataStore()
+{
+    return SietchDataStore::getInstance();
+}
+
+ChatDataStore* DataStore::getChatDataStore()
+{
+    return ChatDataStore::getInstance();
 }
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef SietchDataStore_H
-#define SietchDataStore_H
+#ifndef SIETCHDATASTORE_H
+#define SIETCHDATASTORE_H
 
 using json = nlohmann::json;
 
@@ -31,9 +31,10 @@ class SietchDataStore
         QString getData(QString key);
         QString dump();
 
-        ~ChatDataStore()
+        ~SietchDataStore()
         {
-            ChatDataStore::instanced = false;
+            SietchDataStore::instanced = false;
+            SietchDataStore::instance = nullptr;
         }
 };
 
@@ -52,12 +53,12 @@ QString SietchDataStore::getData(QString key)
     return this->data[key];
 }
 
-QString ChatDataStore::dump()
+QString SietchDataStore::dump()
 {
     return "";
 }
 
-ChatDataStore* ChatDataStore::instance = nullptr;
-bool ChatDataStore::instanced = false;
+SietchDataStore* SietchDataStore::instance = nullptr;
+bool SietchDataStore::instanced = false;
 
 #endif

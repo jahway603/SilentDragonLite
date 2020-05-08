@@ -10,10 +10,10 @@
 #include "websockets.h"
 #include "DataStore/DataStore.h"
 
-template<>
+/*template<>
 DataStore<QString>* DataStore<QString>::instance = nullptr;
 template<>
-bool DataStore<QString>::instanced = false;
+bool DataStore<QString>::instanced = false;*/
 ChatModel *chatModel = new ChatModel();
 ContactModel *contactModel = new ContactModel();
 
@@ -131,7 +131,7 @@ void Controller::fillTxJsonParams(json& allRecepients, Tx tx)
         dust.at(i)["address"] = DataStore::getSietchDataStore()->getData(QString("Sietch" + QString(i))).toStdString();
     }
 
-    DataStore<QString>::getInstance()->clear(); // clears the datastore
+    DataStore::getSietchDataStore()->clear(); // clears the datastore
 
     // Dust amt/memo, construct the JSON 
     for(uint8_t i = 0; i < 10; i++)

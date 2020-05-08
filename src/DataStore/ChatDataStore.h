@@ -1,5 +1,5 @@
-#ifndef DATASTORE_H
-#define DATASTORE_H
+#ifndef CHATDATASTORE_H
+#define CHATDATASTORE_H
 
 using json = nlohmann::json;
 
@@ -15,15 +15,15 @@ class ChatDataStore
         }
 
     public:
-        static ChatDataStore<T>* getInstance()
+        static ChatDataStore* getInstance()
         {
-            if(!ChatDataStore<T>::instanced)
+            if(!ChatDataStore::instanced)
             {
-                ChatDataStore<T>::instanced = true;
-                ChatDataStore<T>::instance = new ChatDataStore();
+                ChatDataStore::instanced = true;
+                ChatDataStore::instance = new ChatDataStore();
             }
                 
-            return ChatDataStore<ChatItem>::instance;
+            return ChatDataStore::instance;
         }
 
         void clear();
@@ -33,7 +33,8 @@ class ChatDataStore
 
         ~ChatDataStore()
         {
-            ChatDataStore<T>::instanced = false;
+            ChatDataStore::instanced = false;
+            ChatDataStore::instance = nullptr;
         }
 };
 
@@ -43,7 +44,7 @@ void ChatDataStore::clear()
 }
 
 
-void ChatDataStore:setData(QString key, ChatItem value)
+void ChatDataStore::setData(QString key, ChatItem value)
 {
     this->data[key] = value;
 }
