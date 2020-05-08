@@ -11,14 +11,4 @@ class DataStore
 	    static ChatDataStore* getChatDataStore();
 };
 
-SietchDataStore* DataStore::getSietchDataStore()
-{
-    return SietchDataStore::getInstance();
-}
-
-ChatDataStore* DataStore::getChatDataStore()
-{
-    return ChatDataStore::getInstance();
-}
-
 #endif
