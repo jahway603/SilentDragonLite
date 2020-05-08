@@ -97,7 +97,7 @@ void Controller::setConnection(Connection* c)
     {
         zrpc->createNewSietchZaddr( [=] (json reply) {
             QString zdust = QString::fromStdString(reply.get<json::array_t>()[0]);
-            DataStore<QString>::getInstance()->setData("Sietch" + QString(i), zdust.toUtf8());
+            DataStore::getSietchDataStore()->setData("Sietch" + QString(i), zdust.toUtf8());
         });
     }
 }
@@ -120,7 +120,7 @@ void Controller::fillTxJsonParams(json& allRecepients, Tx tx)
     {
         zrpc->createNewSietchZaddr( [=] (json reply) {
             QString zdust = QString::fromStdString(reply.get<json::array_t>()[0]);
-            DataStore<QString>::getInstance()->setData(QString("Sietch") + QString(i), zdust.toUtf8());
+            DataStore::getSietchDataStore()->setData(QString("Sietch") + QString(i), zdust.toUtf8());
         } );
     }
 
@@ -128,7 +128,7 @@ void Controller::fillTxJsonParams(json& allRecepients, Tx tx)
     // Using DataStore singelton, to store the data into the dusts, bing bada boom :D
     for(uint8_t i = 0; i < 10; i++)
     {
-        dust.at(i)["address"] = DataStore<QString>::getInstance()->getData(QString("Sietch" + QString(i))).toStdString();
+        dust.at(i)["address"] = DataStore::getSietchDataStore()->getData(QString("Sietch" + QString(i))).toStdString();
     }
 
     DataStore<QString>::getInstance()->clear(); // clears the datastore
