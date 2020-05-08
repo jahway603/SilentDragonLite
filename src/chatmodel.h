@@ -13,8 +13,6 @@
 #include "settings.h"
 #include "camount.h"
 
-
-
 class ListViewDelegate : public QAbstractItemDelegate
 {
     int d_radius;

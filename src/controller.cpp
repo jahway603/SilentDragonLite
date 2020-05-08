@@ -887,7 +887,8 @@ void Controller::refreshTransactions() {
                                 txid,
                                 true // is an outgoing message
                             );
-                        chatModel->addMessage(item);
+                        DataStore::getChatDataStore()->setData(chatModel->generateChatItemID(item), item);
+                        //chatModel->addMessage(item);
                     
                         }                              
                     
@@ -992,8 +993,8 @@ void Controller::refreshTransactions() {
                                 txid,
                                 false
                             );
-
-                    chatModel->addMessage(item);
+                    DataStore::getChatDataStore()->setData(chatModel->generateChatItemID(item), item);
+                    //chatModel->addMessage(item);
                  } 
             }
             
