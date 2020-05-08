@@ -1022,9 +1022,9 @@ void MainWindow::setupchatTab() {
             QIcon addContactIcon(addContact);
             ui->safeContactRequest->setIcon(addContactIcon);
 
-            /*QPixmap rahmen(":/icons/res/rahmen-message.png");
-            QIcon addRahmenIcon(rahmen);
-            ui->lcdNumber->setIcon(addRahmenIcon);*/
+            QPixmap newAddr(":/icons/res/add_contact.png");
+            QIcon addnewAddrIcon(newAddr);
+            ui->givemeZaddr->setIcon(addnewAddrIcon);
 
             QPixmap sendContact(":/icons/res/upload.png");
             QIcon addSendContactIcon(sendContact);
@@ -1042,9 +1042,9 @@ void MainWindow::setupchatTab() {
             QIcon addContactIcon(addContact);
             ui->safeContactRequest->setIcon(addContact);
 
-            /*QPixmap rahmen(":/icons/res/message-icon.svg");
-            QIcon addRahmenIcon(rahmen);
-            ui->lcdNumber->setIcon(addRahmenIcon);*/
+            QPixmap newAddr(":/icons/res/add_contact.svg");
+            QIcon addnewAddrIcon(newAddr);
+            ui->givemeZaddr->setIcon(addnewAddrIcon);
 
             QPixmap sendContact(":/icons/res/upload.svg");
             QIcon addSendContactIcon(sendContact);
@@ -1554,4 +1554,15 @@ MainWindow::~MainWindow()
 
     delete wsserver;
     delete wormhole;
+}
+void MainWindow::on_givemeZaddr_clicked()
+{
+
+    bool sapling = true;
+    rpc->createNewZaddr(sapling, [=] (json reply) {
+                QString hushchataddr = QString::fromStdString(reply.get<json::array_t>()[0]);
+                QMessageBox::information(this, "Your new Hushchataddress",hushchataddr);
+            //    ui->listReceiveAddresses->insertItem(0, hushchataddr);
+              //  ui->listReceiveAddresses->setCurrentIndex(0);
+                });
 }

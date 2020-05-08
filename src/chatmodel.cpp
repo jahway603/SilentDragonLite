@@ -105,9 +105,9 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
     });
 
         QStandardItemModel* chat = new QStandardItemModel();
-            ui->lcdNumber->setStyleSheet("background-color: red");
-            ui->lcdNumber->setPalette(Qt::red);
-            ui->lcdNumber->display("1");
+        //    ui->lcdNumber->setStyleSheet("background-color: red");
+        //    ui->lcdNumber->setPalette(Qt::red);
+        //    ui->lcdNumber->display("1");
 
         for (auto &c : this->chatItems)
         for (auto &p : AddressBook::getInstance()->getAllAddressLabels())
@@ -155,12 +155,12 @@ void ChatModel::renderContactRequest(){
         requestContact.setupUi(&dialog);
         Settings::saveRestore(&dialog);
 
-     /* {
+      {
         QStandardItemModel* contactRequest = new QStandardItemModel();
 
      
             for (auto &c : this->chatItems)
-            for (auto &p : AddressBook::getInstance()->getAllAddressLabels()) {
+          {
                 
             if ((c.second.getType() == "cont") && (c.second.isOutgoing() == false) && (c.second.getMemo().startsWith("{"))) {
 
@@ -222,12 +222,17 @@ void ChatModel::renderContactRequest(){
             QString newLabel = requestContact.requestLabel->text().trimmed();
             auto myAddr = requestContact.requestMyAddr->text().trimmed();
 
-            QString avatar = QString("res/") + requestContact.comboBoxAvatar->currentText() + QString(".png");
+            QString avatar = QString(":/icons/res/") + requestContact.comboBoxAvatar->currentText() + QString(".png");
 
                 qDebug()<<"Beginn kopiert" <<cid << addr << newLabel << myAddr;
                 AddressBook::getInstance()->addAddressLabel(newLabel, addr, myAddr, cid, avatar);
+
+                  QMessageBox::information(main, "Added Contact","successfully added your new contact. You can now Chat with this contact");
+               
+          
+            
     });
-   */    
+       
 
  dialog.exec();
 }
@@ -510,7 +515,7 @@ void::MainWindow::addContact() {
             QString newLabel = request.labelRequest->text().trimmed();
             auto myAddr = request.myzaddr->text().trimmed();
 
-            QString avatar = QString("res/") + request.comboBoxAvatar->currentText() + QString(".png");
+            QString avatar = QString(":/icons/res/") + request.comboBoxAvatar->currentText() + QString(".png");
 
              if (addr.isEmpty() || newLabel.isEmpty()) 
         {
@@ -535,12 +540,14 @@ void::MainWindow::addContact() {
             return;
         } 
 
-        ////// We need a better popup here. 
+        ///////Todo: Test if label allready exist!
+
+        ////// Success, so show it
             AddressBook::getInstance()->addAddressLabel(newLabel, addr, myAddr, cid, avatar);
-           QMessageBox::critical(
+              QMessageBox::information(
                 this, 
-                QObject::tr("Add Successfully"), 
-                QObject::tr("juhu").arg(newLabel), 
+                QObject::tr("Added Contact"), 
+                QObject::tr("successfully added your new contact").arg(newLabel), 
                 QMessageBox::Ok
             );
             return;

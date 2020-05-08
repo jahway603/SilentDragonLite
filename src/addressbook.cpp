@@ -173,7 +173,7 @@ void AddressBook::open(MainWindow* parent, QLineEdit* target)
         QString cid = ab.cid->text();
         
         
-        QString avatar = QString("res/") + ab.comboBoxAvatar->currentText() + QString(".png");
+        QString avatar = QString(":/icons/res/") + ab.comboBoxAvatar->currentText() + QString(".png");
         qDebug()<<"AVATAR NAME : " << avatar;
 
         if (addr.isEmpty() || newLabel.isEmpty()) 
@@ -212,10 +212,11 @@ void AddressBook::open(MainWindow* parent, QLineEdit* target)
 
         ////// We need a better popup here. 
             AddressBook::getInstance()->addAddressLabel(newLabel, addr, myAddr, cid,avatar);
-            QMessageBox::critical(
+
+             QMessageBox::information(
                 parent, 
-                QObject::tr("Add Successfully"), 
-                QObject::tr("juhu").arg(newLabel), 
+                QObject::tr("Added Contact"), 
+                QObject::tr("successfully added your new contact").arg(newLabel), 
                 QMessageBox::Ok
             );
             return;
