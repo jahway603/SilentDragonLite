@@ -889,7 +889,6 @@ void Controller::refreshTransactions() {
                                 true 
                             );
                         DataStore::getChatDataStore()->setData(chatModel->generateChatItemID(item), item);
-                        //chatModel->addMessage(item);
                     
                         }                              
                     
@@ -984,6 +983,7 @@ void Controller::refreshTransactions() {
                 }else{ contact = "";}
                 
                 position = it["position"].get<json::number_integer_t>();
+
                     ChatItem item = ChatItem(
                                 datetime,
                                 address,

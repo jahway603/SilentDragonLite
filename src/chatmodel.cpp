@@ -158,8 +158,6 @@ void ChatModel::renderChatBox(Ui::MainWindow* ui, QListView *view)
      
 }    
     
-
-
 void MainWindow::renderContactRequest(){
 
         Ui_requestDialog requestContact;
@@ -322,7 +320,6 @@ QString MainWindow::createHeaderMemo(QString type, QString cid, QString zaddr,  
    
 }
 
-
 // Create a Tx from the current state of the Chat page. 
 Tx MainWindow::createTxFromChatPage() {
    Tx tx;
@@ -467,7 +464,6 @@ void MainWindow::sendChatButton() {
             }
         );
     }        
-
 
 QString MainWindow::doSendChatTxValidations(Tx tx) {
     // Check to see if we have enough verified funds to send the Tx.
