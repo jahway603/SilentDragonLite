@@ -27,7 +27,7 @@ ChatModel::ChatModel(std::vector<ChatItem> chatItems)
    this->setItems(chatItems);
 }
 
-QString ChatModel::generateChatItemID(ChatItem item)
+/*QString ChatModel::generateChatItemID(ChatItem item)
 {
     QString key = QString::number(item.getTimestamp()) +  QString("-");
     key += QString(QCryptographicHash::hash(
@@ -39,7 +39,7 @@ QString ChatModel::generateChatItemID(ChatItem item)
         ).toUtf8()
         ,QCryptographicHash::Md5).toHex());
     return key;
-}
+}*/
 
 std::map<QString, ChatItem> ChatModel::getItems()
 {
@@ -55,8 +55,7 @@ void ChatModel::setItems(std::vector<ChatItem> items)
 {
     for(ChatItem c : items)
     {
-        this->chatItems[this->generateChatItemID(c)] = c;
-        
+        this->chatItems[ChatIDGenerator::getInstance()->generateID(c)] = c; //this->generateChatItemID(c)] = c;
     }
 }
 
@@ -67,14 +66,14 @@ void ChatModel::clear()
 
 void ChatModel::addMessage(ChatItem item)
 {
-    QString key = this->generateChatItemID(item);
+    QString key = ChatIDGenerator::getInstance()->generateID(item); //this->generateChatItemID(item);
   //  qDebug() << "inserting chatitem with id: " << key;
     this->chatItems[key] = item;
 }
 
 void ChatModel::addMessage(QString timestamp, ChatItem item)
 {
-    QString key = this->generateChatItemID(item);
+    QString key = ChatIDGenerator::getInstance()->generateID(item);//this->generateChatItemID(item);
     timestamp = "0";
     this->chatItems[key] = item;
 }
