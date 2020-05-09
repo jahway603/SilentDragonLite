@@ -77,7 +77,8 @@ SOURCES += \
     src/DataStore/SietchDataStore.cpp \
     src/Model/ChatItem.cpp \
     src/Model/ContactRequestChatItem.cpp \
-    src/Model/ContactItem.cpp 
+    src/Model/ContactItem.cpp \
+    src/Chat/Helper/ChatIDGenerator.cpp
 
 HEADERS += \
     src/firsttimewizard.h \

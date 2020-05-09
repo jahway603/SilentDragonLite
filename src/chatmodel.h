@@ -14,6 +14,7 @@
 #include "camount.h"
 #include "Model/ChatItem.h"
 #include "Chat/Helper/ChatDelegator.h"
+#include "Chat/Helper/ChatIDGenerator.h"
 
 class ChatModel
 {
