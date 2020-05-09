@@ -826,7 +826,7 @@ void Controller::refreshBalances()
     });
 }
 
-void Controller::refreshTransactions() {    
+void Controller::refreshTransactions() {   
     if (!zrpc->haveConnection()) 
         return noConnection();
 
@@ -847,7 +847,7 @@ void Controller::refreshTransactions() {
             
             auto txid = QString::fromStdString(it["txid"]);
             auto datetime = it["datetime"].get<json::number_integer_t>();
-
+            
             // First, check if there's outgoing metadata
             if (!it["outgoing_metadata"].is_null()) {
             
@@ -889,7 +889,8 @@ void Controller::refreshTransactions() {
                                 txid,
                                 true 
                             );
-                        DataStore::getChatDataStore()->setData(chatModel->generateChatItemID(item), item);
+                        //DataStore::getChatDataStore()->setData(chatModel->generateChatItemID(item), item);
+                        DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
                     
                         }                              
                     
@@ -996,8 +997,8 @@ void Controller::refreshTransactions() {
                                 txid,
                                 false
                             );
-                    DataStore::getChatDataStore()->setData(chatModel->generateChatItemID(item), item);
-
+                    //DataStore::getChatDataStore()->setData(chatModel->generateChatItemID(item), item);
+                    DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
                     qDebug() << "Position der Message : " << position;
                  } 
             }

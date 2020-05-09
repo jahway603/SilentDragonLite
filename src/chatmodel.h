@@ -30,7 +30,7 @@ class ChatModel
         ChatModel() {};
         ChatModel(std::map<QString, ChatItem> chatItems);
         ChatModel(std::vector<ChatItem> chatItems);
-        QString generateChatItemID(ChatItem item);
+        //QString generateChatItemID(ChatItem item);
         std::map<QString, ChatItem> getItems();
         void setItems(std::map<QString, ChatItem> items);
         QString zaddr();
