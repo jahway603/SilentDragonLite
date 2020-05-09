@@ -937,7 +937,7 @@ void Controller::refreshTransactions() {
                 
                     QString type;
                     QString cid;
-                    int position;
+                 //   int position;
                     QString requestZaddr1;
                     QString requestZaddr;
 
@@ -982,7 +982,7 @@ void Controller::refreshTransactions() {
 
                 }else{ contact = "";}
                 
-                position = it["position"].get<json::number_integer_t>();
+              //  position = it["position"].get<json::number_integer_t>();
 
                     ChatItem item = ChatItem(
                                 datetime,
@@ -997,7 +997,7 @@ void Controller::refreshTransactions() {
                             );
                     DataStore::getChatDataStore()->setData(chatModel->generateChatItemID(item), item);
 
-                    qDebug() << "Position der Message : " << position;
+                   
                  } 
             }
             
