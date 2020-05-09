@@ -8,6 +8,7 @@
 #include "version.h"
 #include "camount.h"
 #include "websockets.h"
+#include "Model/ChatItem.h"
 #include "DataStore/DataStore.h"
 
 /*template<>

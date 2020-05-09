@@ -74,7 +74,10 @@ SOURCES += \
     src/contactmodel.cpp \
     src/DataStore/DataStore.cpp \
     src/DataStore/ChatDataStore.cpp \
-    src/DataStore/SietchDataStore.cpp
+    src/DataStore/SietchDataStore.cpp \
+    src/Model/ChatItem.cpp \
+    src/Model/ContactRequestChatItem.cpp \
+    src/Model/ContactItem.cpp 
 
 HEADERS += \
     src/firsttimewizard.h \
