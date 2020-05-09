@@ -889,7 +889,7 @@ void Controller::refreshTransactions() {
                                 txid,
                                 true 
                             );
-                        //DataStore::getChatDataStore()->setData(chatModel->generateChatItemID(item), item);
+
                         DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
                     
                         }                              
@@ -945,11 +945,11 @@ void Controller::refreshTransactions() {
 
                 if (memo.startsWith("{")) {
 
-                QJsonDocument doc = QJsonDocument::fromJson(memo.toUtf8());
+                QJsonDocument headermemo = QJsonDocument::fromJson(memo.toUtf8());
 
-                  cid = doc["cid"].toString();
-                  type = doc["t"].toString();
-                  requestZaddr =  doc["z"].toString();
+                  cid = headermemo["cid"].toString();
+                  type = headermemo["t"].toString();
+                  requestZaddr =  headermemo["z"].toString();
 
                     chatModel->addCid(txid, cid);
                     chatModel->addrequestZaddr(txid, requestZaddr);
