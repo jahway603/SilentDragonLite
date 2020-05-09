@@ -999,7 +999,6 @@ void Controller::refreshTransactions() {
                             );
                     //DataStore::getChatDataStore()->setData(chatModel->generateChatItemID(item), item);
                     DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
-
                  } 
             }
             
