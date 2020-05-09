@@ -12,8 +12,6 @@ void ContactModel::renderContactList(QListView* view)
 	for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
     {
 
-         auto theme = Settings::getInstance()->get_theme_name();
-         if ((theme == "dark" || theme == "midnight")) {
 
           QString avatar = c.getAvatar();
 
@@ -25,8 +23,7 @@ void ContactModel::renderContactList(QListView* view)
              view->setUniformItemSizes(true);
              view->setDragDropMode(QAbstractItemView::DropOnly);      
              view->show();
-
-    }     
+     
         
     }
 
