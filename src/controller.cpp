@@ -856,8 +856,7 @@ void Controller::refreshTransactions() {
                      
 
                     address = QString::fromStdString(o["address"]);
-                    
-                  //  qDebug()<< "Position :" << position;
+                
                     // Sent items are -ve
                     CAmount amount = CAmount::fromqint64(-1* o["value"].get<json::number_unsigned_t>()); 
                     
@@ -885,9 +884,9 @@ void Controller::refreshTransactions() {
                                 memo,
                                 QString(""),
                                 QString(""),
-                                cid, // we have to set the cid here, its included in our Addressbook for this contact
+                                cid, 
                                 txid,
-                                true // is an outgoing message
+                                true 
                             );
                         DataStore::getChatDataStore()->setData(chatModel->generateChatItemID(item), item);
                         //chatModel->addMessage(item);
@@ -910,7 +909,6 @@ void Controller::refreshTransactions() {
                 
                   }
                         
- 
                 txdata.push_back(TransactionItem{
                    "send", datetime, address, txid,confirmations, items
                 });
@@ -940,6 +938,7 @@ void Controller::refreshTransactions() {
                 
                     QString type;
                     QString cid;
+                    int position;
                     QString requestZaddr1;
                     QString requestZaddr;
 
@@ -984,6 +983,7 @@ void Controller::refreshTransactions() {
 
                 }else{ contact = "";}
                 
+                position = it["position"].get<json::number_integer_t>();
                     ChatItem item = ChatItem(
                                 datetime,
                                 address,
@@ -991,12 +991,13 @@ void Controller::refreshTransactions() {
                                 memo,
                                 requestZaddr,
                                 type,
-                                cid, // we have to set the cid here, its included in the headermemo
+                                cid, 
                                 txid,
                                 false
                             );
                     DataStore::getChatDataStore()->setData(chatModel->generateChatItemID(item), item);
-                    //chatModel->addMessage(item);
+
+                    qDebug() << "Position der Message : " << position;
                  } 
             }
             
