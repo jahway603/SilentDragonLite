@@ -853,9 +853,11 @@ void Controller::refreshTransactions() {
                 for (auto o: it["outgoing_metadata"].get<json::array_t>()) {
                     
                      QString address;
-              
+                     
+
                     address = QString::fromStdString(o["address"]);
-                
+                    
+                  //  qDebug()<< "Position :" << position;
                     // Sent items are -ve
                     CAmount amount = CAmount::fromqint64(-1* o["value"].get<json::number_unsigned_t>()); 
                     
