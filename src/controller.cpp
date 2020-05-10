@@ -16,6 +16,7 @@ DataStore<QString>* DataStore<QString>::instance = nullptr;
 template<>
 bool DataStore<QString>::instanced = false;*/
 ChatModel *chatModel = new ChatModel();
+Chat *chat = new Chat();
 ContactModel *contactModel = new ContactModel();
 
 using json = nlohmann::json;
@@ -1022,7 +1023,7 @@ void Controller::refreshTransactions() {
 
          // Update model data, which updates the table view
         transactionsTableModel->replaceData(txdata);    
-        chatModel->renderChatBox(ui, ui->listChat);   
+        chat->renderChatBox(ui, ui->listChat);   
         refreshContacts(
             ui->listContactWidget
             
@@ -1032,7 +1033,7 @@ void Controller::refreshTransactions() {
 
 void Controller::refreshChat(QListView *listWidget)
 {
-    chatModel->renderChatBox(ui, listWidget);
+    chat->renderChatBox(ui, listWidget);
   
 }
 
