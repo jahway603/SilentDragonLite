@@ -908,9 +908,9 @@ void MainWindow::setupTransactionsTab() {
     // Set up context menu on transactions tab
     auto theme = Settings::getInstance()->get_theme_name();
     if (theme == "dark" || theme == "midnight") {
-    ui->listChat->setStyleSheet("background-image: url(res/sdlogo.png) ;background-attachment: fixed ;background-position: center center ;background-repeat: no-repeat;background-size: cover");
+    ui->listChat->setStyleSheet("background-image: url(:/icons/res/sdlogo.png) ;background-attachment: fixed ;background-position: center center ;background-repeat: no-repeat;background-size: cover");
      }
-    if (theme == "default") {ui->listChat->setStyleSheet("background-image: url(res/sdlogo2.png) ;background-attachment: fixed ;background-position: center center ;background-repeat: no-repeat;background-size: cover");}
+    if (theme == "default") {ui->listChat->setStyleSheet("background-image: url(:/icons/res/sdlogo2.png) ;background-attachment: fixed ;background-position: center center ;background-repeat: no-repeat;background-size: cover");}
    
     ui->listChat->setResizeMode(QListView::Adjust);
     ui->listChat->setWordWrap(true);

@@ -889,7 +889,7 @@ void Controller::refreshTransactions() {
                                 txid,
                                 true 
                             );
-                        //DataStore::getChatDataStore()->setData(chatModel->generateChatItemID(item), item);
+
                         DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
                     
                         }                              
@@ -920,6 +920,7 @@ void Controller::refreshTransactions() {
                 model->markAddressUsed(address);
 
                 QString memo;
+                QString test;
                 if (!it["memo"].is_null()) {
                     memo = QString::fromStdString(it["memo"]);
                 }
@@ -939,16 +940,16 @@ void Controller::refreshTransactions() {
                 
                     QString type;
                     QString cid;
-                 //   int position;
-                    QString requestZaddr1;
+                   // int position;
                     QString requestZaddr;
 
                 if (memo.startsWith("{")) {
 
-                    type = memo.mid(75,4);
-                    cid =  memo.mid(14,36);
-                    requestZaddr1 = memo.right(82);
-                    requestZaddr = requestZaddr1.left(78);
+                QJsonDocument headermemo = QJsonDocument::fromJson(memo.toUtf8());
+
+                  cid = headermemo["cid"].toString();
+                  type = headermemo["t"].toString();
+                  requestZaddr =  headermemo["z"].toString();
 
                     chatModel->addCid(txid, cid);
                     chatModel->addrequestZaddr(txid, requestZaddr);
@@ -997,7 +998,7 @@ void Controller::refreshTransactions() {
                                 txid,
                                 false
                             );
-                    //DataStore::getChatDataStore()->setData(chatModel->generateChatItemID(item), item);
+
                     DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
                  } 
             }
