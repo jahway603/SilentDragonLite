@@ -867,22 +867,14 @@ void Controller::refreshTransactions() {
                     QString memo;
                     if (!o["memo"].is_null()) {
                         memo = QString::fromStdString(o["memo"]);
-                    }  
+                     
 
-                        QString cid;
-                        QString contact;
-                   
-                    for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
-                    {
-                     if (address == c.getPartnerAddress()){
-                          contact = c.getName();
-                     }else{ contact = "";}   
-                    }
+                        QString cid; 
 
                         ChatItem item = ChatItem(
                                 datetime,
                                 address,
-                                contact,
+                                QString(""),
                                 memo,
                                 QString(""),
                                 QString(""),
@@ -890,12 +882,11 @@ void Controller::refreshTransactions() {
                                 txid,
                                 true 
                             );
-                                qDebug()<<"Kontaktname : " <<contact;
                                 qDebug()<<"Memo : " <<memo;
 
                         DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
                     
-                       // }                              
+                        }                              
                     
                     items.push_back(TransactionItemDetail{address, amount, memo});
                     total_amount = total_amount + amount;
@@ -947,7 +938,7 @@ void Controller::refreshTransactions() {
                    // int position;
                     QString requestZaddr;
 
-                if (memo.startsWith("{")) {
+                if ((memo.startsWith("{")) && (!it["memo"].is_null())) {
 
                 QJsonDocument headermemo = QJsonDocument::fromJson(memo.toUtf8());
 
@@ -958,7 +949,7 @@ void Controller::refreshTransactions() {
                     chatModel->addCid(txid, cid);
                     chatModel->addrequestZaddr(txid, requestZaddr);
 
-                }
+               // }
              
                 if (chatModel->getCidByTx(txid) != QString("0xdeadbeef")){
 
@@ -980,22 +971,13 @@ void Controller::refreshTransactions() {
                             requestZaddr = "";
                     }                 
                              
-                QString contact;
-                for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
-                {
             
-                if (address == c.getMyAddress()){
-                    contact = c.getName();
-
-                }else{ contact = "";}
-                
-                }
               //  position = it["position"].get<json::number_integer_t>();
 
                     ChatItem item = ChatItem(
                                 datetime,
                                 address,
-                                contact,
+                                QString(""),
                                 memo,
                                 requestZaddr,
                                 type,
@@ -1003,10 +985,10 @@ void Controller::refreshTransactions() {
                                 txid,
                                 false
                             );
-    qDebug()<<"Kontaktname : " <<contact;
+                                qDebug()<<"CID : " <<cid;
                                 qDebug()<<"Memo : " <<memo;
                     DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
-                // } 
+                 } 
             }
             
         }
