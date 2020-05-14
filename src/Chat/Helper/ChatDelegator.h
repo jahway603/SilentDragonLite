@@ -1,3 +1,6 @@
+// Copyright 2019-2020 The Hush developers
+// GPLv3
+
 #ifndef CHATDELEGATOR_H
 #define CHATDELEGATOR_H
 
@@ -5,6 +8,14 @@
 #include <QStandardItemModel>
 #include <QAbstractItemDelegate>
 #include <QPainter>
+
+enum RenderType
+{
+	OUTGOING=0,
+	INCOMING=1,
+	INDATE=2,
+	OUTDATE=3
+};
 
 class ListViewDelegate : public QAbstractItemDelegate
 {
@@ -26,7 +37,7 @@ class ListViewDelegate : public QAbstractItemDelegate
         inline QSize sizeHint(QStyleOptionViewItem const &option, QModelIndex const &index) const;
 };
 
-inline ListViewDelegate::ListViewDelegate(QObject *parent): QAbstractItemDelegate(parent), d_radius(5), d_toppadding(5), d_bottompadding(3), d_leftpadding(5), d_rightpadding(5), d_verticalmargin(15), d_horizontalmargin(10), d_pointerwidth(10), d_pointerheight(17), d_widthfraction(.7)
+inline ListViewDelegate::ListViewDelegate(QObject *parent): QAbstractItemDelegate(parent), d_radius(5), d_toppadding(5), d_bottompadding(3), d_leftpadding(5), d_rightpadding(5), d_verticalmargin(5), d_horizontalmargin(10), d_pointerwidth(10), d_pointerheight(17), d_widthfraction(.6)
 {
 
 }
@@ -43,7 +54,9 @@ inline void ListViewDelegate::paint(QPainter *painter, QStyleOptionViewItem cons
     qreal contentswidth = option.rect.width() * d_widthfraction - d_horizontalmargin - d_pointerwidth - d_leftpadding - d_rightpadding;
     bodydoc.setTextWidth(contentswidth);
     qreal bodyheight = bodydoc.size().height();
-    bool outgoing = index.data(Qt::UserRole + 1).toString() == "Outgoing";
+    int outgoing = index.data(Qt::UserRole + 1).toInt();
+    int outdate = index.data(Qt::UserRole + 1).toInt();
+    int indate = index.data(Qt::UserRole + 1).toInt();
     painter->save();
     painter->setRenderHint(QPainter::Antialiasing);
 
@@ -53,10 +66,26 @@ inline void ListViewDelegate::paint(QPainter *painter, QStyleOptionViewItem cons
 
     painter->translate(option.rect.left() + d_horizontalmargin, option.rect.top() + ((index.row() == 0) ? d_verticalmargin : 0));
 
-    // background color for chat bubble
-    QColor bgcolor("#535353");
-    if (outgoing)
-        bgcolor = "#eeeeee";
+    QColor bgcolor("#ffffff");
+    switch(outgoing)
+    {
+        case INDATE:
+            bgcolor = "transparent";
+            break;
+
+        case OUTDATE:
+            bgcolor = "transparent";
+            break;
+
+        case OUTGOING:
+            bgcolor = "#f8f9fa";
+            break;
+
+        default:
+        case INCOMING:
+            bgcolor = "#535353";
+            break;
+    }
 
     // create chat bubble
     QPainterPath pointie;
@@ -85,7 +114,7 @@ inline void ListViewDelegate::paint(QPainter *painter, QStyleOptionViewItem cons
     pointie.closeSubpath();
 
     // rotate bubble for outgoing messages
-    if (outgoing)
+    if ((outgoing == OUTGOING) || (outdate == OUTDATE))
     {
         painter->translate(option.rect.width() - pointie.boundingRect().width() - d_horizontalmargin - d_pointerwidth, 0);
         painter->translate(pointie.boundingRect().center());
@@ -99,7 +128,7 @@ inline void ListViewDelegate::paint(QPainter *painter, QStyleOptionViewItem cons
     painter->fillPath(pointie, QBrush(bgcolor));
 
     // rotate back or painter is going to paint the text rotated...
-    if (outgoing)
+    if ((outgoing == OUTGOING) || (outdate == OUTDATE))
     {
         painter->translate(pointie.boundingRect().center());
         painter->rotate(-180);
@@ -108,13 +137,30 @@ inline void ListViewDelegate::paint(QPainter *painter, QStyleOptionViewItem cons
 
     // set text color used to draw message body
     QAbstractTextDocumentLayout::PaintContext ctx;
-    if (outgoing)
-        ctx.palette.setColor(QPalette::Text, QColor("black"));
-    else
-        ctx.palette.setColor(QPalette::Text, QColor("white"));
+    switch(outgoing)
+    {
+        case INDATE:
+            ctx.palette.setColor(QPalette::Text, QColor("Black"));
+            break;
+
+        case OUTDATE:
+            ctx.palette.setColor(QPalette::Text, QColor("Black"));
+            break;
+
+        case OUTGOING:
+            ctx.palette.setColor(QPalette::Text, QColor("Black"));
+            break;
+
+        default:
+        case INCOMING:
+            ctx.palette.setColor(QPalette::Text, QColor("whitesmoke"));
+            break;
+    }
+
 
     // draw body text
-    painter->translate((outgoing ? 0 : d_pointerwidth) + d_leftpadding, 0);
+    painter->translate((outgoing == OUTGOING ? 0 : d_pointerwidth) + d_leftpadding, 0);
+    painter->translate((outdate == OUTDATE ? 0 : d_pointerwidth) + d_leftpadding, 0);
     bodydoc.documentLayout()->draw(painter, ctx);
 
     painter->restore();

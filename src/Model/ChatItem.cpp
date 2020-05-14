@@ -1,8 +1,11 @@
+// Copyright 2019-2020 The Hush developers
+// GPLv3
+
 #include "ChatItem.h"
 
 ChatItem::ChatItem() {}
 
-ChatItem::ChatItem(long timestamp, QString address, QString contact, QString memo, QString requestZaddr, QString type, QString cid, QString txid)
+ChatItem::ChatItem(long timestamp, QString address, QString contact, QString memo, QString requestZaddr, QString type, QString cid, QString txid, int confirmations)
 {
     _timestamp = timestamp;
     _address = address;
@@ -12,10 +15,11 @@ ChatItem::ChatItem(long timestamp, QString address, QString contact, QString mem
     _type = type;
     _cid = cid;
     _txid = txid;
+    _confirmations = confirmations;
     _outgoing = false;
 }
 
-ChatItem::ChatItem(long timestamp, QString address, QString contact, QString memo, QString requestZaddr, QString type, QString cid, QString txid, bool outgoing)
+ChatItem::ChatItem(long timestamp, QString address, QString contact, QString memo, QString requestZaddr, QString type, QString cid, QString txid, int confirmations, bool outgoing)
 {
     _timestamp = timestamp;
     _address = address;
@@ -25,6 +29,7 @@ ChatItem::ChatItem(long timestamp, QString address, QString contact, QString mem
     _type = type;
     _cid = cid;
     _txid = txid;
+    _confirmations = confirmations;
     _outgoing = outgoing;
 }
 
@@ -65,6 +70,10 @@ QString ChatItem::getCid()
 QString ChatItem::getTxid()
 {
     return _txid;
+}
+int ChatItem::getConfirmations()
+{
+    return _confirmations;
 }
 
 bool ChatItem::isOutgoing()
@@ -110,26 +119,38 @@ void ChatItem::setTxid(QString txid)
 {
     _txid = txid;
 }
+void ChatItem::setConfirmations(int confirmations)
+{
+    _confirmations = confirmations;
+}
 
 void ChatItem::toggleOutgo()
 {
     _outgoing = true;
 }
 
+
 QString ChatItem::toChatLine()
 {
     QDateTime myDateTime;
+    QString lock;
     myDateTime.setTime_t(_timestamp);
-    QString line = QString("[") + myDateTime.toString("d.M.yy hh:mm") + QString("] ");
-    line += QString("") + QString(_memo) + QString("\n\n");
+
+    if (_confirmations == 0){
+         lock = "<b> <img src=':/icons/res/unlocked.svg'><b>";
+        }else{
+
+        lock = "<b> <img src=':/icons/res/lock_green.svg'><b>";
+
+    }
+
+    QString line = QString("<small style='background: rgba(255,255,255,0.1);'>") + myDateTime.toString("dd.MM.yyyy hh:mm");
+    line += QString(lock) + QString("</small>");
+    line += QString("<p>") + _memo.toHtmlEscaped() + QString("</p>");
     return line;
 }
 
 ChatItem::~ChatItem()
 {
-    /*delete timestamp;
-            delete address;
-            delete contact;
-            delete memo;
-            delete outgoing;*/
+
 }

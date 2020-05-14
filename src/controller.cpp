@@ -878,9 +878,11 @@ void Controller::refreshTransactions() {
                                 QString(""),
                                 cid, 
                                 txid,
+                                confirmations,
                                 true 
                             );
                                 qDebug()<<"Memo : " <<memo;
+                                qDebug()<<"Confirmation :" << confirmations;
 
                         DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
                     
@@ -973,9 +975,11 @@ void Controller::refreshTransactions() {
                                 type,
                                 cid, 
                                 txid,
+                                confirmations,
                                 false
                             );
                             qDebug()<< "Position : " << position;
+                            qDebug()<<"Confirmation :" << confirmations;
 
                     DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
                  } 

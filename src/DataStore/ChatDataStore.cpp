@@ -1,3 +1,6 @@
+// Copyright 2019-2020 The Hush developers
+// GPLv3
+
 #include "ChatDataStore.h"
 
 ChatDataStore* ChatDataStore::getInstance()
@@ -43,8 +46,8 @@ std::map<QString, ChatItem> ChatDataStore::getAllContactRequests()
     for(auto &c: this->data)
     {
         if (
-            (c.second.getType() == "cont") && 
-            (c.second.isOutgoing() == false) && 
+            (c.second.isOutgoing() == false) &&
+            (c.second.getType() == "cont") &&  
             (c.second.getMemo().startsWith("{"))
         ) 
         {

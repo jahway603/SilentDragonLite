@@ -1,3 +1,6 @@
+// Copyright 2019-2020 The Hush developers
+// GPLv3
+
 #ifndef CHATITEM_H
 #define CHATITEM_H
 
@@ -14,12 +17,13 @@ class ChatItem
         QString _type; 
         QString _cid;
         QString _txid;
+        int _confirmations;
         bool _outgoing = false;
 
     public:
         ChatItem();
-        ChatItem(long timestamp, QString address, QString contact, QString memo,QString requestZaddr, QString type, QString cid, QString txid);
-        ChatItem(long timestamp, QString address, QString contact, QString memo, QString requestZaddr, QString type,  QString cid, QString txid, bool outgoing);
+        ChatItem(long timestamp, QString address, QString contact, QString memo,QString requestZaddr, QString type, QString cid, QString txid, int confirmations);
+        ChatItem(long timestamp, QString address, QString contact, QString memo, QString requestZaddr, QString type,  QString cid, QString txid, int confirmations, bool outgoing);
         long getTimestamp();
         QString getAddress();
         QString getContact();
@@ -28,6 +32,7 @@ class ChatItem
         QString getType();
         QString getCid();
         QString getTxid();
+        int getConfirmations();
         bool isOutgoing();
         void setTimestamp(long timestamp);
         void setAddress(QString address);
@@ -37,6 +42,7 @@ class ChatItem
         void setType(QString type);
         void setCid(QString cid);
         void setTxid(QString txid);
+        void setConfirmations(int confirmations);
         void toggleOutgo();
         QString toChatLine();
         ~ChatItem();
