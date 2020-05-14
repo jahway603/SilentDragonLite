@@ -17,7 +17,7 @@ void Chat::renderChatBox(Ui::MainWindow *ui, QListView *view)
             //////Render only Memos for selected contacts. Do not render empty Memos //// Render only memos where cid=cid
 
             if (
-                (c.second.getContact() == ui->contactNameMemo->text().trimmed()) &&
+                (p.getName() == ui->contactNameMemo->text().trimmed()) &&
                 (p.getPartnerAddress() == c.second.getAddress()) &&
                 (c.second.isOutgoing() == true))
             {
@@ -33,7 +33,7 @@ void Chat::renderChatBox(Ui::MainWindow *ui, QListView *view)
             }
 
             if (
-                (c.second.getContact() == ui->contactNameMemo->text().trimmed()) &&
+                (p.getName() == ui->contactNameMemo->text().trimmed()) &&
                 (p.getMyAddress() == c.second.getAddress()) &&
                 (c.second.isOutgoing() == false))
 

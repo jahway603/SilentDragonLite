@@ -877,7 +877,7 @@ void Controller::refreshTransactions() {
                      if (address == c.getPartnerAddress()){
                           contact = c.getName();
                      }else{ contact = "";}   
-                    
+                    }
 
                         ChatItem item = ChatItem(
                                 datetime,
@@ -890,14 +890,17 @@ void Controller::refreshTransactions() {
                                 txid,
                                 true 
                             );
+                                qDebug()<<"Kontaktname : " <<contact;
+                                qDebug()<<"Memo : " <<memo;
 
                         DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
                     
-                        }                              
+                       // }                              
                     
                     items.push_back(TransactionItemDetail{address, amount, memo});
                     total_amount = total_amount + amount;
                 }
+                
 
                 {
                      QList<QString> addresses;
@@ -986,6 +989,7 @@ void Controller::refreshTransactions() {
 
                 }else{ contact = "";}
                 
+                }
               //  position = it["position"].get<json::number_integer_t>();
 
                     ChatItem item = ChatItem(
@@ -999,9 +1003,10 @@ void Controller::refreshTransactions() {
                                 txid,
                                 false
                             );
-
+    qDebug()<<"Kontaktname : " <<contact;
+                                qDebug()<<"Memo : " <<memo;
                     DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
-                 } 
+                // } 
             }
             
         }
