@@ -1,3 +1,6 @@
+// Copyright 2019-2020 The Hush developers
+// GPLv3
+
 #include "Chat.h"
 #include "../addressbook.h"
 #include "../DataStore/DataStore.h"
@@ -23,9 +26,11 @@ void Chat::renderChatBox(Ui::MainWindow *ui, QListView *view)
             {
 
                 QStandardItem *Items = new QStandardItem(c.second.toChatLine());
-                Items->setData("Outgoing", Qt::UserRole + 1);
+
+                Items->setData(OUTGOING, Qt::UserRole + 1);
                 chat->appendRow(Items);
-                ui->listChat->setModel(chat);
+                ui->listChat->setModel(chat);      
+       
             }
             else
             {
@@ -39,7 +44,7 @@ void Chat::renderChatBox(Ui::MainWindow *ui, QListView *view)
 
             {
                 QStandardItem *Items1 = new QStandardItem(c.second.toChatLine());
-                Items1->setData("Incoming", Qt::UserRole + 1);
+                Items1->setData(INCOMING, Qt::UserRole + 1);
                 chat->appendRow(Items1);
                 ui->listChat->setModel(chat);
             }

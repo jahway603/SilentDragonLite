@@ -36,6 +36,11 @@
         <file>res/upload.png</file>
         <file>res/upload.svg</file>
         <file>res/message-icon.svg</file>
+        <file>res/lock.svg</file>
+        <file>res/lock.png</file>
+        <file>res/lock_green.svg</file>
+        <file>res/lock_blue.svg</file>
+        <file>res/unlocked.svg</file>
     </qresource>
     <qresource prefix="/img">
         <file>res/hushdlogo.gif</file>

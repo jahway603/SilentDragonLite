@@ -1,3 +1,6 @@
+// Copyright 2019-2020 The Hush developers
+// GPLv3
+
 #ifndef CHATMODEL_H
 #define CHATMODEL_H
 #include <QString>

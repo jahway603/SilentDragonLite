@@ -1,5 +1,6 @@
 // Copyright 2019-2020 The Hush developers
 // GPLv3
+
 #include "contactmodel.h"
 #include "addressbook.h"
 #include "mainwindow.h"
