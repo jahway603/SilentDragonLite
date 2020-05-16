@@ -373,38 +373,29 @@ void AddressBook::readFromStorage()
         in >> version;
         qDebug() << "Detected old addressbook format";
             // Convert old addressbook format v1 to v2
-        if(in.status() == QDataStream::ReadCorruptData)
+                QList<QList<QString>> stuff;
+        in >> stuff;
+        //qDebug() << "Stuff: " << stuff;
+        for (int i=0; i < stuff.size(); i++) 
         {
-           qDebug() << "Error reading contacts! ---> Your hush contacts from disk maybe corrupted";
-           QString filepath = QFileInfo(AddressBook::writeableFile()).absolutePath() + QString("/");
-           QFile::rename(filepath +  QString("addresslabels.dat"), filepath +  QString("addresslabels.dat-corrupted"));
-           QMessageBox::critical(
-                nullptr, 
-                QObject::tr("Error reading contacts!"), 
-                QObject::tr("Your hush contacts from disk maybe corrupted"), 
-                QMessageBox::Ok
-            );
+                //qDebug() << "0:" << stuff[i][0];
+            //qDebug() << "1:" << stuff[i][1];
+            //qDebug() << "2:" << stuff[i][2];
+            ContactItem contact = ContactItem(stuff[i][0],stuff[i][1], stuff[i][2], stuff[i][3],stuff[i][4]);
+            //qDebug() << "contact=" << contact.toQTString();
+            allLabels.push_back(contact);
         }
-        else
-        {
-            qDebug() << "Read " << version << " Hush contacts from disk...";
-            QList<QList<QString>> stuff;
-            in >> stuff;
-            for (int i=0; i < stuff.size(); i++) 
-            {
-                ContactItem contact = ContactItem(stuff[i][0],stuff[i][1], stuff[i][2], stuff[i][3],stuff[i][4]);
-                allLabels.push_back(contact);
-            }
 
-            qDebug() << "Hush contacts readed from disk...";
-        }
+        {
+          qDebug() << "Read " << version << " Hush contacts from disk...";
         
         file.close();
     }
-    else 
+    }else{ 
     {
         qDebug() << "No Hush contacts found on disk!";
     }
+}
 }
 
 void AddressBook::writeToStorage() 
