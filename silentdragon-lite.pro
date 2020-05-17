@@ -75,11 +75,14 @@ SOURCES += \
     src/DataStore/DataStore.cpp \
     src/DataStore/ChatDataStore.cpp \
     src/DataStore/SietchDataStore.cpp \
+    src/DataStore/ContactDataStore.cpp \
     src/Model/ChatItem.cpp \
     src/Model/ContactRequestChatItem.cpp \
     src/Model/ContactItem.cpp \
     src/Chat/Helper/ChatIDGenerator.cpp \
-    src/Chat/Chat.cpp
+    src/Chat/Chat.cpp \
+    src/FileSystem/FileSystem.cpp \
+    src/Crypto/FileEncryption.cpp
 
 HEADERS += \
     src/firsttimewizard.h \

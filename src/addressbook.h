@@ -3,6 +3,7 @@
 
 #include "precompiled.h"
 #include "contactmodel.h"
+#include "FileSystem/FileSystem.h"
 
 class MainWindow;
 

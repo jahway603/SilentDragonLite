@@ -32,7 +32,15 @@ ChatItem ChatDataStore::getData(QString key)
 
 QString ChatDataStore::dump()
 {
-	return "";
+	json chats;
+    chats["count"] = this->data.size();
+    json j = {};
+    for (auto &c: this->data)
+    {
+        j.push_back(c.second.toJson());
+    }
+    chats["chatitems"] = j;
+	return QString::fromStdString(chats.dump());
 }
 
 std::map<QString, ChatItem> ChatDataStore::getAllRawChatItems()
