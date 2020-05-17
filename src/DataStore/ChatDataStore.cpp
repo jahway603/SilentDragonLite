@@ -40,10 +40,7 @@ QString ChatDataStore::dump()
         j.push_back(c.second.toJson());
     }
     chats["chatitems"] = j;
-
-    std::string dump = chats.dump(4);
-    qDebug() << dump.c_str();
-	return "";
+	return QString::fromStdString(chats.dump());
 }
 
 std::map<QString, ChatItem> ChatDataStore::getAllRawChatItems()

@@ -406,11 +406,16 @@ void AddressBook::readFromStorage()
         DataStore::getContactDataStore()->setData(item.getCid(), item);
     }
     DataStore::getContactDataStore()->dump(); 
+    AddressBook::writeToStorage();
 }
 
 void AddressBook::writeToStorage() 
 {
-    FileSystem::getInstance()->writeContacts(AddressBook::writeableFile(), allLabels);
+    //FileSystem::getInstance()->writeContacts(AddressBook::writeableFile(), DataStore::getContactDataStore()->dump());
+    
+    FileSystem::getInstance()->writeContactsOldFormat(AddressBook::writeableFile(), allLabels);
+    
+    
     /*QFile file(AddressBook::writeableFile());
     file.open(QIODevice::ReadWrite | QIODevice::Truncate);
     QDataStream out(&file);   // we will serialize the data into the file

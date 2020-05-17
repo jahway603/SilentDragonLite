@@ -21,6 +21,51 @@ FileSystem* FileSystem::getInstance()
 
 QList<ContactItem> FileSystem::readContacts(QString file)
 {
+    return this->readContactsOldFormat(file); //will be called if addresses are in the old dat-format
+}
+
+void FileSystem::writeContacts(QString file, QString data)
+{
+    qDebug() << data;
+    QFile _file(file);
+    if (_file.exists()) 
+    {
+        std::ofstream f(file.toStdString().c_str());
+        if(f.is_open())
+        {
+            f << data.toStdString();
+        }
+
+        f.close();
+    }
+    else
+    {
+        qInfo() << file << "not exist";
+    }    
+}
+
+void FileSystem::writeContactsOldFormat(QString file, QList<ContactItem> contacts)
+{
+    QFile _file(file);
+    _file.open(QIODevice::ReadWrite | QIODevice::Truncate);
+    QDataStream out(&_file);   // we will serialize the data into the file
+    QList<QList<QString>> _contacts;
+    for(auto &item: contacts)
+    {
+        QList<QString> c;
+        c.push_back(item.getName());
+        c.push_back(item.getPartnerAddress());
+        c.push_back(item.getMyAddress());
+        c.push_back(item.getCid());
+        c.push_back(item.getAvatar());
+        _contacts.push_back(c);
+    }
+    out << QString("v1") << _contacts;
+    _file.close();
+}
+
+QList<ContactItem> FileSystem::readContactsOldFormat(QString file)
+{
     QList<ContactItem> contacts;
     QFile _file(file);
     if (_file.exists()) 
@@ -49,26 +94,6 @@ QList<ContactItem> FileSystem::readContacts(QString file)
     }
 
     return contacts;
-}
-
-void FileSystem::writeContacts(QString file, QList<ContactItem> contacts)
-{
-    QFile _file(file);
-    _file.open(QIODevice::ReadWrite | QIODevice::Truncate);
-    QDataStream out(&_file);   // we will serialize the data into the file
-    QList<QList<QString>> _contacts;
-    for(auto &item: contacts)
-    {
-        QList<QString> c;
-        c.push_back(item.getName());
-        c.push_back(item.getPartnerAddress());
-        c.push_back(item.getMyAddress());
-        c.push_back(item.getCid());
-        c.push_back(item.getAvatar());
-        _contacts.push_back(c);
-    }
-    out << QString("v1") << _contacts;
-    _file.close();
 }
 
 FileSystem::~FileSystem()
