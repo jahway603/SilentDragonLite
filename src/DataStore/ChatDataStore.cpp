@@ -32,6 +32,17 @@ ChatItem ChatDataStore::getData(QString key)
 
 QString ChatDataStore::dump()
 {
+	json chats;
+    chats["count"] = this->data.size();
+    json j = {};
+    for (auto &c: this->data)
+    {
+        j.push_back(c.second.toJson());
+    }
+    chats["chatitems"] = j;
+
+    std::string dump = chats.dump(4);
+    qDebug() << dump.c_str();
 	return "";
 }
 

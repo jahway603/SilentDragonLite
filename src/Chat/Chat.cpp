@@ -12,7 +12,7 @@ void Chat::renderChatBox(Ui::MainWindow *ui, QListView *view)
     //    ui->lcdNumber->setStyleSheet("background-color: red");
     //    ui->lcdNumber->setPalette(Qt::red);
     //    ui->lcdNumber->display("1");
-
+    DataStore::getChatDataStore()->dump(); // test to see if the chat items in datastore are correctly dumped to json
     for (auto &p : AddressBook::getInstance()->getAllAddressLabels())
     {
         for (auto &c : DataStore::getChatDataStore()->getAllMemos())

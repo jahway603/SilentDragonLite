@@ -64,3 +64,14 @@ QString ContactItem::toQTString()
 {
     return _name + "|" + _partnerAddress + "|" + _myAddress + "|" + _cid + "|" + _avatar;
 }
+
+json ContactItem::toJson()
+{
+    json j;
+    j["_myAddress"] = _myAddress.toStdString();
+    j["_partnerAddress"] = _partnerAddress.toStdString();
+    j["_name"] = _name.toStdString();
+    j["_cid"] = _cid.toStdString();
+    j["_avatar"] = _avatar.toStdString();
+    return j;
+}

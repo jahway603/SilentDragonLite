@@ -75,6 +75,7 @@ SOURCES += \
     src/DataStore/DataStore.cpp \
     src/DataStore/ChatDataStore.cpp \
     src/DataStore/SietchDataStore.cpp \
+    src/DataStore/ContactDataStore.cpp \
     src/Model/ChatItem.cpp \
     src/Model/ContactRequestChatItem.cpp \
     src/Model/ContactItem.cpp \

@@ -5,6 +5,7 @@
 #define CHATITEM_H
 
 #include <QString>
+using json = nlohmann::json;
 
 class ChatItem
 {
@@ -45,6 +46,7 @@ class ChatItem
         void setConfirmations(int confirmations);
         void toggleOutgo();
         QString toChatLine();
+        json toJson();
         ~ChatItem();
 };
 

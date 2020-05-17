@@ -7,6 +7,7 @@
 #include "settings.h"
 #include "mainwindow.h"
 #include "controller.h"
+#include "DataStore/DataStore.h"
 #include "FileSystem/FileSystem.h"
 
 
@@ -398,6 +399,13 @@ void AddressBook::readFromStorage()
         }
     }*/
     allLabels = FileSystem::getInstance()->readContacts(AddressBook::writeableFile());
+
+    // test to see if the contact items in datastore are correctly dumped to json
+    for(ContactItem item: allLabels)
+    {
+        DataStore::getContactDataStore()->setData(item.getCid(), item);
+    }
+    DataStore::getContactDataStore()->dump(); 
 }
 
 void AddressBook::writeToStorage() 
