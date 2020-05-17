@@ -22,6 +22,23 @@ FileSystem* FileSystem::getInstance()
 QList<ContactItem> FileSystem::readContacts(QString file)
 {
     return this->readContactsOldFormat(file); //will be called if addresses are in the old dat-format
+
+    QFile _file(file);
+    if (_file.exists()) 
+    {
+        std::ifstream f(file.toStdString().c_str(), std::ios::binary);
+        if(f.is_open())
+        {
+            std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(f), {});
+            //todo covert to string to use is as json to feed the data store in addressbook
+        }
+
+        f.close();
+    }
+    else
+    {
+        qInfo() << file << "not exist";
+    }
 }
 
 void FileSystem::writeContacts(QString file, QString data)
@@ -33,6 +50,8 @@ void FileSystem::writeContacts(QString file, QString data)
         std::ofstream f(file.toStdString().c_str());
         if(f.is_open())
         {
+            //ENCRYPT HERE
+
             f << data.toStdString();
         }
 
