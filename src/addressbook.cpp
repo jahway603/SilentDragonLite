@@ -7,6 +7,7 @@
 #include "settings.h"
 #include "mainwindow.h"
 #include "controller.h"
+#include "FileSystem/FileSystem.h"
 
 
 AddressBookModel::AddressBookModel(QTableView *parent) : QAbstractTableModel(parent) 
@@ -362,7 +363,7 @@ AddressBook::AddressBook()
 
 void AddressBook::readFromStorage() 
 {
-    QFile file(AddressBook::writeableFile());
+    /*QFile file(AddressBook::writeableFile());
 
     if (file.exists()) 
     {
@@ -392,15 +393,17 @@ void AddressBook::readFromStorage()
         file.close();
     }
     }else{ 
-    {
-        qDebug() << "No Hush contacts found on disk!";
-    }
-}
+        {
+            qDebug() << "No Hush contacts found on disk!";
+        }
+    }*/
+    allLabels = FileSystem::getInstance()->readContacts(AddressBook::writeableFile());
 }
 
 void AddressBook::writeToStorage() 
 {
-    QFile file(AddressBook::writeableFile());
+    FileSystem::getInstance()->writeContacts(AddressBook::writeableFile(), allLabels);
+    /*QFile file(AddressBook::writeableFile());
     file.open(QIODevice::ReadWrite | QIODevice::Truncate);
     QDataStream out(&file);   // we will serialize the data into the file
     QList<QList<QString>> contacts;
@@ -415,7 +418,7 @@ void AddressBook::writeToStorage()
         contacts.push_back(c);
     }
     out << QString("v1") << contacts;
-    file.close();
+    file.close();*/
 }
 
 QString AddressBook::writeableFile() 
