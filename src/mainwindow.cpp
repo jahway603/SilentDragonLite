@@ -1011,52 +1011,45 @@ void MainWindow::setupchatTab() {
        
   auto theme = Settings::getInstance()->get_theme_name();
         if (theme == "dark" || theme == "midnight") {
-            QPixmap send(":/icons/res/send-new-white.png");
+            QPixmap send(":/icons/res/send-white.png");
             QIcon sendIcon(send);
             ui->sendChatButton->setIcon(sendIcon);
 
-            QPixmap notification(":/icons/res/notification.png");
+            QPixmap notification(":/icons/res/requestWhite.png");
             QIcon notificationIcon(notification);
             ui->pushContact->setIcon(notificationIcon);
 
-            QPixmap addContact(":/icons/res/add_contact.png");
+            QPixmap addContact(":/icons/res/addContactWhite.png");
             QIcon addContactIcon(addContact);
             ui->safeContactRequest->setIcon(addContactIcon);
 
-            QPixmap newAddr(":/icons/res/add_contact.png");
+            QPixmap newAddr(":/icons/res/getAddrWhite.png");
             QIcon addnewAddrIcon(newAddr);
             ui->givemeZaddr->setIcon(addnewAddrIcon);
 
-            QPixmap sendContact(":/icons/res/upload.png");
-            QIcon addSendContactIcon(sendContact);
-            ui->sendContact->setIcon(addSendContactIcon);
         }else{
-            QPixmap pixmap(":/icons/res/send-new.svg");
-            QIcon sendIcon(pixmap);
+            
+            QPixmap send(":/icons/res/sendBlack.png");
+            QIcon sendIcon(send);
             ui->sendChatButton->setIcon(sendIcon);
 
-            QPixmap notification(":/icons/res/notification.svg");
+            QPixmap notification(":/icons/res/requestBlack.png");
             QIcon notificationIcon(notification);
             ui->pushContact->setIcon(notificationIcon);
 
-            QPixmap addContact(":/icons/res/add_contact.svg");
+            QPixmap addContact(":/icons/res/addContactBlack.png");
             QIcon addContactIcon(addContact);
-            ui->safeContactRequest->setIcon(addContact);
+            ui->safeContactRequest->setIcon(addContactIcon);
 
-            QPixmap newAddr(":/icons/res/add_contact.svg");
+            QPixmap newAddr(":/icons/res/getAddrBlack.png");
             QIcon addnewAddrIcon(newAddr);
             ui->givemeZaddr->setIcon(addnewAddrIcon);
-
-            QPixmap sendContact(":/icons/res/upload.svg");
-            QIcon addSendContactIcon(sendContact);
-            ui->sendContact->setIcon(addSendContactIcon);
         }
 
   
 
 
     QObject::connect(ui->sendChatButton, &QPushButton::clicked, this, &MainWindow::sendChatButton);
-    QObject::connect(ui->sendContact, &QPushButton::clicked, this, &MainWindow::ContactRequest);
     QObject::connect(ui->safeContactRequest, &QPushButton::clicked, this, &MainWindow::addContact);
     QObject::connect(ui->pushContact, &QPushButton::clicked, this , &MainWindow::renderContactRequest);
 

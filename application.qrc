@@ -41,6 +41,15 @@
         <file>res/lock_green.svg</file>
         <file>res/lock_blue.svg</file>
         <file>res/unlocked.svg</file>
+        <file>res/getAddrWhite.png</file>
+        <file>res/send-white.png</file>
+        <file>res/requestWhite.png</file>
+        <file>res/addContactWhite.png</file>
+        <file>res/getAddrBlack.png</file>
+        <file>res/sendBlack.png</file>
+        <file>res/requestBlack.png</file>
+        <file>res/addContactBlack.png</file>
+       
     </qresource>
     <qresource prefix="/img">
         <file>res/hushdlogo.gif</file>

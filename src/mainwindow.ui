@@ -1409,8 +1409,20 @@
           <height>81</height>
          </rect>
         </property>
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
         <property name="styleSheet">
          <string notr="true">font: 11pt &quot;Noto Color Emoji&quot;;</string>
+        </property>
+        <property name="autoFormatting">
+         <set>QTextEdit::AutoNone</set>
+        </property>
+        <property name="lineWrapMode">
+         <enum>QTextEdit::FixedColumnWidth</enum>
+        </property>
+        <property name="lineWrapColumnOrWidth">
+         <number>80</number>
         </property>
        </widget>
        <widget class="QLabel" name="contactNameMemo">
@@ -1435,7 +1447,7 @@
        <widget class="QPushButton" name="sendChatButton">
         <property name="geometry">
          <rect>
-          <x>1170</x>
+          <x>1160</x>
           <y>560</y>
           <width>91</width>
           <height>81</height>
@@ -1455,12 +1467,12 @@
         </property>
         <property name="icon">
          <iconset>
-          <normalon>:/icons/res/send-new-white.png</normalon>
+          <normalon>:/icons/res/sendBlack.png</normalon>
          </iconset>
         </property>
         <property name="iconSize">
          <size>
-          <width>41</width>
+          <width>50</width>
           <height>49</height>
          </size>
         </property>
@@ -1533,18 +1545,21 @@
           <height>0</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>Add  a new contact</string>
+        </property>
         <property name="text">
          <string/>
         </property>
         <property name="icon">
          <iconset theme="Dark">
-          <normalon>:/icons/res/add_contact.png</normalon>
+          <normalon>:/icons/res/addContactBlack.png</normalon>
          </iconset>
         </property>
         <property name="iconSize">
          <size>
-          <width>43</width>
-          <height>49</height>
+          <width>50</width>
+          <height>45</height>
          </size>
         </property>
         <property name="flat">
@@ -1554,44 +1569,9 @@
        <widget class="QPushButton" name="pushContact">
         <property name="geometry">
          <rect>
-          <x>10</x>
-          <y>30</y>
-          <width>41</width>
-          <height>41</height>
-         </rect>
-        </property>
-        <property name="baseSize">
-         <size>
-          <width>100</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="autoFillBackground">
-         <bool>false</bool>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="../application.qrc">
-          <normaloff>:/icons/res/notification.png</normaloff>:/icons/res/notification.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>33</width>
-          <height>35</height>
-         </size>
-        </property>
-        <property name="flat">
-         <bool>true</bool>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="sendContact">
-        <property name="geometry">
-         <rect>
-          <x>270</x>
-          <y>510</y>
-          <width>51</width>
+          <x>50</x>
+          <y>20</y>
+          <width>61</width>
           <height>51</height>
          </rect>
         </property>
@@ -1601,18 +1581,23 @@
           <height>0</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>Incoming contact request</string>
+        </property>
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string/>
         </property>
         <property name="icon">
-         <iconset theme="Dark">
-          <normalon>:/icons/res/add_contact.png</normalon>
-         </iconset>
+         <iconset resource="../application.qrc">
+          <normaloff>:/icons/res/requestBlack.png</normaloff>:/icons/res/requestBlack.png</iconset>
         </property>
         <property name="iconSize">
          <size>
-          <width>43</width>
-          <height>49</height>
+          <width>50</width>
+          <height>45</height>
          </size>
         </property>
         <property name="flat">
@@ -1622,23 +1607,26 @@
        <widget class="QPushButton" name="givemeZaddr">
         <property name="geometry">
          <rect>
-          <x>60</x>
-          <y>30</y>
-          <width>111</width>
-          <height>41</height>
+          <x>210</x>
+          <y>20</y>
+          <width>61</width>
+          <height>51</height>
          </rect>
         </property>
+        <property name="toolTip">
+         <string>Get a new Address</string>
+        </property>
         <property name="text">
-         <string> New Addr</string>
+         <string/>
         </property>
         <property name="icon">
          <iconset resource="../application.qrc">
-          <normaloff>:/icons/res/add_contact.png</normaloff>:/icons/res/add_contact.png</iconset>
+          <normaloff>:/icons/res/getAddrBlack.png</normaloff>:/icons/res/getAddrBlack.png</iconset>
         </property>
         <property name="iconSize">
          <size>
-          <width>33</width>
-          <height>35</height>
+          <width>50</width>
+          <height>45</height>
          </size>
         </property>
         <property name="flat">
@@ -1648,8 +1636,8 @@
        <widget class="QLabel" name="label_40">
         <property name="geometry">
          <rect>
-          <x>40</x>
-          <y>20</y>
+          <x>90</x>
+          <y>10</y>
           <width>21</width>
           <height>16</height>
          </rect>
@@ -2042,7 +2030,7 @@
   <customwidget>
    <class>AddressCombo</class>
    <extends>QComboBox</extends>
-   <header location="global">addresscombo.h</header>
+   <header>addresscombo.h</header>
   </customwidget>
   <customwidget>
    <class>QRCodeLabel</class>
