@@ -83,11 +83,8 @@ void MainWindow::renderContactRequest(){
 
        QStandardItemModel* contactRequest = new QStandardItemModel();
 
-       //    auto labels = AddressBook::getInstance()->getAllAddressLabels();
             for (auto &c : DataStore::getChatDataStore()->getAllNewContactRequests())
 
-
-         //  if (labels.adress() != c.second.getRequestZaddr())
             {
 
                 QStandardItem* Items = new QStandardItem(c.second.getAddress());
@@ -95,17 +92,20 @@ void MainWindow::renderContactRequest(){
                 requestContact.requestContact->setModel(contactRequest);
                 requestContact.requestContact->show();
             }
-            QStandardItemModel* contactRequestOld = new QStandardItemModel();
 
+            QStandardItemModel* contactRequestOld = new QStandardItemModel();
+             for (auto &p : AddressBook::getInstance()->getAllAddressLabels())
               for (auto &c : DataStore::getChatDataStore()->getAllOldContactRequests())
             {
-
+               if (p.getPartnerAddress() == c.second.getRequestZaddr())
+               {
                 QStandardItem* Items = new QStandardItem(c.second.getAddress());
                 contactRequestOld->appendRow(Items);
                 requestContact.requestContactOld->setModel(contactRequestOld);
                 requestContact.requestContactOld->show();
+               }else{}
             }
-        //}
+       
 
         QObject::connect(requestContact.requestContact, &QTableView::clicked, [&] () {
 
@@ -115,6 +115,33 @@ void MainWindow::renderContactRequest(){
         QStandardItemModel* contactMemo = new QStandardItemModel();
            
         if  ((c.second.isOutgoing() == false) && (label_contact == c.second.getAddress()) && (c.second.getType() != "Cont"))
+        
+        {
+
+          QStandardItem* Items = new QStandardItem(c.second.getMemo());
+             contactMemo->appendRow(Items);
+            requestContact.requestMemo->setModel(contactMemo);   
+            requestContact.requestMemo->show();
+           
+
+            requestContact.requestZaddr->setText(c.second.getRequestZaddr());
+            requestContact.requestCID->setText(c.second.getCid());
+            requestContact.requestMyAddr->setText(c.second.getAddress());
+            }else{}
+        }
+    
+    
+            
+   });
+
+   QObject::connect(requestContact.requestContactOld, &QTableView::clicked, [&] () {
+
+    for (auto &c : DataStore::getChatDataStore()->getAllRawChatItems()){
+        QModelIndex index = requestContact.requestContactOld->currentIndex();
+        QString label_contactold = index.data(Qt::DisplayRole).toString();
+        QStandardItemModel* contactMemo = new QStandardItemModel();
+           
+        if  ((c.second.isOutgoing() == false) && (label_contactold == c.second.getAddress()) && (c.second.getType() != "Cont"))
         
         {
 
@@ -174,6 +201,11 @@ void MainWindow::renderContactRequest(){
     });
 
  dialog.exec();
+
+ rpc->refreshContacts(
+            ui->listContactWidget
+            
+        );
 }
 
 void ChatModel::addCid(QString tx, QString cid)
