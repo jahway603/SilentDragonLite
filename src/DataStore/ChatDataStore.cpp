@@ -52,11 +52,14 @@ std::map<QString, ChatItem> ChatDataStore::getAllRawChatItems()
 std::map<QString, ChatItem> ChatDataStore::getAllNewContactRequests()
 {
     std::map<QString, ChatItem> filteredItems;
+  
     for(auto &c: this->data)
     {
         if (
             (c.second.isOutgoing() == false) &&
-            (c.second.getType() == "cont")  
+            (c.second.getType() == "Cont")  &&
+            (c.second.getContact() == "")
+            
            
         ) 
         {
@@ -74,7 +77,7 @@ std::map<QString, ChatItem> ChatDataStore::getAllOldContactRequests()
     {
         if (
             (c.second.isOutgoing() == false) &&
-            (c.second.getType() == "cont") &&  
+            (c.second.getType() == "Cont") &&  
             (p.getPartnerAddress() == c.second.getRequestZaddr())
         ) 
         {

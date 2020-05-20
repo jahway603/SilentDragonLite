@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>780</width>
-    <height>416</height>
+    <width>777</width>
+    <height>427</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Send a contact request</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="2" colspan="2">
+   <item row="0" column="2">
     <widget class="QLabel" name="label_6">
      <property name="text">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;Choose a avatar for your contact :&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -185,9 +185,6 @@
    <item row="6" column="0">
     <widget class="QLineEdit" name="myzaddr"/>
    </item>
-   <item row="6" column="1" rowspan="3" colspan="3">
-    <widget class="QTextEdit" name="memorequest"/>
-   </item>
    <item row="7" column="0">
     <widget class="QLabel" name="label_5">
      <property name="text">
@@ -234,13 +231,6 @@
      </property>
     </widget>
    </item>
-   <item row="9" column="3">
-    <widget class="QPushButton" name="sendcontactrequest">
-     <property name="text">
-      <string>Send Contact</string>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <resources/>
@@ -265,7 +255,7 @@
    <sender>sendRequestButton</sender>
    <signal>clicked()</signal>
    <receiver>Dialog</receiver>
-   <slot>update()</slot>
+   <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>536</x>

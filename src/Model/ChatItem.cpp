@@ -144,7 +144,7 @@ QString ChatItem::toChatLine()
 
     }
 
-    QString line = QString("<small style='background: rgba(255,255,255,0.1);'>") + myDateTime.toString("dd.MM.yyyy hh:mm");
+    QString line = QString("<small>") + myDateTime.toString("dd.MM.yyyy hh:mm");
     line += QString(lock) + QString("</small>");
     line += QString("<p>") + _memo.toHtmlEscaped() + QString("</p>");
     return line;

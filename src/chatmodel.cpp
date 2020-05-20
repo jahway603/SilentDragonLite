@@ -26,20 +26,6 @@ ChatModel::ChatModel(std::vector<ChatItem> chatItems)
    this->setItems(chatItems);
 }
 
-/*QString ChatModel::generateChatItemID(ChatItem item)
-{
-    QString key = QString::number(item.getTimestamp()) +  QString("-");
-    key += QString(QCryptographicHash::hash(
-        QString(
-            QString::number(item.getTimestamp()) +  
-            item.getAddress() + 
-            item.getContact() + 
-            item.getMemo()
-        ).toUtf8()
-        ,QCryptographicHash::Md5).toHex());
-    return key;
-}*/
-
 std::map<QString, ChatItem> ChatModel::getItems()
 {
     return this->chatItems;
@@ -81,10 +67,12 @@ void ChatModel::showMessages()
 {
     for(auto &c : this->chatItems)
     {
-        qDebug() << c.second.toChatLine();
+      //  qDebug() << c.second.toChatLine();
     }
           
 }
+
+
       
 void MainWindow::renderContactRequest(){
 
@@ -95,8 +83,11 @@ void MainWindow::renderContactRequest(){
 
        QStandardItemModel* contactRequest = new QStandardItemModel();
 
-    {
-            for (auto &c : DataStore::getChatDataStore()->getAllOldContactRequests())
+       //    auto labels = AddressBook::getInstance()->getAllAddressLabels();
+            for (auto &c : DataStore::getChatDataStore()->getAllNewContactRequests())
+
+
+         //  if (labels.adress() != c.second.getRequestZaddr())
             {
 
                 QStandardItem* Items = new QStandardItem(c.second.getAddress());
@@ -104,7 +95,17 @@ void MainWindow::renderContactRequest(){
                 requestContact.requestContact->setModel(contactRequest);
                 requestContact.requestContact->show();
             }
-        }
+            QStandardItemModel* contactRequestOld = new QStandardItemModel();
+
+              for (auto &c : DataStore::getChatDataStore()->getAllOldContactRequests())
+            {
+
+                QStandardItem* Items = new QStandardItem(c.second.getAddress());
+                contactRequestOld->appendRow(Items);
+                requestContact.requestContactOld->setModel(contactRequestOld);
+                requestContact.requestContactOld->show();
+            }
+        //}
 
         QObject::connect(requestContact.requestContact, &QTableView::clicked, [&] () {
 
@@ -113,7 +114,7 @@ void MainWindow::renderContactRequest(){
         QString label_contact = index.data(Qt::DisplayRole).toString();
         QStandardItemModel* contactMemo = new QStandardItemModel();
            
-        if  ((c.second.isOutgoing() == false) && (label_contact == c.second.getAddress()) && (c.second.getType() == "cont"))
+        if  ((c.second.isOutgoing() == false) && (label_contact == c.second.getAddress()) && (c.second.getType() != "Cont"))
         
         {
 
@@ -283,7 +284,8 @@ Tx MainWindow::createTxFromChatPage() {
      
 
          qDebug() << "pushback chattx";
-   } }
+   } 
+   }
 
     tx.fee = Settings::getMinerFee();
 
@@ -440,16 +442,14 @@ void::MainWindow::addContact() {
 
             QString cid = QUuid::createUuid().toString(QUuid::WithoutBraces);
             request.cid->setText(cid);
-
-            
-
-            
-            
+                  
      QObject::connect(request.sendRequestButton, &QPushButton::clicked, [&] () {
 
-            
+         
+        
             QString cid = request.cid->text();
             auto addr = request.zaddr->text().trimmed();
+            QString getrequest = addr;
             QString newLabel = request.labelRequest->text().trimmed();
             auto myAddr = request.myzaddr->text().trimmed();
 
@@ -494,27 +494,28 @@ void::MainWindow::addContact() {
             );
             return;
 
+
     });
+     
+
+  //   QObject::connect(request.sendRequestButton, &QPushButton::clicked, this, &MainWindow::ContactRequest);
        
    dialog.exec();
+       rpc->refreshContacts(
+            ui->listContactWidget
+            
+        );
 }
 
 
 
 // Create a Tx for a contact Request 
 Tx MainWindow::createTxForSafeContactRequest() {
-
-        Ui_Dialog request;
-    QDialog dialog(this);
-    request.setupUi(&dialog);
-    Settings::saveRestore(&dialog);
-
+   
 Tx tx; 
 
 {
              
-        
-    // For each addr/amt in the Chat tab
   {
        CAmount totalAmt;
         QString amtStr = "0";
@@ -525,28 +526,39 @@ Tx tx;
             totalAmt = totalAmt + amt;
 
         
-            QString cid = request.cid->text();
-            QString myAddr = request.myzaddr->text().trimmed();
-            QString type = "cont";
-            QString addr = request.zaddr->text().trimmed();    
+            for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
+
+            if (ui->contactNameMemo->text().trimmed() == c.getName()) {
      
-            QString hmemo= createHeaderMemo(type,cid,myAddr);
-            QString memo = request.memorequest->toPlainText().trimmed();
+            QString cid = c.getCid();
+            QString myAddr = c.getMyAddress();
+            QString type = "Cont";
+            QString addr = c.getPartnerAddress();
+           
+     
+        QString hmemo= createHeaderMemo(type,cid,myAddr);
+        QString memo = ui->memoTxtChat->toPlainText().trimmed();
+        
 
-            tx.toAddrs.push_back(ToFields{addr, amt, memo});
-            tx.toAddrs.push_back(ToFields{addr, amt, hmemo});
-            
+       // ui->memoSizeChat->setLenDisplayLabel();// Todo -> activate lendisplay for chat
+     
+     tx.toAddrs.push_back(ToFields{addr, amt, hmemo});
+     tx.toAddrs.push_back(ToFields{addr, amt, memo});
 
-                qDebug() << "pushback chattx";
-            
-     }
+     
+
+         qDebug() << "pushback chattx";
+   
     
       tx.fee = Settings::getMinerFee();
+
+        }
 }
      return tx;
 
      qDebug() << "RequestTx created";
 
+}
 }
 
 void MainWindow::ContactRequest() {
