@@ -1027,6 +1027,8 @@ void MainWindow::setupchatTab() {
             QIcon addnewAddrIcon(newAddr);
             ui->givemeZaddr->setIcon(addnewAddrIcon);
 
+            ui->memoTxtChat->setTextColor("White");
+
         }else{
             
             QPixmap send(":/icons/res/sendBlack.png");
@@ -1044,6 +1046,8 @@ void MainWindow::setupchatTab() {
             QPixmap newAddr(":/icons/res/getAddrBlack.png");
             QIcon addnewAddrIcon(newAddr);
             ui->givemeZaddr->setIcon(addnewAddrIcon);
+
+            ui->memoTxtChat->setTextColor("Black");
         }
 
   
@@ -1108,11 +1112,6 @@ void ChatMemoEdit::setMaxLen(int len) {
     this->maxlen = len;
     updateDisplay();
 }
-
-void ChatMemoEdit::setSendChatButton(QPushButton* button) {
-    this->sendChatButton = button;
-}
-
 
 void MainWindow::updateChat()
 {
