@@ -125,7 +125,7 @@ void MainWindow::renderContactRequest(){
             requestContact.requestMemo->setModel(contactMemo);   
             requestContact.requestMemo->show();
            
-
+            requestContact.requestCID->setText(c.second.getCid());
             requestContact.requestZaddr->setText(c.second.getRequestZaddr());
             requestContact.requestMyAddr->setText(c.second.getAddress());
             }else{}
@@ -617,7 +617,7 @@ Tx MainWindow::createTxForSafeContactRequest()
 
             QString hmemo= createHeaderMemo(type,cid,myAddr);
             QString memo = contactRequest.getMemo();
-            // ui->memoSizeChat->setLenDisplayLabel();// Todo -> activate lendisplay for chat
+
      
             tx.toAddrs.push_back(ToFields{addr, amt, hmemo});
             tx.toAddrs.push_back(ToFields{addr, amt, memo});

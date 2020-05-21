@@ -1506,16 +1506,16 @@
          </rect>
         </property>
         <property name="verticalScrollBarPolicy">
-         <enum>Qt::ScrollBarAlwaysOff</enum>
+         <enum>Qt::ScrollBarAsNeeded</enum>
         </property>
         <property name="horizontalScrollBarPolicy">
-         <enum>Qt::ScrollBarAlwaysOff</enum>
+         <enum>Qt::ScrollBarAsNeeded</enum>
         </property>
         <property name="sizeAdjustPolicy">
          <enum>QAbstractScrollArea::AdjustToContents</enum>
         </property>
         <property name="editTriggers">
-         <set>QAbstractItemView::NoEditTriggers</set>
+         <set>QAbstractItemView::AllEditTriggers</set>
         </property>
         <property name="resizeMode">
          <enum>QListView::Adjust</enum>
@@ -1533,11 +1533,23 @@
        <widget class="QPushButton" name="safeContactRequest">
         <property name="geometry">
          <rect>
-          <x>270</x>
-          <y>580</y>
+          <x>10</x>
+          <y>20</y>
           <width>51</width>
           <height>51</height>
          </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>51</width>
+          <height>51</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>51</width>
+          <height>51</height>
+         </size>
         </property>
         <property name="baseSize">
          <size>
@@ -1569,11 +1581,23 @@
        <widget class="QPushButton" name="pushContact">
         <property name="geometry">
          <rect>
-          <x>0</x>
+          <x>80</x>
           <y>20</y>
-          <width>61</width>
+          <width>51</width>
           <height>51</height>
          </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>51</width>
+          <height>51</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>51</width>
+          <height>51</height>
+         </size>
         </property>
         <property name="baseSize">
          <size>
@@ -1607,11 +1631,23 @@
        <widget class="QPushButton" name="givemeZaddr">
         <property name="geometry">
          <rect>
-          <x>70</x>
+          <x>150</x>
           <y>20</y>
-          <width>61</width>
+          <width>51</width>
           <height>51</height>
          </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>51</width>
+          <height>51</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>51</width>
+          <height>51</height>
+         </size>
         </property>
         <property name="toolTip">
          <string>Get a new Address</string>
@@ -1633,14 +1669,17 @@
          <bool>true</bool>
         </property>
        </widget>
-       <widget class="QLabel" name="memoSize">
+       <widget class="QLabel" name="memoSizeChat">
         <property name="geometry">
          <rect>
-          <x>1160</x>
-          <y>540</y>
+          <x>1140</x>
+          <y>640</y>
           <width>91</width>
           <height>17</height>
          </rect>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Sunken</enum>
         </property>
         <property name="text">
          <string notr="true">0 / 512</string>
@@ -1649,6 +1688,17 @@
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
+       <zorder>listContactWidget</zorder>
+       <zorder>label_39</zorder>
+       <zorder>contactNameMemo</zorder>
+       <zorder>contactNameMemo_3</zorder>
+       <zorder>safeContactRequest</zorder>
+       <zorder>pushContact</zorder>
+       <zorder>givemeZaddr</zorder>
+       <zorder>memoSizeChat</zorder>
+       <zorder>listChat</zorder>
+       <zorder>memoTxtChat</zorder>
+       <zorder>sendChatButton</zorder>
       </widget>
      </widget>
     </item>
@@ -1838,7 +1888,7 @@
   <customwidget>
    <class>ChatMemoEdit</class>
    <extends>QTextEdit</extends>
-   <header location="global">mainwindow.h</header>
+   <header>mainwindow.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

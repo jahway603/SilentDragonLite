@@ -1080,14 +1080,14 @@ void MainWindow::setupchatTab() {
    });
 
     
-ui->memoTxtChat->setLenDisplayLabel(ui->memoSize);// Todo -> activate lendisplay for chat
+ui->memoTxtChat->setLenDisplayLabel(ui->memoSizeChat);
 }
 
 
 
 void MainWindow::updateChat()
 {
-    rpc->refreshChat(ui->listChat,ui->memoSize);
+    rpc->refreshChat(ui->listChat,ui->memoSizeChat);
     rpc->refresh(true);
     
 

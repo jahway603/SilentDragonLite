@@ -50,9 +50,6 @@ void Chat::renderChatBox(Ui::MainWindow *ui, QListView *view, QLabel *label)
 {
     
     QStandardItemModel *chat = new QStandardItemModel();
-    //    ui->lcdNumber->setStyleSheet("background-color: red");
-    //    ui->lcdNumber->setPalette(Qt::red);
-    //    ui->lcdNumber->display("1");
     DataStore::getChatDataStore()->dump(); // test to see if the chat items in datastore are correctly dumped to json
     for (auto &p : AddressBook::getInstance()->getAllAddressLabels())
     {
@@ -63,7 +60,7 @@ void Chat::renderChatBox(Ui::MainWindow *ui, QListView *view, QLabel *label)
             if (
                 (p.getName() == ui->contactNameMemo->text().trimmed()) &&
                 (p.getPartnerAddress() == c.second.getAddress()) &&
-                (c.second.isOutgoing() == true))
+                (c.second.isOutgoing() == true)) 
             {
 
                 QStandardItem *Items = new QStandardItem(c.second.toChatLine());
@@ -81,8 +78,9 @@ void Chat::renderChatBox(Ui::MainWindow *ui, QListView *view, QLabel *label)
             if (
                 (p.getName() == ui->contactNameMemo->text().trimmed()) &&
                 (p.getMyAddress() == c.second.getAddress()) &&
-                (c.second.isOutgoing() == false))
-
+                (c.second.isOutgoing() == false) &&
+                (c.second.getCid() == p.getCid())
+                )
             {
                 QStandardItem *Items1 = new QStandardItem(c.second.toChatLine());
                 Items1->setData(INCOMING, Qt::UserRole + 1);

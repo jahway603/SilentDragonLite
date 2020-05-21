@@ -1009,7 +1009,7 @@ void Controller::refreshTransactions() {
 
          // Update model data, which updates the table view
         transactionsTableModel->replaceData(txdata);    
-        chat->renderChatBox(ui, ui->listChat,ui->memoSize);   
+        chat->renderChatBox(ui, ui->listChat,ui->memoSizeChat);   
       //  refreshContacts(
         //    ui->listContactWidget
             

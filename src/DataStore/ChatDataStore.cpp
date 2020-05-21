@@ -96,6 +96,7 @@ std::map<QString, ChatItem> ChatDataStore::getAllMemos()
 
             (c.second.getMemo().startsWith("{") == false) &&
             (c.second.getMemo().isEmpty() == false) 
+           
                
         ) 
         {
