@@ -137,10 +137,10 @@ QString ChatItem::toChatLine()
     myDateTime.setTime_t(_timestamp);
 
     if (_confirmations == 0){
-         lock = "<b> <img src=':/icons/res/unlocked.svg'><b>";
+         lock = "<b> <img src=':/icons/res/unlocked.png'><b>";
         }else{
 
-        lock = "<b> <img src=':/icons/res/lock_green.svg'><b>";
+        lock = "<b> <img src=':/icons/res/lock_green.png'><b>";
 
     }
 

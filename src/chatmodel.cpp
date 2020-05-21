@@ -126,6 +126,7 @@ void MainWindow::renderContactRequest(){
             requestContact.requestMemo->show();
            
             requestContact.requestCID->setText(c.second.getCid());
+            requestContact.requestCID->setVisible(false);
             requestContact.requestZaddr->setText(c.second.getRequestZaddr());
             requestContact.requestMyAddr->setText(c.second.getAddress());
             }else{}
@@ -152,6 +153,7 @@ void MainWindow::renderContactRequest(){
             requestContact.requestMemo->show();
            
             requestContact.requestCID->setText(c.second.getCid());
+            requestContact.requestCID->setVisible(false);
             requestContact.requestZaddr->setText(c.second.getRequestZaddr());
             requestContact.requestMyAddr->setText(c.second.getAddress());
             }else{}
