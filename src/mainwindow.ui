@@ -1400,7 +1400,7 @@
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline;&quot;&gt;Contactlist&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
-       <widget class="QTextEdit" name="memoTxtChat">
+       <widget class="ChatMemoEdit" name="memoTxtChat">
         <property name="geometry">
          <rect>
           <x>340</x>
@@ -1633,6 +1633,22 @@
          <bool>true</bool>
         </property>
        </widget>
+       <widget class="QLabel" name="memoSize">
+        <property name="geometry">
+         <rect>
+          <x>1160</x>
+          <y>540</y>
+          <width>91</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string notr="true">0 / 512</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
       </widget>
      </widget>
     </item>
@@ -1818,6 +1834,11 @@
    <class>FilledIconLabel</class>
    <extends>QLabel</extends>
    <header>fillediconlabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ChatMemoEdit</class>
+   <extends>QTextEdit</extends>
+   <header location="global">mainwindow.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

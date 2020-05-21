@@ -58,6 +58,8 @@ public:
     void stopWebsocket();
     void saveContact();
     void saveandsendContact();
+    void setMaxLen(int len);
+    void updateDisplay();
     
 
     void balancesReady();
@@ -108,7 +110,7 @@ private:
     void setuphushdTab();
     void setupchatTab();
     void renderContactRequest();
-    void setLenDisplayLabel(QLabel* label);
+  //  void setLenDisplayLabel(QLabel* label);
     
     void updateContacts();
     void updateChat();
@@ -130,9 +132,11 @@ private:
 
     void cancelButton();
     void sendButton();
-    void sendChatButton();
+    void sendChat();
     void addContact();
     void ContactRequest();
+    
+    
     void addAddressSection();
     void maxAmountChecked(int checked);
 
@@ -171,6 +175,7 @@ private:
     WSServer*       wsserver = nullptr;
     WormholeClient* wormhole = nullptr;
 
+
     Controller*         rpc             = nullptr;
     
     QCompleter*         labelCompleter  = nullptr;
@@ -182,15 +187,14 @@ private:
     QMovie*      loadingMovie;
 };
 
-class ChatMemoEdit : public QPlainTextEdit
+class ChatMemoEdit : public QTextEdit
 {
 public:
     ChatMemoEdit(QWidget* parent);
 
     void setMaxLen(int len);
-    
-    void setSendChatButton(QPushButton* button);
-    void includeReplyTo(QString replyToAddress);
+    void setLenDisplayLabel(QLabel* label);
+    void SetSendChatButton(QPushButton* button);
     void updateDisplay();
 
 private:
@@ -198,5 +202,6 @@ private:
     QLabel*         lenDisplayLabel    = nullptr;
     QPushButton*    sendChatButton     = nullptr;
 };
+
 
 #endif // MAINWINDOW_H

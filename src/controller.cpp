@@ -1009,7 +1009,7 @@ void Controller::refreshTransactions() {
 
          // Update model data, which updates the table view
         transactionsTableModel->replaceData(txdata);    
-        chat->renderChatBox(ui, ui->listChat);   
+        chat->renderChatBox(ui, ui->listChat,ui->memoSize);   
       //  refreshContacts(
         //    ui->listContactWidget
             
@@ -1017,9 +1017,9 @@ void Controller::refreshTransactions() {
          });
 }
 
-void Controller::refreshChat(QListView *listWidget)
+void Controller::refreshChat(QListView *listWidget, QLabel *label)
 {
-    chat->renderChatBox(ui, listWidget);
+    chat->renderChatBox(ui, listWidget, label);
   
 }
 

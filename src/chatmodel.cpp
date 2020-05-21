@@ -308,7 +308,7 @@ Tx MainWindow::createTxFromChatPage() {
         QString memo = ui->memoTxtChat->toPlainText().trimmed();
         
 
-       // ui->memoSizeChat->setLenDisplayLabel();// Todo -> activate lendisplay for chat
+        
      
      tx.toAddrs.push_back(ToFields{addr, amt, hmemo});
      tx.toAddrs.push_back(ToFields{addr, amt, memo});
@@ -326,7 +326,7 @@ Tx MainWindow::createTxFromChatPage() {
      qDebug() << "ChatTx created";
 }
 
-void MainWindow::sendChatButton() {
+void MainWindow::sendChat() {
 
 ////////////////////////////Todo: Check if a Contact is selected//////////
 

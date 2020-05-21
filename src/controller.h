@@ -74,7 +74,7 @@ public:
     void refreshGBPCAP();
     void refreshAUDCAP();
     
-    void refreshChat(QListView *listWidget);
+    void refreshChat(QListView *listWidget, QLabel *label);
     void refreshContacts(QListView *listWidget);
     
     void executeStandardUITransaction(Tx tx); 

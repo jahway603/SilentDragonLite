@@ -50,6 +50,8 @@ MainWindow::MainWindow(QWidget *parent) :
      ui->memoTxtChat->setAutoFillBackground(false);
      ui->memoTxtChat->setPlaceholderText("Send Message");
      ui->memoTxtChat->setTextColor(Qt::white);
+     
+     
 
     // Status Bar
     setupStatusBar();
@@ -1053,7 +1055,7 @@ void MainWindow::setupchatTab() {
   
 
 
-    QObject::connect(ui->sendChatButton, &QPushButton::clicked, this, &MainWindow::sendChatButton);
+    QObject::connect(ui->sendChatButton, &QPushButton::clicked, this, &MainWindow::sendChat);
     QObject::connect(ui->safeContactRequest, &QPushButton::clicked, this, &MainWindow::addContact);
     QObject::connect(ui->pushContact, &QPushButton::clicked, this , &MainWindow::renderContactRequest);
 
@@ -1078,45 +1080,16 @@ void MainWindow::setupchatTab() {
    });
 
     
-
+ui->memoTxtChat->setLenDisplayLabel(ui->memoSize);// Todo -> activate lendisplay for chat
 }
 
-ChatMemoEdit::ChatMemoEdit(QWidget* parent) : QPlainTextEdit(parent) {
-    QObject::connect(this, &QPlainTextEdit::textChanged, this, &ChatMemoEdit::updateDisplay);
-}
 
-void ChatMemoEdit::updateDisplay() {
-    QString txt = this->toPlainText();
-    if (lenDisplayLabel)
-        lenDisplayLabel->setText(QString::number(txt.toUtf8().size()) + "/" + QString::number(maxlen));
-
-    if (txt.toUtf8().size() <= maxlen) {
-        // Everything is fine
-        if (sendChatButton)
-            sendChatButton->setEnabled(true);
-
-        if (lenDisplayLabel)
-            lenDisplayLabel->setStyleSheet("");
-    }
-    else {
-        // Overweight
-        if (sendChatButton)
-            sendChatButton->setEnabled(false);
-
-        if (lenDisplayLabel)
-            lenDisplayLabel->setStyleSheet("color: red;");
-    }
-}
-
-void ChatMemoEdit::setMaxLen(int len) {
-    this->maxlen = len;
-    updateDisplay();
-}
 
 void MainWindow::updateChat()
 {
-    rpc->refreshChat(ui->listChat);
+    rpc->refreshChat(ui->listChat,ui->memoSize);
     rpc->refresh(true);
+    
 
 }
 
