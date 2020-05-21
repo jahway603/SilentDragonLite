@@ -144,22 +144,35 @@ void AddressBook::open(MainWindow* parent, QLineEdit* target)
     // Connect the dialog's closing to updating the label address completor
     QObject::connect(&d, &QDialog::finished, [=] (auto) { parent->updateLabels(); });
 
+       
        Controller* rpc = parent->getRPC();
         bool sapling = true;
+        try 
+       {
         rpc->createNewZaddr(sapling, [=] (json reply) {
             QString myAddr = QString::fromStdString(reply.get<json::array_t>()[0]);
             QString message = QString("New Chat Address for your partner: ") + myAddr;
             QString cid = QUuid::createUuid().toString(QUuid::WithoutBraces);
+ 
+            rpc->refreshAddresses();
            
             parent->ui->listReceiveAddresses->insertItem(0, myAddr); 
             parent->ui->listReceiveAddresses->setCurrentIndex(0);
 
-            qDebug() << "new generated myAddr" << myAddr;
+            qDebug() << " new Addr in Addressbook" << myAddr;
             ab.cid->setText(cid);
             ab.addr_chat->setText(myAddr);
         });
-        model.updateUi(); //todo fix updating gui after adding 
-        //rpc->refresh(true);
+       }
+
+       catch(...)
+       {
+
+            
+            qDebug() << QString("Caught something nasty with myZaddr Addressbook");
+       }
+   
+       // model.updateUi(); //todo fix updating gui after adding 
 
     // If there is a target then make it the addr for the "Add to" button
     if (target != nullptr && Settings::isValidAddress(target->text())) 
