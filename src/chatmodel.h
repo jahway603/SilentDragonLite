@@ -16,6 +16,7 @@
 #include "settings.h"
 #include "camount.h"
 #include "Model/ChatItem.h"
+#include "Model/ContactRequest.h"
 #include "Chat/Helper/ChatDelegator.h"
 #include "Chat/Helper/ChatIDGenerator.h"
 

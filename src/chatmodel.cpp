@@ -16,6 +16,8 @@
 
 using namespace std; 
 
+ContactRequest contactRequest = ContactRequest();
+
 ChatModel::ChatModel(std::map<QString, ChatItem> chatItems)
 {
     this->chatItems = chatItems;
@@ -455,45 +457,38 @@ QString MainWindow::doSendChatTxValidations(Tx tx) {
     return "";
 }
 
-void::MainWindow::addContact() {
-    
- 
+void::MainWindow::addContact() 
+{
     Ui_Dialog request;
     QDialog dialog(this);
     request.setupUi(&dialog);
     Settings::saveRestore(&dialog);
-    
-        bool sapling = true;
-        rpc->createNewZaddr(sapling, [=] (json reply) {
-            QString myAddr = QString::fromStdString(reply.get<json::array_t>()[0]);
-            request.myzaddr->setText(myAddr);
-            ui->listReceiveAddresses->insertItem(0, myAddr); 
-            ui->listReceiveAddresses->setCurrentIndex(0);
-            qDebug() << "new generated myAddr" << myAddr;
-            });
+    bool sapling = true;
+    rpc->createNewZaddr(sapling, [=] (json reply) {
+        QString myAddr = QString::fromStdString(reply.get<json::array_t>()[0]);
+        request.myzaddr->setText(myAddr);
+        ui->listReceiveAddresses->insertItem(0, myAddr); 
+        ui->listReceiveAddresses->setCurrentIndex(0);
+        qDebug() << "new generated myAddr" << myAddr;
+    });
 
-            QString cid = QUuid::createUuid().toString(QUuid::WithoutBraces);
-            request.cid->setText(cid);
+    QString cid = QUuid::createUuid().toString(QUuid::WithoutBraces);
+    request.cid->setText(cid);
                   
-     QObject::connect(request.sendRequestButton, &QPushButton::clicked, [&] () {
-
-         
-        
-            QString cid = request.cid->text();
-            auto addr = request.zaddr->text().trimmed();
-            QString getrequest = addr;
-            QString newLabel = request.labelRequest->text().trimmed();
-            auto myAddr = request.myzaddr->text().trimmed();
-
-    //        ChatModel->addSendRequest(myAddr, cid, addr);
-
-           
-            
-            QString avatar = QString(":/icons/res/") + request.comboBoxAvatar->currentText() + QString(".png");
-
-             if (addr.isEmpty() || newLabel.isEmpty()) 
+    QObject::connect(request.sendRequestButton, &QPushButton::clicked, [&] () {
+        QString cid = request.cid->text();
+        QString addr = request.zaddr->text().trimmed();
+        QString getrequest = addr;
+        QString newLabel = request.labelRequest->text().trimmed();
+        QString myAddr = request.myzaddr->text().trimmed();
+        contactRequest.setSenderAddress(myAddr);
+        contactRequest.setReceiverAddress(addr);
+        contactRequest.setMemo(newLabel);
+        contactRequest.setCid(cid);
+        QString avatar = QString(":/icons/res/") + request.comboBoxAvatar->currentText() + QString(".png");
+        if (addr.isEmpty() || newLabel.isEmpty()) 
         {
-             QMessageBox::critical(
+            QMessageBox::critical(
                 this, 
                 QObject::tr("Address or Label Error"), 
                 QObject::tr("Address or Label cannot be empty"), 
@@ -505,7 +500,7 @@ void::MainWindow::addContact() {
         // Test if address is valid.
         if (!Settings::isValidAddress(addr)) 
         {
-          QMessageBox::critical(
+            QMessageBox::critical(
                 this, 
                 QObject::tr("Address Format Error"), 
                 QObject::tr("%1 doesn't seem to be a valid hush address.").arg(addr), 
@@ -517,80 +512,53 @@ void::MainWindow::addContact() {
         ///////Todo: Test if label allready exist!
 
         ////// Success, so show it
-            AddressBook::getInstance()->addAddressLabel(newLabel, addr, myAddr, cid, avatar);
-              QMessageBox::information(
-                this, 
-                QObject::tr("Added Contact"), 
-                QObject::tr("successfully added your new contact").arg(newLabel), 
-                QMessageBox::Ok
-            );
-            return;
-
-
-    });
-     
-
-  //   QObject::connect(request.sendRequestButton, &QPushButton::clicked, this, &MainWindow::ContactRequest);
-       
-   dialog.exec();
-       rpc->refreshContacts(
-            ui->listContactWidget
-            
+        AddressBook::getInstance()->addAddressLabel(newLabel, addr, myAddr, cid, avatar);
+        QMessageBox::information(
+            this, 
+            QObject::tr("Added Contact"), 
+            QObject::tr("successfully added your new contact").arg(newLabel), 
+            QMessageBox::Ok
         );
+        return;
+    });
+   
+    dialog.exec();
+    rpc->refreshContacts(ui->listContactWidget);
 }
 
 
 
 // Create a Tx for a contact Request 
-Tx MainWindow::createTxForSafeContactRequest() {
-   
-Tx tx; 
-
+Tx MainWindow::createTxForSafeContactRequest() 
 {
-             
-  {
-       CAmount totalAmt;
-        QString amtStr = "0";
-        CAmount amt;  
-
-         
-            amt = CAmount::fromDecimalString("0");
-            totalAmt = totalAmt + amt;
-
-        
-            for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
-
-            if (ui->contactNameMemo->text().trimmed() == c.getName()) {
-     
+    Tx tx; 
+    CAmount totalAmt;
+    QString amtStr = "0";
+    CAmount amt;  
+    amt = CAmount::fromDecimalString("0");
+    totalAmt = totalAmt + amt;
+    for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
+    {
+        if (ui->contactNameMemo->text().trimmed() == c.getName()) 
+        {
             QString cid = c.getCid();
             QString myAddr = c.getMyAddress();
             QString type = "Cont";
             QString addr = c.getPartnerAddress();
-           
+            qDebug() << contactRequest.toString();
+            QString hmemo= createHeaderMemo(type,cid,myAddr);
+            QString memo = ui->memoTxtChat->toPlainText().trimmed();
+            // ui->memoSizeChat->setLenDisplayLabel();// Todo -> activate lendisplay for chat
      
-        QString hmemo= createHeaderMemo(type,cid,myAddr);
-        QString memo = ui->memoTxtChat->toPlainText().trimmed();
-        
-
-       // ui->memoSizeChat->setLenDisplayLabel();// Todo -> activate lendisplay for chat
-     
-     tx.toAddrs.push_back(ToFields{addr, amt, hmemo});
-     tx.toAddrs.push_back(ToFields{addr, amt, memo});
-
-     
-
-         qDebug() << "pushback chattx";
-   
-    
-      tx.fee = Settings::getMinerFee();
-
+            tx.toAddrs.push_back(ToFields{addr, amt, hmemo});
+            tx.toAddrs.push_back(ToFields{addr, amt, memo});
+            qDebug() << "pushback chattx";
+            tx.fee = Settings::getMinerFee();
         }
-}
-     return tx;
-
-     qDebug() << "RequestTx created";
-
-}
+    }
+        
+    return tx;
+    qDebug() << "RequestTx created";
 }
 
 void MainWindow::ContactRequest() {
