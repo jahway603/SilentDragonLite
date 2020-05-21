@@ -463,6 +463,8 @@ void::MainWindow::addContact()
     QDialog dialog(this);
     request.setupUi(&dialog);
     Settings::saveRestore(&dialog);
+
+
     bool sapling = true;
     rpc->createNewZaddr(sapling, [=] (json reply) {
         QString myAddr = QString::fromStdString(reply.get<json::array_t>()[0]);
@@ -471,21 +473,48 @@ void::MainWindow::addContact()
         ui->listReceiveAddresses->setCurrentIndex(0);
         qDebug() << "new generated myAddr" << myAddr;
     });
+      
+        QString cid = QUuid::createUuid().toString(QUuid::WithoutBraces);
+        request.cid->setText(cid);
+       
+   
 
-    QString cid = QUuid::createUuid().toString(QUuid::WithoutBraces);
-    request.cid->setText(cid);
-                  
     QObject::connect(request.sendRequestButton, &QPushButton::clicked, [&] () {
-        QString cid = request.cid->text();
-        QString addr = request.zaddr->text().trimmed();
-        QString getrequest = addr;
-        QString newLabel = request.labelRequest->text().trimmed();
+        
+        QString addr = request.zaddr->text();
         QString myAddr = request.myzaddr->text().trimmed();
+        QString memo = request.memorequest->toPlainText().trimmed();
+        QString avatar = QString(":/icons/res/") + request.comboBoxAvatar->currentText() + QString(".png");
+        QString label = request.labelRequest->text().trimmed();
+
+
         contactRequest.setSenderAddress(myAddr);
         contactRequest.setReceiverAddress(addr);
-        contactRequest.setMemo(newLabel);
+        contactRequest.setMemo(memo);
         contactRequest.setCid(cid);
-        QString avatar = QString(":/icons/res/") + request.comboBoxAvatar->currentText() + QString(".png");
+        contactRequest.setAvatar(avatar);
+        contactRequest.setLabel(label);
+
+    });
+        
+   QObject::connect(request.sendRequestButton, &QPushButton::clicked, this, &MainWindow::saveandsendContact);
+   QObject::connect(request.onlyAdd, &QPushButton::clicked, this, &MainWindow::saveContact);
+        
+    dialog.exec();
+       
+    rpc->refreshContacts(ui->listContactWidget);
+
+}
+
+void MainWindow::saveandsendContact()
+{
+        this->ContactRequest();
+        QString addr = contactRequest.getReceiverAddress();
+        QString newLabel = contactRequest.getLabel();
+        QString myAddr = contactRequest.getSenderAddress();
+        QString cid = contactRequest.getCid();
+        QString avatar = contactRequest.getAvatar();
+        
         if (addr.isEmpty() || newLabel.isEmpty()) 
         {
             QMessageBox::critical(
@@ -520,42 +549,83 @@ void::MainWindow::addContact()
             QMessageBox::Ok
         );
         return;
-    });
-   
-    dialog.exec();
-    rpc->refreshContacts(ui->listContactWidget);
+        
+
+
 }
 
+void MainWindow::saveContact()
+{
 
+        QString addr = contactRequest.getReceiverAddress();
+        QString newLabel = contactRequest.getLabel();
+        QString myAddr = contactRequest.getSenderAddress();
+        QString cid = contactRequest.getCid();
+        QString avatar = contactRequest.getAvatar();
+        
+        if (addr.isEmpty() || newLabel.isEmpty()) 
+        {
+            QMessageBox::critical(
+                this, 
+                QObject::tr("Address or Label Error"), 
+                QObject::tr("Address or Label cannot be empty"), 
+                QMessageBox::Ok
+                );
+            return;
+        }
+
+        // Test if address is valid.
+        if (!Settings::isValidAddress(addr)) 
+        {
+            QMessageBox::critical(
+                this, 
+                QObject::tr("Address Format Error"), 
+                QObject::tr("%1 doesn't seem to be a valid hush address.").arg(addr), 
+                QMessageBox::Ok
+            );
+            return;
+        } 
+
+        ///////Todo: Test if label allready exist!
+
+        ////// Success, so show it
+        AddressBook::getInstance()->addAddressLabel(newLabel, addr, myAddr, cid, avatar);
+        QMessageBox::information(
+            this, 
+            QObject::tr("Added Contact"), 
+            QObject::tr("successfully added your new contact").arg(newLabel), 
+            QMessageBox::Ok
+        );
+        return;
+
+}
 
 // Create a Tx for a contact Request 
 Tx MainWindow::createTxForSafeContactRequest() 
 {
     Tx tx; 
+{
     CAmount totalAmt;
     QString amtStr = "0";
     CAmount amt;  
     amt = CAmount::fromDecimalString("0");
     totalAmt = totalAmt + amt;
-    for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
-    {
-        if (ui->contactNameMemo->text().trimmed() == c.getName()) 
-        {
-            QString cid = c.getCid();
-            QString myAddr = c.getMyAddress();
+   
+            QString cid = contactRequest.getCid();
+            QString myAddr = contactRequest.getSenderAddress();
             QString type = "Cont";
-            QString addr = c.getPartnerAddress();
-            qDebug() << contactRequest.toString();
+            QString addr = contactRequest.getReceiverAddress();
+
             QString hmemo= createHeaderMemo(type,cid,myAddr);
-            QString memo = ui->memoTxtChat->toPlainText().trimmed();
+            QString memo = contactRequest.getMemo();
             // ui->memoSizeChat->setLenDisplayLabel();// Todo -> activate lendisplay for chat
      
             tx.toAddrs.push_back(ToFields{addr, amt, hmemo});
             tx.toAddrs.push_back(ToFields{addr, amt, memo});
             qDebug() << "pushback chattx";
             tx.fee = Settings::getMinerFee();
-        }
-    }
+        
+}
         
     return tx;
     qDebug() << "RequestTx created";
@@ -563,7 +633,7 @@ Tx MainWindow::createTxForSafeContactRequest()
 
 void MainWindow::ContactRequest() {
 
-   /* if (request.labelRequest->text().trimmed().isEmpty() || request.memorequest->toPlainText().trimmed().isEmpty()) {
+    if (contactRequest.getReceiverAddress().isEmpty() || contactRequest.getMemo().isEmpty()) {
      
   // auto addr = "";
   //  if (! Settings::isZAddress(AddressBook::addressFromAddressLabel(addr->text()))) {
@@ -573,7 +643,7 @@ void MainWindow::ContactRequest() {
 
         msg.exec();
         return;
-    }*/
+    }
 
   Tx tx = createTxForSafeContactRequest();
 

@@ -56,6 +56,8 @@ public:
     bool isWebsocketListening();
     void createWebsocket(QString wormholecode);
     void stopWebsocket();
+    void saveContact();
+    void saveandsendContact();
     
 
     void balancesReady();
