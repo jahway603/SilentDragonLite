@@ -22,7 +22,8 @@ class ChatDataStore
         void setData(QString key, ChatItem value);
         ChatItem getData(QString key);
         std::map<QString, ChatItem> getAllRawChatItems();
-        std::map<QString, ChatItem> getAllContactRequests();
+        std::map<QString, ChatItem> getAllNewContactRequests();
+        std::map<QString, ChatItem> getAllOldContactRequests();
         std::map<QString, ChatItem> getAllMemos();
         QString dump();
 

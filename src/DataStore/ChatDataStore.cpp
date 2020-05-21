@@ -2,6 +2,7 @@
 // GPLv3
 
 #include "ChatDataStore.h"
+#include "addressbook.h"
 
 ChatDataStore* ChatDataStore::getInstance()
 {
@@ -48,15 +49,18 @@ std::map<QString, ChatItem> ChatDataStore::getAllRawChatItems()
     return this->data;
 }
 
-std::map<QString, ChatItem> ChatDataStore::getAllContactRequests()
+std::map<QString, ChatItem> ChatDataStore::getAllNewContactRequests()
 {
     std::map<QString, ChatItem> filteredItems;
+  
     for(auto &c: this->data)
     {
         if (
             (c.second.isOutgoing() == false) &&
-            (c.second.getType() == "cont") &&  
-            (c.second.getMemo().startsWith("{"))
+            (c.second.getType() == "Cont")  &&
+            (c.second.getContact() == "")
+            
+           
         ) 
         {
             filteredItems[c.first] = c.second;
@@ -65,6 +69,23 @@ std::map<QString, ChatItem> ChatDataStore::getAllContactRequests()
     return filteredItems;
 }
 
+std::map<QString, ChatItem> ChatDataStore::getAllOldContactRequests()
+{
+    std::map<QString, ChatItem> filteredItems;
+    for(auto &p : AddressBook::getInstance()->getAllAddressLabels())
+    for(auto &c: this->data)
+    {
+        if (
+            (c.second.isOutgoing() == false) &&
+            (c.second.getType() == "Cont") &&  
+            (p.getPartnerAddress() == c.second.getRequestZaddr())
+        ) 
+        {
+            filteredItems[c.first] = c.second;
+        }
+    }
+    return filteredItems;
+}
 
 std::map<QString, ChatItem> ChatDataStore::getAllMemos()
 {

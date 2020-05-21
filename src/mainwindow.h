@@ -50,6 +50,7 @@ public:
     QString doSendTxValidations(Tx tx);
     QString doSendChatTxValidations(Tx tx);
     QString doSendRequestTxValidations(Tx tx);
+    QString getCid();
 
     void replaceWormholeClient(WormholeClient* newClient);
     bool isWebsocketListening();
@@ -62,12 +63,7 @@ public:
 
     void updateLabels();
     void updateTAddrCombo(bool checked);
-  //  void renderContactRequest();
-  //  void setChatItem(ChatItem* item);
-    //void ChatItem* getChatItem();
-   
     
-
     // Disable recurring on mainnet
     void disableRecurring();
 

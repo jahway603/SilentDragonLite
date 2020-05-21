@@ -102,6 +102,10 @@ void Controller::setConnection(Connection* c)
             DataStore::getSietchDataStore()->setData("Sietch" + QString(i), zdust.toUtf8());
         });
     }
+       refreshContacts(
+            ui->listContactWidget
+            
+        );
 }
 
 // Build the RPC JSON Parameters for this tx
@@ -797,6 +801,7 @@ void Controller::refreshBalances()
         CAmount balAvailable = balT + balVerified;
         model->setAvailableBalance(balAvailable);
         updateUIBalances();
+        
     });
 
     // 2. Get the UTXOs
@@ -881,8 +886,8 @@ void Controller::refreshTransactions() {
                                 confirmations,
                                 true 
                             );
-                                qDebug()<<"Memo : " <<memo;
-                                qDebug()<<"Confirmation :" << confirmations;
+                              //  qDebug()<<"Memo : " <<memo;
+                             //   qDebug()<<"Confirmation :" << confirmations;
 
                         DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
                     
@@ -978,8 +983,8 @@ void Controller::refreshTransactions() {
                                 confirmations,
                                 false
                             );
-                            qDebug()<< "Position : " << position;
-                            qDebug()<<"Confirmation :" << confirmations;
+                          //  qDebug()<< "Position : " << position;
+                          //  qDebug()<<"Confirmation :" << confirmations;
 
                     DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
                  } 
@@ -1005,10 +1010,10 @@ void Controller::refreshTransactions() {
          // Update model data, which updates the table view
         transactionsTableModel->replaceData(txdata);    
         chat->renderChatBox(ui, ui->listChat);   
-        refreshContacts(
-            ui->listContactWidget
+      //  refreshContacts(
+        //    ui->listContactWidget
             
-        );
+       // );
          });
 }
 

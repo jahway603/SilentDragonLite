@@ -19,6 +19,9 @@
 #include "Chat/Helper/ChatDelegator.h"
 #include "Chat/Helper/ChatIDGenerator.h"
 
+namespace Ui {
+    class MainWindow;
+}
 class ChatModel
 {
     private:
@@ -28,6 +31,7 @@ class ChatModel
         MainWindow*                 main;
         std::map<QString, QString> cidMap;
         std::map<QString, QString> requestZaddrMap;
+        std::map<int, std::tuple<QString, QString, QString>> sendrequestMap;
 
     public:
         ChatModel() {};
@@ -44,6 +48,7 @@ class ChatModel
         void addMessage(QString timestamp, ChatItem item);
         void addCid(QString tx, QString cid);
         void addrequestZaddr(QString tx, QString requestZaddr);
+        void addSendRequest(int i, QString myAddr, QString cid, QString addr );
         QString getCidByTx(QString tx);
         QString getrequestZaddrByTx(QString tx);
         void killCidCache();
