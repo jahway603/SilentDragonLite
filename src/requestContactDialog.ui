@@ -14,10 +14,26 @@
    <string>Incoming contact request</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QLabel" name="label">
+   <item row="6" column="1">
+    <widget class="QLabel" name="label_7">
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline;&quot;&gt;Open requests&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>My Zaddr :</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" rowspan="7">
+    <widget class="QListView" name="requestContactOld">
+     <property name="mouseTracking">
+      <bool>true</bool>
+     </property>
+     <property name="editTriggers">
+      <set>QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
+     </property>
+     <property name="alternatingRowColors">
+      <bool>false</bool>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::SingleSelection</enum>
      </property>
     </widget>
    </item>
@@ -41,6 +57,16 @@
      </property>
      <property name="selectionMode">
       <enum>QAbstractItemView::SingleSelection</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="2" colspan="3">
+    <widget class="QLineEdit" name="requestMyAddr"/>
+   </item>
+   <item row="7" column="1">
+    <widget class="QLabel" name="label_5">
+     <property name="text">
+      <string>Give a Nickname:</string>
      </property>
     </widget>
    </item>
@@ -72,13 +98,6 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline;&quot;&gt;Recently closed requests&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
-   </item>
    <item row="2" column="1" rowspan="2" colspan="4">
     <widget class="QLabel" name="label_4">
      <property name="text">
@@ -86,66 +105,10 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0" rowspan="7">
-    <widget class="QListView" name="requestContactOld">
-     <property name="mouseTracking">
-      <bool>true</bool>
-     </property>
-     <property name="editTriggers">
-      <set>QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
-     </property>
-     <property name="alternatingRowColors">
-      <bool>false</bool>
-     </property>
-     <property name="selectionMode">
-      <enum>QAbstractItemView::SingleSelection</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="1">
-    <widget class="QLabel" name="label_8">
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
      <property name="text">
-      <string>Request from :</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="2" colspan="3">
-    <widget class="QLineEdit" name="requestZaddr"/>
-   </item>
-   <item row="5" column="1">
-    <widget class="QLabel" name="label_9">
-     <property name="text">
-      <string>Cid :</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="2" colspan="3">
-    <widget class="QLineEdit" name="requestCID"/>
-   </item>
-   <item row="6" column="1">
-    <widget class="QLabel" name="label_7">
-     <property name="text">
-      <string>My Zaddr :</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="2" colspan="3">
-    <widget class="QLineEdit" name="requestMyAddr"/>
-   </item>
-   <item row="7" column="1">
-    <widget class="QLabel" name="label_5">
-     <property name="text">
-      <string>Nickname</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="2" colspan="2">
-    <widget class="QLineEdit" name="requestLabel"/>
-   </item>
-   <item row="8" column="1" colspan="2">
-    <widget class="QLabel" name="label_6">
-     <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;Choose a avatar for your contact :&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline;&quot;&gt;Open requests&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>
@@ -283,6 +246,19 @@
      </item>
     </widget>
    </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline;&quot;&gt;Recently closed requests&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="2" colspan="2">
+    <widget class="QLineEdit" name="requestLabel"/>
+   </item>
+   <item row="4" column="2" colspan="3">
+    <widget class="QLineEdit" name="requestZaddr"/>
+   </item>
    <item row="9" column="3">
     <widget class="QPushButton" name="cancel">
      <property name="baseSize">
@@ -294,6 +270,9 @@
      <property name="text">
       <string>Cancel</string>
      </property>
+     <property name="autoDefault">
+      <bool>false</bool>
+     </property>
      <property name="flat">
       <bool>false</bool>
      </property>
@@ -303,6 +282,33 @@
     <widget class="QPushButton" name="pushButton">
      <property name="text">
       <string>Add this new Contact</string>
+     </property>
+     <property name="autoDefault">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QLabel" name="label_8">
+     <property name="text">
+      <string>Request from :</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1" colspan="2">
+    <widget class="QLabel" name="label_6">
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;Choose a avatar for your contact :&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="2" colspan="3">
+    <widget class="QLineEdit" name="requestCID"/>
+   </item>
+   <item row="5" column="1">
+    <widget class="QLabel" name="label_9">
+     <property name="text">
+      <string>Cid :</string>
      </property>
     </widget>
    </item>

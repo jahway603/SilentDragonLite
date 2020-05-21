@@ -127,7 +127,6 @@ void MainWindow::renderContactRequest(){
            
 
             requestContact.requestZaddr->setText(c.second.getRequestZaddr());
-            requestContact.requestCID->setText(c.second.getCid());
             requestContact.requestMyAddr->setText(c.second.getAddress());
             }else{}
         }
@@ -152,9 +151,8 @@ void MainWindow::renderContactRequest(){
             requestContact.requestMemo->setModel(contactMemo);   
             requestContact.requestMemo->show();
            
-
-            requestContact.requestZaddr->setText(c.second.getRequestZaddr());
             requestContact.requestCID->setText(c.second.getCid());
+            requestContact.requestZaddr->setText(c.second.getRequestZaddr());
             requestContact.requestMyAddr->setText(c.second.getAddress());
             }else{}
         }
@@ -468,14 +466,15 @@ void::MainWindow::addContact()
     bool sapling = true;
     rpc->createNewZaddr(sapling, [=] (json reply) {
         QString myAddr = QString::fromStdString(reply.get<json::array_t>()[0]);
+        rpc->refreshAddresses();
         request.myzaddr->setText(myAddr);
         ui->listReceiveAddresses->insertItem(0, myAddr); 
         ui->listReceiveAddresses->setCurrentIndex(0);
-        qDebug() << "new generated myAddr" << myAddr;
+        qDebug() << "new generated myAddr add Contact" << myAddr;
     });
       
         QString cid = QUuid::createUuid().toString(QUuid::WithoutBraces);
-        request.cid->setText(cid);
+        
        
    
 
@@ -483,7 +482,7 @@ void::MainWindow::addContact()
         
         QString addr = request.zaddr->text();
         QString myAddr = request.myzaddr->text().trimmed();
-        QString memo = request.memorequest->toPlainText().trimmed();
+        QString memo = request.memorequest->text().trimmed();
         QString avatar = QString(":/icons/res/") + request.comboBoxAvatar->currentText() + QString(".png");
         QString label = request.labelRequest->text().trimmed();
 
