@@ -140,7 +140,7 @@ void Controller::fillTxJsonParams(json& allRecepients, Tx tx)
     DataStore::getSietchDataStore()->clear(); // clears the datastore
 
     // Dust amt/memo, construct the JSON 
-    for(uint8_t i = 0; i < 10; i++)
+    for(uint8_t i = 0; i < 8; i++)
     {
         dust.at(i)["amount"] = 0;
         dust.at(i)["memo"] = "";
@@ -166,9 +166,8 @@ void Controller::fillTxJsonParams(json& allRecepients, Tx tx)
             dust.at(3),
             dust.at(4),
             dust.at(5),
-            dust.at(6),
-            dust.at(7),
-            dust.at(8)
+            dust.at(6)
+           
         }) ;
 }
 
@@ -305,6 +304,7 @@ void Controller::getInfoThenRefresh(bool force)
         QString chainName = Settings::getInstance()->isTestnet() ? "test" : "main";
         main->statusLabel->setText(chainName + "(" + QString::number(curBlock) + ")");
 
+
         // use currency ComboBox as input 
 
         if (Settings::getInstance()->get_currency_name() == "USD") 
@@ -321,6 +321,8 @@ void Controller::getInfoThenRefresh(bool force)
             ui->marketcapTab->setText(
                 " $ " + (QLocale(QLocale::English).toString(cap,'f', 2))
             );
+
+            
 
         }   
         else if (Settings::getInstance()->get_currency_name() == "EUR") 
@@ -614,7 +616,7 @@ void Controller::processUnspent(const json& reply, QMap<QString, CAmount>* balan
             QString txid    = QString::fromStdString(it["created_in_txid"]);
             CAmount amount  = CAmount::fromqint64(it["value"].get<json::number_unsigned_t>());
 
-            bool spendable = it["unconfirmed_spent"].is_null() && it["spent"].is_null();    // TODO: Wait for 4 confirmations
+            bool spendable = it["unconfirmed_spent"].is_null() && it["spent"].is_null();    // TODO: Wait for 1 confirmations
             bool pending   = !it["unconfirmed_spent"].is_null();
 
             unspentOutputs->push_back(
@@ -648,7 +650,9 @@ void Controller::updateUIBalances()
     CAmount balAvailable = balT + balVerified;
     if (balZ < 0) 
         balZ = CAmount::fromqint64(0);
-
+            double price = (Settings::getInstance()->getBTCPrice() / 1000);
+      //  ui->PriceMemo->setText(" The price of \n one HushChat \n Message is :\n BTC " + (QLocale(QLocale::English).toString(price, 'f',8))
+        //+ " Messages left :" + ((balTotal.toDecimalhushString()) /0.0001)  );
     // Balances table
     ui->balSheilded->setText(balZ.toDecimalhushString());
     ui->balVerified->setText(balVerified.toDecimalhushString());
