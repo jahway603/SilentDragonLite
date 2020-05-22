@@ -1400,7 +1400,7 @@
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline;&quot;&gt;Contactlist&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
-       <widget class="QTextEdit" name="memoTxtChat">
+       <widget class="ChatMemoEdit" name="memoTxtChat">
         <property name="geometry">
          <rect>
           <x>340</x>
@@ -1506,16 +1506,16 @@
          </rect>
         </property>
         <property name="verticalScrollBarPolicy">
-         <enum>Qt::ScrollBarAlwaysOff</enum>
+         <enum>Qt::ScrollBarAsNeeded</enum>
         </property>
         <property name="horizontalScrollBarPolicy">
-         <enum>Qt::ScrollBarAlwaysOff</enum>
+         <enum>Qt::ScrollBarAsNeeded</enum>
         </property>
         <property name="sizeAdjustPolicy">
          <enum>QAbstractScrollArea::AdjustToContents</enum>
         </property>
         <property name="editTriggers">
-         <set>QAbstractItemView::NoEditTriggers</set>
+         <set>QAbstractItemView::AllEditTriggers</set>
         </property>
         <property name="resizeMode">
          <enum>QListView::Adjust</enum>
@@ -1533,11 +1533,23 @@
        <widget class="QPushButton" name="safeContactRequest">
         <property name="geometry">
          <rect>
-          <x>270</x>
-          <y>580</y>
+          <x>10</x>
+          <y>20</y>
           <width>51</width>
           <height>51</height>
          </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>51</width>
+          <height>51</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>51</width>
+          <height>51</height>
+         </size>
         </property>
         <property name="baseSize">
          <size>
@@ -1569,11 +1581,23 @@
        <widget class="QPushButton" name="pushContact">
         <property name="geometry">
          <rect>
-          <x>50</x>
+          <x>80</x>
           <y>20</y>
-          <width>61</width>
+          <width>51</width>
           <height>51</height>
          </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>51</width>
+          <height>51</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>51</width>
+          <height>51</height>
+         </size>
         </property>
         <property name="baseSize">
          <size>
@@ -1607,11 +1631,23 @@
        <widget class="QPushButton" name="givemeZaddr">
         <property name="geometry">
          <rect>
-          <x>210</x>
+          <x>150</x>
           <y>20</y>
-          <width>61</width>
+          <width>51</width>
           <height>51</height>
          </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>51</width>
+          <height>51</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>51</width>
+          <height>51</height>
+         </size>
         </property>
         <property name="toolTip">
          <string>Get a new Address</string>
@@ -1633,229 +1669,36 @@
          <bool>true</bool>
         </property>
        </widget>
-       <widget class="QLabel" name="label_40">
+       <widget class="QLabel" name="memoSizeChat">
         <property name="geometry">
          <rect>
-          <x>90</x>
-          <y>10</y>
-          <width>21</width>
-          <height>16</height>
+          <x>1140</x>
+          <y>640</y>
+          <width>91</width>
+          <height>17</height>
          </rect>
         </property>
-        <property name="palette">
-         <palette>
-          <active>
-           <colorrole role="WindowText">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>204</red>
-              <green>0</green>
-              <blue>0</blue>
-             </color>
-            </brush>
-           </colorrole>
-           <colorrole role="Text">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>204</red>
-              <green>0</green>
-              <blue>0</blue>
-             </color>
-            </brush>
-           </colorrole>
-           <colorrole role="BrightText">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>239</red>
-              <green>41</green>
-              <blue>41</blue>
-             </color>
-            </brush>
-           </colorrole>
-           <colorrole role="ButtonText">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>204</red>
-              <green>0</green>
-              <blue>0</blue>
-             </color>
-            </brush>
-           </colorrole>
-           <colorrole role="LinkVisited">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>204</red>
-              <green>0</green>
-              <blue>0</blue>
-             </color>
-            </brush>
-           </colorrole>
-           <colorrole role="ToolTipText">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>204</red>
-              <green>0</green>
-              <blue>0</blue>
-             </color>
-            </brush>
-           </colorrole>
-           <colorrole role="PlaceholderText">
-            <brush brushstyle="SolidPattern">
-             <color alpha="128">
-              <red>204</red>
-              <green>0</green>
-              <blue>0</blue>
-             </color>
-            </brush>
-           </colorrole>
-          </active>
-          <inactive>
-           <colorrole role="WindowText">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>204</red>
-              <green>0</green>
-              <blue>0</blue>
-             </color>
-            </brush>
-           </colorrole>
-           <colorrole role="Text">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>204</red>
-              <green>0</green>
-              <blue>0</blue>
-             </color>
-            </brush>
-           </colorrole>
-           <colorrole role="BrightText">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>239</red>
-              <green>41</green>
-              <blue>41</blue>
-             </color>
-            </brush>
-           </colorrole>
-           <colorrole role="ButtonText">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>204</red>
-              <green>0</green>
-              <blue>0</blue>
-             </color>
-            </brush>
-           </colorrole>
-           <colorrole role="LinkVisited">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>204</red>
-              <green>0</green>
-              <blue>0</blue>
-             </color>
-            </brush>
-           </colorrole>
-           <colorrole role="ToolTipText">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>204</red>
-              <green>0</green>
-              <blue>0</blue>
-             </color>
-            </brush>
-           </colorrole>
-           <colorrole role="PlaceholderText">
-            <brush brushstyle="SolidPattern">
-             <color alpha="128">
-              <red>204</red>
-              <green>0</green>
-              <blue>0</blue>
-             </color>
-            </brush>
-           </colorrole>
-          </inactive>
-          <disabled>
-           <colorrole role="WindowText">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>190</red>
-              <green>190</green>
-              <blue>190</blue>
-             </color>
-            </brush>
-           </colorrole>
-           <colorrole role="Text">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>190</red>
-              <green>190</green>
-              <blue>190</blue>
-             </color>
-            </brush>
-           </colorrole>
-           <colorrole role="BrightText">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>239</red>
-              <green>41</green>
-              <blue>41</blue>
-             </color>
-            </brush>
-           </colorrole>
-           <colorrole role="ButtonText">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>190</red>
-              <green>190</green>
-              <blue>190</blue>
-             </color>
-            </brush>
-           </colorrole>
-           <colorrole role="LinkVisited">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>204</red>
-              <green>0</green>
-              <blue>0</blue>
-             </color>
-            </brush>
-           </colorrole>
-           <colorrole role="ToolTipText">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>204</red>
-              <green>0</green>
-              <blue>0</blue>
-             </color>
-            </brush>
-           </colorrole>
-           <colorrole role="PlaceholderText">
-            <brush brushstyle="SolidPattern">
-             <color alpha="128">
-              <red>0</red>
-              <green>0</green>
-              <blue>0</blue>
-             </color>
-            </brush>
-           </colorrole>
-          </disabled>
-         </palette>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>12</pointsize>
-         </font>
-        </property>
-        <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
+        <property name="frameShadow">
+         <enum>QFrame::Sunken</enum>
         </property>
         <property name="text">
-         <string>1</string>
+         <string notr="true">0 / 512</string>
         </property>
-        <property name="textFormat">
-         <enum>Qt::AutoText</enum>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
+       <zorder>listContactWidget</zorder>
+       <zorder>label_39</zorder>
+       <zorder>contactNameMemo</zorder>
+       <zorder>contactNameMemo_3</zorder>
+       <zorder>safeContactRequest</zorder>
+       <zorder>pushContact</zorder>
+       <zorder>givemeZaddr</zorder>
+       <zorder>memoSizeChat</zorder>
+       <zorder>listChat</zorder>
+       <zorder>memoTxtChat</zorder>
+       <zorder>sendChatButton</zorder>
       </widget>
      </widget>
     </item>
@@ -2041,6 +1884,11 @@
    <class>FilledIconLabel</class>
    <extends>QLabel</extends>
    <header>fillediconlabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ChatMemoEdit</class>
+   <extends>QTextEdit</extends>
+   <header>mainwindow.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

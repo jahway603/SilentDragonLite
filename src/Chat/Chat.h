@@ -28,7 +28,7 @@ class Chat // Chat Controller
     public:
         Chat();
         //QString zaddr();
-        void renderChatBox(Ui::MainWindow* ui, QListView *view); // action
+        void renderChatBox(Ui::MainWindow* ui, QListView *view, QLabel *label); // action
        // void renderContactRequest();
         /*void triggerRequest();
         void showMessages();
