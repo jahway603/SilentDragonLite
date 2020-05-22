@@ -33,6 +33,7 @@ class ContactRequest
         void setLabel(QString label);
         void setAvatar(QString avatar);
         QString toString();
+        void clear();
         ~ContactRequest();
 };
 

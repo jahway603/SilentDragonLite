@@ -515,6 +515,7 @@ void MainWindow::saveandsendContact()
         QString myAddr = contactRequest.getSenderAddress();
         QString cid = contactRequest.getCid();
         QString avatar = contactRequest.getAvatar();
+        contactRequest.clear();
         
         if (addr.isEmpty() || newLabel.isEmpty()) 
         {
