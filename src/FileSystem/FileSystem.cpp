@@ -2,6 +2,7 @@
 
 #include <QString>
 #include <QList>
+#include "../Crypto/passwd.h"
 
 FileSystem::FileSystem()
 {
@@ -85,6 +86,13 @@ void FileSystem::writeContactsOldFormat(QString file, QList<ContactItem> contact
 
 QList<ContactItem> FileSystem::readContactsOldFormat(QString file)
 {
+    const unsigned char* data=PASSWD::hash(QString("Hello world"));
+    PASSWD::show_hex_buff((unsigned char*) data);
+    QString source_file = "/tmp/addresslabels.dat";
+    QString target_file = "/tmp/addresslabels.dat.enc";
+    FileEncryption::encrypt(target_file, source_file, data);
+    FileEncryption::decrypt("/tmp/addresslabels.dat.dec", target_file, data);
+
     QList<ContactItem> contacts;
     QFile _file(file);
     if (_file.exists()) 
