@@ -2,6 +2,7 @@
 
 #include <QString>
 #include <QList>
+#include "../Crypto/passwd.h"
 
 FileSystem::FileSystem()
 {

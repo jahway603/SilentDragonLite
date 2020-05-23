@@ -83,7 +83,8 @@ SOURCES += \
     src/Chat/Helper/ChatIDGenerator.cpp \
     src/Chat/Chat.cpp \
     src/FileSystem/FileSystem.cpp \
-    src/Crypto/FileEncryption.cpp
+    src/Crypto/FileEncryption.cpp \
+    src/Crypto/passwd.cpp
 
 HEADERS += \
     src/firsttimewizard.h \
