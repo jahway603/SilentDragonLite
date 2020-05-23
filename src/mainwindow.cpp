@@ -295,10 +295,10 @@ void MainWindow::encryptWallet() {
     #define MESSAGE ((const unsigned char *) sequence)
     #define MESSAGE_LEN length
 
-    qDebug()<<"Generating cryptographic key from password: " <<MESSAGE;
+    qDebug()<<"Generating cryptographic key from password: " <<sequence;
 
 
-    unsigned char hash[crypto_generichash_BYTES];
+    unsigned char hash[crypto_secretstream_xchacha20poly1305_KEYBYTES];
 
     crypto_generichash(hash, sizeof hash,
                      MESSAGE, MESSAGE_LEN,
@@ -306,7 +306,7 @@ void MainWindow::encryptWallet() {
 
 
     qDebug()<<"secret key generated:\n";
-    dump_hex_buff(hash, crypto_generichash_BYTES);
+    dump_hex_buff(hash,crypto_secretstream_xchacha20poly1305_KEYBYTES);
 
 d.exec();
 
