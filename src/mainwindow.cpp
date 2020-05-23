@@ -56,7 +56,12 @@ MainWindow::MainWindow(QWidget *parent) :
      ui->memoTxtChat->setPlaceholderText("Send Message");
      ui->memoTxtChat->setTextColor(Qt::white);
      
-     
+
+    // Check for encryption
+    if(fileExists(QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("addresslabels.dat.enc")))
+    {
+        this->removeWalletEncryption();
+    }
 
     // Status Bar
     setupStatusBar();
@@ -184,6 +189,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
         createWebsocket(wormholecode);
     }
+}
+
+bool MainWindow::fileExists(QString path) 
+{
+    QFileInfo check_file(path);
+    return (check_file.exists() && check_file.isFile());
 }
  
 void MainWindow::createWebsocket(QString wormholecode) {
@@ -332,6 +343,7 @@ void MainWindow::removeWalletEncryption() {
         auto dir =  QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
         QString target_enc_file = dir.filePath("addresslabels.dat.enc");
         QString target_dec_file = dir.filePath("addresslabels.dat");
+
         FileEncryption::decrypt(target_dec_file, target_enc_file, key);
 
         d.exec();

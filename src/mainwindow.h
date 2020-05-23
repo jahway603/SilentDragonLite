@@ -100,6 +100,7 @@ private slots:
 
 private:
 
+    bool fileExists(QString path);
     void closeEvent(QCloseEvent* event);
 
 
