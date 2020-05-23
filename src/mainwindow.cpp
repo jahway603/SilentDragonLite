@@ -307,6 +307,11 @@ void MainWindow::encryptWallet() {
 
     qDebug()<<"secret key generated:\n";
     dump_hex_buff(hash,crypto_secretstream_xchacha20poly1305_KEYBYTES);
+    
+    QString source_file = "/home/denio/.local/share/Hush/SilentDragonLite/addresslabel.dat";
+    QString target_file = "/home/denio/.local/share/Hush/SilentDragonLite/addresslabel-encrypt.dat";
+
+    FileEncryption::encrypt(target_file, source_file, hash);
 
 d.exec();
 
