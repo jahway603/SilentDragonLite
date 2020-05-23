@@ -25,6 +25,9 @@
 #include "sodium.h"
 #include "sodium/crypto_generichash_blake2b.h"
 #include <QRegularExpression>
+#include "FileSystem/FileSystem.h"
+#include "Crypto/passwd.h"
+#include "Crypto/FileEncryption.h"
 
 using json = nlohmann::json;
 
@@ -283,39 +286,20 @@ void MainWindow::encryptWallet() {
     QObject::connect(ed.txtConfirmPassword, &QLineEdit::textChanged, fnPasswordEdited);
     QObject::connect(ed.txtPassword, &QLineEdit::textChanged, fnPasswordEdited);
 
-    if (d.exec() == QDialog::Accepted) {
-        
-    QString str = ed.txtPassword->text(); // data comes from user inputs
-    int length = str.length();
-     
-    char *sequence = NULL;
-    sequence = new char[length+1];
-    strncpy(sequence, str.toLocal8Bit(), length +1);
+    if (d.exec() == QDialog::Accepted) 
+    {
+        const unsigned char* key=PASSWD::hash(ed.txtPassword->text());
+        PASSWD::show_hex_buff((unsigned char*) key);
+        auto dir =  QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+        QString source_file = dir.filePath("addresslabels.dat");
+        QString target_enc_file = dir.filePath("addresslabels.dat.enc");
+        QString target_dec_file = dir.filePath("addresslabels.dat.dec");
+        FileEncryption::encrypt(target_enc_file, source_file, key);
+        FileEncryption::decrypt(target_dec_file, target_enc_file, key);
 
-    #define MESSAGE ((const unsigned char *) sequence)
-    #define MESSAGE_LEN length
+    d.exec();
 
-    qDebug()<<"Generating cryptographic key from password: " <<sequence;
-
-
-    unsigned char hash[crypto_secretstream_xchacha20poly1305_KEYBYTES];
-
-    crypto_generichash(hash, sizeof hash,
-                     MESSAGE, MESSAGE_LEN,
-                    NULL, 0);
-
-
-    qDebug()<<"secret key generated:\n";
-    dump_hex_buff(hash,crypto_secretstream_xchacha20poly1305_KEYBYTES);
-    
-    QString source_file = "/home/denio/.local/share/Hush/SilentDragonLite/addresslabel.dat";
-    QString target_file = "/home/denio/.local/share/Hush/SilentDragonLite/addresslabel-encrypt.dat";
-
-    FileEncryption::encrypt(target_file, source_file, hash);
-
-d.exec();
-
-}
+    }
 
 }
 
