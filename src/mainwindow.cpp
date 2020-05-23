@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Check for encryption
     if(fileExists(QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("addresslabels.dat.enc")))
     {
-        this->removeWalletEncryption();
+        this->removeWalletEncryptionStartUp();
     }
 
     // Status Bar
@@ -302,16 +302,16 @@ void MainWindow::encryptWallet() {
         const unsigned char* key=PASSWD::hash(ed.txtPassword->text());
         PASSWD::show_hex_buff((unsigned char*) key);
         auto dir =  QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+        auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
         QString source_file = dir.filePath("addresslabels.dat");
         QString target_enc_file = dir.filePath("addresslabels.dat.enc");
-        //QString target_dec_file = dir.filePath("addresslabels.dat.dec");
+        QString sourceWallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat");
+        QString target_encWallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat.enc");
+     
         FileEncryption::encrypt(target_enc_file, source_file, key);
-       // FileEncryption::decrypt(target_dec_file, target_enc_file, key);
-
-        d.exec();
-
+        FileEncryption::encrypt(target_encWallet_file, sourceWallet_file, key);
     }
-
+ d.exec();
 }
 
 void MainWindow::removeWalletEncryption() {
@@ -341,69 +341,64 @@ void MainWindow::removeWalletEncryption() {
         const unsigned char* key=PASSWD::hash(ed.txtPassword->text());
         PASSWD::show_hex_buff((unsigned char*) key);
         auto dir =  QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
-        QString target_enc_file = dir.filePath("addresslabels.dat.enc");
-        QString target_dec_file = dir.filePath("addresslabels.dat");
+          auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+        QString target_encaddr_file = dir.filePath("addresslabels.dat.enc");
+        QString target_decaddr_file = dir.filePath("addresslabels.dat");
+        QString target_encwallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat.enc");
+        QString target_decwallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat");
 
-        FileEncryption::decrypt(target_dec_file, target_enc_file, key);
+        
+        FileEncryption::decrypt(target_decwallet_file, target_encwallet_file, key);
+        FileEncryption::decrypt(target_decaddr_file, target_encaddr_file, key);
 
-        d.exec();
+       
 
     }
-    /*// Check if wallet is already encrypted
-    auto encStatus = rpc->getModel()->getEncryptionStatus();
-    if (!encStatus.first) {
-        QMessageBox::information(this, tr("Wallet is not encrypted"), 
-                    tr("Your wallet is not encrypted with a password."),
-                    QMessageBox::Ok
-                );
-        return;
+    d.exec();   
+}
+
+void MainWindow::removeWalletEncryptionStartUp() {
+   QDialog d(this);
+    Ui_encryptionDialog ed;
+    ed.setupUi(&d);
+
+    // Handle edits on the password box
+    auto fnPasswordEdited = [=](const QString&) {
+        // Enable the OK button if the passwords match.
+        if (!ed.txtPassword->text().isEmpty() && 
+                ed.txtPassword->text() == ed.txtConfirmPassword->text()) {
+            ed.lblPasswordMatch->setText("");
+            ed.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+        } else {
+            ed.lblPasswordMatch->setText(tr("Passwords don't match"));
+            ed.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+        }
+
+    };
+
+    QObject::connect(ed.txtConfirmPassword, &QLineEdit::textChanged, fnPasswordEdited);
+    QObject::connect(ed.txtPassword, &QLineEdit::textChanged, fnPasswordEdited);
+
+    if (d.exec() == QDialog::Accepted) 
+    {
+        const unsigned char* key=PASSWD::hash(ed.txtPassword->text());
+        PASSWD::show_hex_buff((unsigned char*) key);
+        auto dir =  QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+        auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+        QString target_encaddr_file = dir.filePath("addresslabels.dat.enc");
+        QString target_decaddr_file = dir.filePath("addresslabels.dat");
+        QString target_encwallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat.enc");
+        QString target_decwallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat");
+
+        
+        FileEncryption::decrypt(target_decwallet_file, target_encwallet_file, key);
+        QThread::sleep(1);
+        FileEncryption::decrypt(target_decaddr_file, target_encaddr_file, key);
+
+       
+
     }
-
-    bool ok;
-    QString password = QInputDialog::getText(this, tr("Wallet Password"), 
-                            tr("Please enter your wallet password"), QLineEdit::Password, "", &ok);
-    
-    qDebug() << password;
-
-    // If cancel was pressed, just return
-    if (!ok) {
-        return;
-    }
-
-    if (password.isEmpty()) {
-        QMessageBox::critical(this, tr("Wallet Decryption Failed"),
-            tr("Please enter a password to decrypt your wallet!"),
-            QMessageBox::Ok
-        );
-        return;
-    }
-
-    rpc->removeWalletEncryption(password, [=] (json res) {
-        if (isJsonResultSuccess(res)) {
-                // Save the wallet
-                rpc->saveWallet([=] (json reply) {
-                    if(isJsonResultSuccess(reply)) {
-                        QMessageBox::information(this, tr("Wallet Encryption Removed"), 
-                            tr("Your wallet was successfully decrypted! You will no longer need a password to send funds or export private keys."),
-                            QMessageBox::Ok
-                        );
-                    } else {
-                        QMessageBox::critical(this, tr("Wallet Decryption Failed"),
-                            QString::fromStdString(reply["error"].get<json::string_t>()),
-                            QMessageBox::Ok
-                        );
-                    }
-                });
-
-                // And then refresh the UI
-                rpc->refresh(true);
-            } else {
-                QMessageBox::critical(this, tr("Wallet Decryption Failed"),
-                    QString::fromStdString(res["error"].get<json::string_t>()),
-                    QMessageBox::Ok
-                );
-            }
-    });     */       
+   
 }
 
 void MainWindow::setupStatusBar() {

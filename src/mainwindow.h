@@ -130,6 +130,7 @@ private:
 
     void encryptWallet();
     void removeWalletEncryption();
+    void removeWalletEncryptionStartUp();
 
     void cancelButton();
     void sendButton();
