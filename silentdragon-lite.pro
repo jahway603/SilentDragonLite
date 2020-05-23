@@ -133,6 +133,7 @@ FORMS += \
     src/confirm.ui \
     src/privkey.ui \
     src/memodialog.ui \ 
+    src/startupencryption.ui \
     src/viewalladdresses.ui \
     src/connection.ui \
     src/addressbook.ui \

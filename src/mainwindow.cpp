@@ -21,6 +21,7 @@
 #include "ui_requestContactDialog.h"
 #include "chatmodel.h"
 #include "requestdialog.h"
+#include "ui_startupencryption.h"
 #include "websockets.h"
 #include "sodium.h"
 #include "sodium/crypto_generichash_blake2b.h"
@@ -359,7 +360,7 @@ void MainWindow::removeWalletEncryption() {
 
 void MainWindow::removeWalletEncryptionStartUp() {
    QDialog d(this);
-    Ui_encryptionDialog ed;
+    Ui_startup ed;
     ed.setupUi(&d);
 
     // Handle edits on the password box
