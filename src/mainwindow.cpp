@@ -22,6 +22,8 @@
 #include "chatmodel.h"
 #include "requestdialog.h"
 #include "websockets.h"
+#include "sodium.h"
+#include "sodium/crypto_generichash_blake2b.h"
 #include <QRegularExpression>
 
 using json = nlohmann::json;
@@ -251,17 +253,23 @@ void MainWindow::closeEvent(QCloseEvent* event) {
         QMainWindow::closeEvent(event);
 }
 
+void dump_hex_buff(unsigned char buf[], unsigned int len)
+{
+    int i;
+    for (i=0; i<len; i++) printf("%02X ", buf[i]);
+    printf("\n");
+}
 
 void MainWindow::encryptWallet() {
     // Check if wallet is already encrypted
-    auto encStatus = rpc->getModel()->getEncryptionStatus();
+   /* auto encStatus = rpc->getModel()->getEncryptionStatus();
     if (encStatus.first) {
         QMessageBox::information(this, tr("Wallet is already encrypted"), 
                     tr("Your wallet is already encrypted with a password.\nPlease use 'Remove Wallet Encryption' if you want to remove the wallet encryption."),
                     QMessageBox::Ok
                 );
         return;
-    }
+    }*/
 
     QDialog d(this);
     Ui_encryptionDialog ed;
@@ -278,12 +286,13 @@ void MainWindow::encryptWallet() {
             ed.lblPasswordMatch->setText(tr("Passwords don't match"));
             ed.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
         }
+
     };
 
     QObject::connect(ed.txtConfirmPassword, &QLineEdit::textChanged, fnPasswordEdited);
     QObject::connect(ed.txtPassword, &QLineEdit::textChanged, fnPasswordEdited);
 
-    ed.txtPassword->setText("");
+   /* ed.txtPassword->setText("");
     ed.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 
     auto fnShowError = [=](QString title, const json& res) {
@@ -291,31 +300,42 @@ void MainWindow::encryptWallet() {
             tr("Error was:\n") + QString::fromStdString(res.dump()),
             QMessageBox::Ok
         );
-    };
+    };*/
 
     if (d.exec() == QDialog::Accepted) {
-        rpc->encryptWallet(ed.txtPassword->text(), [=](json res) {
-            if (isJsonResultSuccess(res)) {
-                // Save the wallet
-                rpc->saveWallet([=] (json reply) {
-                    if (isJsonResultSuccess(reply)) {
-                        QMessageBox::information(this, tr("Wallet Encrypted"), 
-                            tr("Your wallet was successfully encrypted! The password will be needed to send funds or export private keys."),
-                            QMessageBox::Ok
-                        );
-                    } else {
-                        fnShowError(tr("Wallet Encryption Failed"), reply);
-                    }
-                });
+    QString str = ed.txtPassword->text(); // data comes from a db in my case
+    int length = str.length();
+     
+    char *sequence = NULL;
+    sequence = new char[length+1];
+    strncpy(sequence, str.toLocal8Bit(), length +1);
 
-                // And then refresh the UI
-                rpc->refresh(true);
-            } else {
-                fnShowError(tr("Wallet Encryption Failed"), res);
-            }
-        });
-    }
+    #define MESSAGE ((const unsigned char *) sequence)
+    #define MESSAGE_LEN length
+
+
+
+    qDebug()<<"Generating cryptographic key from password: " <<MESSAGE;
+
+
+    unsigned char hash[crypto_generichash_BYTES];
+
+    crypto_generichash(hash, sizeof hash,
+                     MESSAGE, MESSAGE_LEN,
+                    NULL, 0);
+
+
+    qDebug()<<"secret key generated:\n";
+    dump_hex_buff(hash, crypto_generichash_BYTES);
+
+d.exec();
+
 }
+
+}
+//The following snippet demonstrates how to calculate the hash of a very long message using the init/update/final interface:
+
+
 
 void MainWindow::removeWalletEncryption() {
     // Check if wallet is already encrypted
