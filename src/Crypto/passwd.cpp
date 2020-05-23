@@ -31,8 +31,21 @@ const unsigned char* PASSWD::hash(QString password)
     #define MESSAGE_LEN length
 
     qDebug()<<"Generating cryptographic key from password: " <<sequence;
-    unsigned char * hash= new unsigned char[crypto_secretstream_xchacha20poly1305_KEYBYTES];
-    crypto_generichash(hash, sizeof hash, MESSAGE, MESSAGE_LEN, NULL, 0);
+    unsigned char * sha256hash = new unsigned char[crypto_hash_sha256_BYTES];
+    unsigned char * blacke2hash = new unsigned char[crypto_generichash_KEYBYTES];
+    unsigned char * hash = new unsigned char[crypto_secretstream_xchacha20poly1305_KEYBYTES];
+
+    crypto_hash_sha256(sha256hash, MESSAGE, MESSAGE_LEN);
+    crypto_generichash(blacke2hash, sizeof hash, MESSAGE, MESSAGE_LEN, NULL, 0);
+
+    for(uint8_t i = 0; i < crypto_secretstream_xchacha20poly1305_KEYBYTES/2; i++)
+        hash[i] = blacke2hash[i];
+
+    for(uint8_t i = crypto_secretstream_xchacha20poly1305_KEYBYTES/2; i < crypto_secretstream_xchacha20poly1305_KEYBYTES; i++)
+        hash[i] = sha256hash[i];
+
+    delete[] sha256hash;
+    delete[] blacke2hash;
     qDebug()<<"secret key generated:\n";
     PASSWD::show_hex_buff(hash);
     return hash;
