@@ -261,15 +261,6 @@ void dump_hex_buff(unsigned char buf[], unsigned int len)
 }
 
 void MainWindow::encryptWallet() {
-    // Check if wallet is already encrypted
-   /* auto encStatus = rpc->getModel()->getEncryptionStatus();
-    if (encStatus.first) {
-        QMessageBox::information(this, tr("Wallet is already encrypted"), 
-                    tr("Your wallet is already encrypted with a password.\nPlease use 'Remove Wallet Encryption' if you want to remove the wallet encryption."),
-                    QMessageBox::Ok
-                );
-        return;
-    }*/
 
     QDialog d(this);
     Ui_encryptionDialog ed;
@@ -292,18 +283,9 @@ void MainWindow::encryptWallet() {
     QObject::connect(ed.txtConfirmPassword, &QLineEdit::textChanged, fnPasswordEdited);
     QObject::connect(ed.txtPassword, &QLineEdit::textChanged, fnPasswordEdited);
 
-   /* ed.txtPassword->setText("");
-    ed.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
-
-    auto fnShowError = [=](QString title, const json& res) {
-        QMessageBox::critical(this, title,
-            tr("Error was:\n") + QString::fromStdString(res.dump()),
-            QMessageBox::Ok
-        );
-    };*/
-
     if (d.exec() == QDialog::Accepted) {
-    QString str = ed.txtPassword->text(); // data comes from a db in my case
+        
+    QString str = ed.txtPassword->text(); // data comes from user inputs
     int length = str.length();
      
     char *sequence = NULL;
@@ -312,8 +294,6 @@ void MainWindow::encryptWallet() {
 
     #define MESSAGE ((const unsigned char *) sequence)
     #define MESSAGE_LEN length
-
-
 
     qDebug()<<"Generating cryptographic key from password: " <<MESSAGE;
 
@@ -333,9 +313,6 @@ d.exec();
 }
 
 }
-//The following snippet demonstrates how to calculate the hash of a very long message using the init/update/final interface:
-
-
 
 void MainWindow::removeWalletEncryption() {
     // Check if wallet is already encrypted
