@@ -65,6 +65,7 @@
     <file>res/silentdragonlite_it.qm</file>
     <file>res/silentdragonlite_hr.qm</file>
     <file>res/silentdragonlite_fa.qm</file>
+    <file>res/silentdragonlite_id.qm</file>
     </qresource>
     <qresource prefix="/css">
         <file>res/css/blue.css</file>
