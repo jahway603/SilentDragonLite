@@ -266,7 +266,8 @@ void MainWindow::closeEvent(QCloseEvent* event) {
     s.sync();
 
     
-
+    // Let the RPC know to shut down any running service.
+    rpc->shutdownhushd();
 
 // Check is encryption is ON for SDl
     if(fileExists(QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat"))) 
@@ -324,10 +325,10 @@ void MainWindow::closeEvent(QCloseEvent* event) {
 
         QFile file(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat"));
         file.rename(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.datBACKUP"));
+      
 
     }
-    // Let the RPC know to shut down any running service.
-    rpc->shutdownhushd();
+    
 
     // Bubble up
     if (event)
@@ -591,6 +592,7 @@ void MainWindow::removeWalletEncryptionStartUp() {
      auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
      QFile filencrypted(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat"));
      QFile backup(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.datBACKUP"));
+    
      
        
     if (filencrypted.size() > 0)
