@@ -36,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+   
 	// Include css    
     QString theme_name;
     try
@@ -53,17 +54,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     logger = new Logger(this, QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("silentdragonlite-wallet.log"));
-     ui->memoTxtChat->setAutoFillBackground(false);
-     ui->memoTxtChat->setPlaceholderText("Send Message");
-     ui->memoTxtChat->setTextColor(Qt::white);
-     
-
-    // Check for encryption
-    if(fileExists(QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("addresslabels.dat.enc")))
+      // Check for encryption
+    if(fileExists(QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat")))
     {
         this->removeWalletEncryptionStartUp();
     }
 
+     ui->memoTxtChat->setAutoFillBackground(false);
+     ui->memoTxtChat->setPlaceholderText("Send Message");
+     ui->memoTxtChat->setTextColor(Qt::white);
+    
     // Status Bar
     setupStatusBar();
     
@@ -263,6 +263,69 @@ void MainWindow::closeEvent(QCloseEvent* event) {
     // Let the RPC know to shut down any running service.
     rpc->shutdownhushd();
 
+
+// Check is encryption is ON for SDl
+    if(fileExists(QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat"))) 
+   
+    {
+       
+
+        // delete old file before
+
+        auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+        QFile file1(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat"));
+        file1.remove();
+
+        // Encrypt our wallet.dat 
+        QString str = "123";///just for testing. We set the user pw here
+      //   QString str = ed.txtPassword->text(); // data comes from user inputs
+    int length = str.length();
+
+    char *sequence = NULL;
+    sequence = new char[length+1];
+    strncpy(sequence, str.toLocal8Bit(), length +1);
+
+    #define MESSAGE ((const unsigned char *) sequence)
+    #define MESSAGE_LEN length
+
+    unsigned char hash[crypto_secretstream_xchacha20poly1305_KEYBYTES];
+
+    crypto_hash_sha256(hash,MESSAGE, MESSAGE_LEN);
+
+    #define PASSWORD sequence
+    #define KEY_LEN crypto_box_SEEDBYTES
+
+   
+
+ /////////we use the Hash of the Password as Salt, not perfect but still a good solution.
+
+    unsigned char key[KEY_LEN];
+
+    if (crypto_pwhash
+    (key, sizeof key, PASSWORD, strlen(PASSWORD), hash,
+     crypto_pwhash_OPSLIMIT_SENSITIVE, crypto_pwhash_MEMLIMIT_SENSITIVE,
+     crypto_pwhash_ALG_DEFAULT) != 0) {
+    /* out of memory */
+}
+   
+        auto dir =  QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+     //   auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+        QString source_file = dir.filePath("addresslabels.dat");
+        QString target_enc_file = dir.filePath("addresslabels.dat.enc");
+        QString sourceWallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat");
+        QString target_encWallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat");
+     
+        FileEncryption::encrypt(target_enc_file, source_file, key);
+        FileEncryption::encrypt(target_encWallet_file, sourceWallet_file, key);      
+
+    }
+///////////////// we rename the plaintext wallet.dat to Backup, for testing. 
+        auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+        QFile file1(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.datBACKUP"));
+        file1.remove();
+        QFile file(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat"));
+        file.rename(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.datBACKUP"));
+
     // Bubble up
     if (event)
         QMainWindow::closeEvent(event);
@@ -282,14 +345,17 @@ void MainWindow::encryptWallet() {
     ed.setupUi(&d);
 
     // Handle edits on the password box
+    
+    
     auto fnPasswordEdited = [=](const QString&) {
         // Enable the OK button if the passwords match.
+        QString password = ed.txtPassword->text();
         if (!ed.txtPassword->text().isEmpty() && 
-                ed.txtPassword->text() == ed.txtConfirmPassword->text()) {
+                ed.txtPassword->text() == ed.txtConfirmPassword->text() && password.size() >= 10) {
             ed.lblPasswordMatch->setText("");
             ed.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
         } else {
-            ed.lblPasswordMatch->setText(tr("Passwords don't match"));
+            ed.lblPasswordMatch->setText(tr("Passwords don't match or You have entered too few letters (10 minimum)"));
             ed.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
         }
 
@@ -300,19 +366,49 @@ void MainWindow::encryptWallet() {
 
     if (d.exec() == QDialog::Accepted) 
     {
-        const unsigned char* key=PASSWD::hash(ed.txtPassword->text());
-        PASSWD::show_hex_buff((unsigned char*) key);
+
+    QString str = ed.txtPassword->text(); // data comes from user inputs
+    int length = str.length();
+
+    char *sequence = NULL;
+    sequence = new char[length+1];
+    strncpy(sequence, str.toLocal8Bit(), length +1);
+
+    #define MESSAGE ((const unsigned char *) sequence)
+    #define MESSAGE_LEN length
+
+    unsigned char hash[crypto_secretstream_xchacha20poly1305_KEYBYTES];
+
+    crypto_hash_sha256(hash,MESSAGE, MESSAGE_LEN);
+
+    #define PASSWORD sequence
+    #define KEY_LEN crypto_box_SEEDBYTES
+
+   
+
+ /////////we use the Hash of the Password as Salt, not perfect but still a good solution.
+
+    unsigned char key[KEY_LEN];
+
+    if (crypto_pwhash
+    (key, sizeof key, PASSWORD, strlen(PASSWORD), hash,
+     crypto_pwhash_OPSLIMIT_SENSITIVE, crypto_pwhash_MEMLIMIT_SENSITIVE,
+     crypto_pwhash_ALG_DEFAULT) != 0) {
+    /* out of memory */
+}
+
+    qDebug()<<"Generating cryptographic key from password: " <<sequence;
+
         auto dir =  QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
         auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
         QString source_file = dir.filePath("addresslabels.dat");
         QString target_enc_file = dir.filePath("addresslabels.dat.enc");
         QString sourceWallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat");
-        QString target_encWallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat.enc");
+        QString target_encWallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat");
      
         FileEncryption::encrypt(target_enc_file, source_file, key);
         FileEncryption::encrypt(target_encWallet_file, sourceWallet_file, key);
     }
- d.exec();
 }
 
 void MainWindow::removeWalletEncryption() {
@@ -339,13 +435,40 @@ void MainWindow::removeWalletEncryption() {
 
     if (d.exec() == QDialog::Accepted) 
     {
-        const unsigned char* key=PASSWD::hash(ed.txtPassword->text());
-        PASSWD::show_hex_buff((unsigned char*) key);
+    QString str = ed.txtPassword->text(); // data comes from user inputs
+    int length = str.length();
+
+    char *sequence = NULL;
+    sequence = new char[length+1];
+    strncpy(sequence, str.toLocal8Bit(), length +1);
+
+    #define MESSAGE ((const unsigned char *) sequence)
+    #define MESSAGE_LEN length
+
+    unsigned char hash[crypto_secretstream_xchacha20poly1305_KEYBYTES];
+
+    crypto_hash_sha256(hash,MESSAGE, MESSAGE_LEN);
+
+    #define PASSWORD sequence
+    #define KEY_LEN crypto_box_SEEDBYTES
+
+   
+
+ /////////we use the Hash of the Password as Salt, not perfect but still a good solution.
+
+    unsigned char key[KEY_LEN];
+
+    if (crypto_pwhash
+    (key, sizeof key, PASSWORD, strlen(PASSWORD), hash,
+     crypto_pwhash_OPSLIMIT_SENSITIVE, crypto_pwhash_MEMLIMIT_SENSITIVE,
+     crypto_pwhash_ALG_DEFAULT) != 0) {
+    /* out of memory */
+}
         auto dir =  QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
-          auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+        auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
         QString target_encaddr_file = dir.filePath("addresslabels.dat.enc");
         QString target_decaddr_file = dir.filePath("addresslabels.dat");
-        QString target_encwallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat.enc");
+        QString target_encwallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat");
         QString target_decwallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat");
 
         
@@ -354,8 +477,7 @@ void MainWindow::removeWalletEncryption() {
 
        
 
-    }
-    d.exec();   
+    } 
 }
 
 void MainWindow::removeWalletEncryptionStartUp() {
@@ -367,11 +489,11 @@ void MainWindow::removeWalletEncryptionStartUp() {
     auto fnPasswordEdited = [=](const QString&) {
         // Enable the OK button if the passwords match.
         if (!ed.txtPassword->text().isEmpty() && 
-                ed.txtPassword->text() == ed.txtConfirmPassword->text()) {
+                ed.txtPassword->text() == ed.txtConfirmPassword->text())  {
             ed.lblPasswordMatch->setText("");
             ed.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
         } else {
-            ed.lblPasswordMatch->setText(tr("Passwords don't match"));
+            ed.lblPasswordMatch->setText(tr("Passwords don't match or under-lettered"));
             ed.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
         }
 
@@ -382,22 +504,45 @@ void MainWindow::removeWalletEncryptionStartUp() {
 
     if (d.exec() == QDialog::Accepted) 
     {
-        const unsigned char* key=PASSWD::hash(ed.txtPassword->text());
-        PASSWD::show_hex_buff((unsigned char*) key);
+        QString str = ed.txtPassword->text(); // data comes from user inputs
+        int length = str.length();
+
+        char *sequence = NULL;
+        sequence = new char[length+1];
+        strncpy(sequence, str.toLocal8Bit(), length +1);
+
+        #define MESSAGE ((const unsigned char *) sequence)
+        #define MESSAGE_LEN length
+
+        unsigned char hash[crypto_secretstream_xchacha20poly1305_KEYBYTES];
+
+        crypto_hash_sha256(hash,MESSAGE, MESSAGE_LEN);
+
+        #define PASSWORD sequence
+         #define KEY_LEN crypto_box_SEEDBYTES
+
+   
+
+ /////////we use the Hash of the Password as Salt, not perfect but still a good solution.
+
+        unsigned char key[KEY_LEN];
+
+      if (crypto_pwhash
+      (key, sizeof key, PASSWORD, strlen(PASSWORD), hash,
+      crypto_pwhash_OPSLIMIT_SENSITIVE, crypto_pwhash_MEMLIMIT_SENSITIVE,
+      crypto_pwhash_ALG_DEFAULT) != 0) {
+    /* out of memory */
+        }
         auto dir =  QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
         auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+        QString target_encwallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat");
+        QString target_decwallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat");
         QString target_encaddr_file = dir.filePath("addresslabels.dat.enc");
         QString target_decaddr_file = dir.filePath("addresslabels.dat");
-        QString target_encwallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat.enc");
-        QString target_decwallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat");
 
-        
         FileEncryption::decrypt(target_decwallet_file, target_encwallet_file, key);
-        QThread::sleep(1);
+      //  QThread::sleep(1);
         FileEncryption::decrypt(target_decaddr_file, target_encaddr_file, key);
-
-       
-
     }
    
 }

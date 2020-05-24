@@ -8,7 +8,7 @@ class PASSWD
 {
     public:
         static void show_hex_buff(unsigned char buf[]);
-        static const unsigned char* hash(QString);
+        static const unsigned char* key(QString);
 };
 
 #endif
