@@ -51,6 +51,8 @@ public:
     QString doSendChatTxValidations(Tx tx);
     QString doSendRequestTxValidations(Tx tx);
     QString getCid();
+    QString getPassword();
+    void setPassword(QString Password);
 
     void replaceWormholeClient(WormholeClient* newClient);
     bool isWebsocketListening();
@@ -86,6 +88,7 @@ public:
     Logger*      logger;
 
     void doClose();
+    void doClosePw();
     QString createHeaderMemo(QString type, QString cid, QString zaddr, int version, int headerNumber);
 
 public slots:
@@ -100,7 +103,9 @@ private slots:
 
 private:
 
+    bool fileExists(QString path);
     void closeEvent(QCloseEvent* event);
+    void closeEventpw(QCloseEvent* event);
 
 
     void setupSendTab();
@@ -119,6 +124,7 @@ private:
     void setupStatusBar();
     
     void clearSendForm();
+    QString _password;
 
     Tx   createTxFromSendPage();
     bool confirmTx(Tx tx, RecurringPaymentInfo* rpi);
@@ -129,6 +135,7 @@ private:
 
     void encryptWallet();
     void removeWalletEncryption();
+    void removeWalletEncryptionStartUp();
 
     void cancelButton();
     void sendButton();

@@ -83,7 +83,8 @@ SOURCES += \
     src/Chat/Helper/ChatIDGenerator.cpp \
     src/Chat/Chat.cpp \
     src/FileSystem/FileSystem.cpp \
-    src/Crypto/FileEncryption.cpp
+    src/Crypto/FileEncryption.cpp \
+    src/Crypto/passwd.cpp
 
 HEADERS += \
     src/firsttimewizard.h \
@@ -132,6 +133,7 @@ FORMS += \
     src/confirm.ui \
     src/privkey.ui \
     src/memodialog.ui \ 
+    src/startupencryption.ui \
     src/viewalladdresses.ui \
     src/connection.ui \
     src/addressbook.ui \
@@ -141,6 +143,7 @@ FORMS += \
     src/requestContactDialog.ui \
     src/newrecurring.ui \
     src/requestdialog.ui \
+    src/removeencryption.ui \
     src/recurringmultiple.ui \ 
     src/chatbubbleme.ui \
     src/chatbubblepartner.ui
