@@ -33,6 +33,19 @@
 
 using json = nlohmann::json;
 
+
+
+#ifdef Q_OS_WIN
+auto dirwallet = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("silentdragonlite/silentdragonlite-wallet.dat");
+auto dirwalletenc = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("silentdragonlite/silentdragonlite-wallet-enc.dat");
+auto dirwalletbackup = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("silentdragonlite/silentdragonlite-wallet.datBackup");
+#endif
+#ifdef Q_OS_UNIX
+auto dirwallet = QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath(".silentdragonlite/silentdragonlite-wallet.dat");
+auto dirwalletenc = QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat");
+auto dirwalletbackup = QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath(".silentdragonlite/silentdragonlite-wallet.datBackup");
+#endif
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -56,7 +69,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     logger = new Logger(this, QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("silentdragonlite-wallet.log"));
       // Check for encryption
-    if(fileExists(QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat")))
+ 
+       
+ 
+    if(fileExists(dirwalletenc))
     {
         this->removeWalletEncryptionStartUp();
     }
@@ -270,13 +286,13 @@ void MainWindow::closeEvent(QCloseEvent* event) {
     rpc->shutdownhushd();
 
 // Check is encryption is ON for SDl
-    if(fileExists(QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat"))) 
+    if(fileExists(dirwalletenc)) 
    
     {
         // delete old file before
 
-        auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
-        QFile fileoldencryption(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat"));
+        //auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+        QFile fileoldencryption(dirwalletenc);
         fileoldencryption.remove();
 
          // Encrypt our wallet.dat 
@@ -315,15 +331,15 @@ void MainWindow::closeEvent(QCloseEvent* event) {
        // auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
         QString source_file = dir.filePath("addresslabels.dat");
         QString target_enc_file = dir.filePath("addresslabels.dat.enc");
-        QString sourceWallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat");
-        QString target_encWallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat");
+        QString sourceWallet_file = dirwallet;
+        QString target_encWallet_file = dirwalletenc;
      
         FileEncryption::encrypt(target_enc_file, source_file, key);
         FileEncryption::encrypt(target_encWallet_file, sourceWallet_file, key);      
 
         ///////////////// we rename the plaintext wallet.dat to Backup, for testing. 
 
-        QFile wallet(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat"));
+        QFile wallet(dirwallet);
         QFile address(dir.filePath("addresslabels.dat"));
         wallet.remove();
         address.remove();
@@ -411,15 +427,15 @@ void MainWindow::encryptWallet() {
         auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
         QString source_file = dir.filePath("addresslabels.dat");
         QString target_enc_file = dir.filePath("addresslabels.dat.enc");
-        QString sourceWallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat");
-        QString target_encWallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat");
+        QString sourceWallet_file = dirwallet;
+        QString target_encWallet_file = dirwalletenc;
      
         FileEncryption::encrypt(target_enc_file, source_file, key);
         FileEncryption::encrypt(target_encWallet_file, sourceWallet_file, key);
 
-        QFile wallet(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat"));
+        QFile wallet(dirwallet);
         QFile address(dir.filePath("addresslabels.dat"));
-        wallet.rename(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.datBackup"));
+        wallet.rename(dirwalletbackup);
         address.rename(dir.filePath("addresslabels.datBackup"));
     }
 }
@@ -482,16 +498,16 @@ void MainWindow::removeWalletEncryption() {
   
         auto dir =  QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
         auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
-        QString target_encwallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat");
-        QString target_decwallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat");
+        QString target_encwallet_file = dirwalletenc;
+        QString target_decwallet_file = dirwallet;
         QString target_encaddr_file = dir.filePath("addresslabels.dat.enc");
         QString target_decaddr_file = dir.filePath("addresslabels.dat");
 
         FileEncryption::decrypt(target_decwallet_file, target_encwallet_file, key);
         FileEncryption::decrypt(target_decaddr_file, target_encaddr_file, key);
     
-     QFile filencrypted(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat"));
-     QFile wallet(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat"));
+     QFile filencrypted(dirwalletenc);
+     QFile wallet(dirwallet);
        
     if (wallet.size() > 0)
     {
@@ -578,8 +594,8 @@ void MainWindow::removeWalletEncryptionStartUp() {
     {
         auto dir =  QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
         auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
-        QString target_encwallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat");
-        QString target_decwallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat");
+        QString target_encwallet_file = dirwalletenc;
+        QString target_decwallet_file = dirwallet;
         QString target_encaddr_file = dir.filePath("addresslabels.dat.enc");
         QString target_decaddr_file = dir.filePath("addresslabels.dat");
 
@@ -589,12 +605,12 @@ void MainWindow::removeWalletEncryptionStartUp() {
     } 
 
      auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
-     QFile wallet(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat"));
+     QFile wallet(dirwallet);
      //QFile backup(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.datBACKUP"));*/
     
     if (wallet.size() > 0)
     {
-        if  (fileExists(QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath(".silentdragonlite/silentdragonlite-wallet.datBackup")))
+        if  (fileExists(dirwalletbackup))
 
         {
 
