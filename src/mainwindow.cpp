@@ -466,21 +466,46 @@ void MainWindow::removeWalletEncryption() {
      crypto_pwhash_ALG_DEFAULT) != 0) {
     /* out of memory */
 }
-        auto dir =  QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
-        auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
-        QString target_encaddr_file = dir.filePath("addresslabels.dat.enc");
-        QString target_decaddr_file = dir.filePath("addresslabels.dat");
-        QString target_encwallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat");
-        QString target_decwallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat");
-
-        
-        FileEncryption::decrypt(target_decwallet_file, target_encwallet_file, key);
-        FileEncryption::decrypt(target_decaddr_file, target_encaddr_file, key);
 
         QFile filencrypted(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat"));
         filencrypted.remove();
 
+  {
+        auto dir =  QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+        auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+        QString target_encwallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat");
+        QString target_decwallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat");
+        QString target_encaddr_file = dir.filePath("addresslabels.dat.enc");
+        QString target_decaddr_file = dir.filePath("addresslabels.dat");
+
+        FileEncryption::decrypt(target_decwallet_file, target_encwallet_file, key);
+        FileEncryption::decrypt(target_decaddr_file, target_encaddr_file, key);
+
     } 
+
+     auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+     QFile filencrypted(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat"));
+       
+    if (filencrypted.size() > 0)
+    {
+      
+         QMessageBox::information(this, tr("Wallet Encryption Success"),
+                    QString("SDL is ready to Rock"),
+                    QMessageBox::Ok
+                );     
+        }else{
+            
+             qDebug()<<"verschlüsselung gescheitert ";
+        
+         QMessageBox::critical(this, tr("Wallet Encryption Failed"),
+                    QString("false password please try again"),
+                    QMessageBox::Ok
+                );
+                 this->removeWalletEncryptionStartUp();
+        }    
+
+    }
+   
 }
 
 void MainWindow::removeWalletEncryptionStartUp() {
@@ -532,12 +557,15 @@ void MainWindow::removeWalletEncryptionStartUp() {
 
         unsigned char key[KEY_LEN];
 
-      if (crypto_pwhash
+      if (crypto_pwhash  
       (key, sizeof key, PASSWORD, strlen(PASSWORD), hash,
       crypto_pwhash_OPSLIMIT_SENSITIVE, crypto_pwhash_MEMLIMIT_SENSITIVE,
       crypto_pwhash_ALG_DEFAULT) != 0) {
     /* out of memory */
         }
+
+  
+    {
         auto dir =  QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
         auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
         QString target_encwallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat");
@@ -546,8 +574,31 @@ void MainWindow::removeWalletEncryptionStartUp() {
         QString target_decaddr_file = dir.filePath("addresslabels.dat");
 
         FileEncryption::decrypt(target_decwallet_file, target_encwallet_file, key);
-      //  QThread::sleep(1);
         FileEncryption::decrypt(target_decaddr_file, target_encaddr_file, key);
+
+    } 
+
+     auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+     QFile filencrypted(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat"));
+       
+    if (filencrypted.size() > 0)
+    {
+      
+         QMessageBox::information(this, tr("Wallet Encryption Success"),
+                    QString("SDL is ready to Rock"),
+                    QMessageBox::Ok
+                );     
+        }else{
+
+             qDebug()<<"verschlüsselung gescheitert ";
+        
+         QMessageBox::critical(this, tr("Wallet Encryption Failed"),
+                    QString("false password please try again"),
+                    QMessageBox::Ok
+                );
+                 this->removeWalletEncryptionStartUp();
+        }    
+
     }
    
 }
