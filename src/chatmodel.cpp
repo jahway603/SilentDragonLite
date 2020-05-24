@@ -8,7 +8,6 @@
 #include "ui_mainwindow.h"
 #include "ui_requestContactDialog.h"
 #include "addressbook.h"
-#include "ui_memodialog.h"
 #include "ui_contactrequest.h"
 #include <QtWidgets>
 #include <QUuid>

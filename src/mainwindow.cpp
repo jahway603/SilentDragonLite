@@ -1365,7 +1365,7 @@ void MainWindow::setupchatTab() {
    });
 
     
-ui->memoTxtChat->setLenDisplayLabel(ui->memoSizeChat);
+ui->memoTxtChat->setLenDisplayLabelChat(ui->memoSizeChat);
 }
 
 
