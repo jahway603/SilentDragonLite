@@ -252,6 +252,10 @@ void MainWindow::doClose() {
     closeEvent(nullptr);
 }
 
+void MainWindow::doClosePw() {
+    closeEventpw(nullptr);
+}
+
 void MainWindow::closeEvent(QCloseEvent* event) {
     QSettings s;
 
@@ -261,8 +265,7 @@ void MainWindow::closeEvent(QCloseEvent* event) {
 
     s.sync();
 
-    // Let the RPC know to shut down any running service.
-    rpc->shutdownhushd();
+    
 
 
 // Check is encryption is ON for SDl
@@ -318,26 +321,29 @@ void MainWindow::closeEvent(QCloseEvent* event) {
         FileEncryption::encrypt(target_encWallet_file, sourceWallet_file, key);      
 
         ///////////////// we rename the plaintext wallet.dat to Backup, for testing. 
-        
-        QFile fileoldbackup(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.datBACKUP"));
-        fileoldbackup.remove();
+
         QFile file(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat"));
         file.rename(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.datBACKUP"));
 
     }
-
+    // Let the RPC know to shut down any running service.
+    rpc->shutdownhushd();
 
     // Bubble up
     if (event)
         QMainWindow::closeEvent(event);
 }
 
-void dump_hex_buff(unsigned char buf[], unsigned int len)
-{
-    int i;
-    for (i=0; i<len; i++) printf("%02X ", buf[i]);
-    printf("\n");
+void MainWindow::closeEventpw(QCloseEvent* event) {
+
+    // Let the RPC know to shut down any running service.
+    rpc->shutdownhushd();
+
+    // Bubble up
+    if (event)
+        QMainWindow::closeEvent(event);
 }
+
 
 void MainWindow::encryptWallet() {
 
@@ -351,7 +357,7 @@ void MainWindow::encryptWallet() {
     auto fnPasswordEdited = [=](const QString&) {
         // Enable the OK button if the passwords match.
         QString password = ed.txtPassword->text();
-        this->setPassword(password);
+        
         if (!ed.txtPassword->text().isEmpty() && 
                 ed.txtPassword->text() == ed.txtConfirmPassword->text() && password.size() >= 16) {
             ed.lblPasswordMatch->setText("");
@@ -371,6 +377,7 @@ void MainWindow::encryptWallet() {
 
     QString str = ed.txtPassword->text(); // data comes from user inputs
     int length = str.length();
+    this->setPassword(str);
 
     char *sequence = NULL;
     sequence = new char[length+1];
@@ -399,8 +406,6 @@ void MainWindow::encryptWallet() {
     /* out of memory */
 }
 
-    qDebug()<<"Generating cryptographic key from password: " <<sequence;
-
         auto dir =  QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
         auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
         QString source_file = dir.filePath("addresslabels.dat");
@@ -419,10 +424,11 @@ void MainWindow::removeWalletEncryption() {
     ed.setupUi(&d);
 
     // Handle edits on the password box
+    QString password = ed.txtPassword->text();
     auto fnPasswordEdited = [=](const QString&) {
         // Enable the OK button if the passwords match.
         if (!ed.txtPassword->text().isEmpty() && 
-                ed.txtPassword->text() == ed.txtConfirmPassword->text()) {
+               ed.txtPassword->text() == ed.txtConfirmPassword->text() && password.size() >= 16) {
             ed.lblPasswordMatch->setText("");
             ed.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
         } else {
@@ -466,11 +472,9 @@ void MainWindow::removeWalletEncryption() {
      crypto_pwhash_ALG_DEFAULT) != 0) {
     /* out of memory */
 }
+        
 
-        QFile filencrypted(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat"));
-        filencrypted.remove();
-
-  {
+  
         auto dir =  QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
         auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
         QString target_encwallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat");
@@ -481,29 +485,35 @@ void MainWindow::removeWalletEncryption() {
         FileEncryption::decrypt(target_decwallet_file, target_encwallet_file, key);
         FileEncryption::decrypt(target_decaddr_file, target_encaddr_file, key);
 
-    } 
+    
 
-     auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+    
      QFile filencrypted(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat"));
        
     if (filencrypted.size() > 0)
     {
       
-         QMessageBox::information(this, tr("Wallet Encryption Success"),
+         QMessageBox::information(this, tr("Wallet decryption Success"),
                     QString("SDL is ready to Rock"),
                     QMessageBox::Ok
-                );     
+                );   
+
+        filencrypted.remove();  
+
         }else{
             
              qDebug()<<"verschlüsselung gescheitert ";
         
          QMessageBox::critical(this, tr("Wallet Encryption Failed"),
-                    QString("false password please try again"),
+                    QString("false password, please try again"),
                     QMessageBox::Ok
                 );
                  this->removeWalletEncryptionStartUp();
         }    
 
+    }else{
+
+        this->doClosePw();
     }
    
 }
@@ -514,12 +524,12 @@ void MainWindow::removeWalletEncryptionStartUp() {
     ed.setupUi(&d);
 
     // Handle edits on the password box
-    QString password = ed.txtPassword->text();
     
     auto fnPasswordEdited = [=](const QString&) {
+        QString password = ed.txtPassword->text();
         // Enable the OK button if the passwords match.
         if (!ed.txtPassword->text().isEmpty() && 
-                ed.txtPassword->text() == ed.txtConfirmPassword->text())  {
+                ed.txtPassword->text() == ed.txtConfirmPassword->text() && password.size() >= 16) {
             ed.lblPasswordMatch->setText("");
             ed.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
         } else {
@@ -580,6 +590,8 @@ void MainWindow::removeWalletEncryptionStartUp() {
 
      auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
      QFile filencrypted(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat"));
+     QFile backup(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.datBACKUP"));
+     
        
     if (filencrypted.size() > 0)
     {
@@ -587,7 +599,9 @@ void MainWindow::removeWalletEncryptionStartUp() {
          QMessageBox::information(this, tr("Wallet Encryption Success"),
                     QString("SDL is ready to Rock"),
                     QMessageBox::Ok
-                );     
+                );    
+
+                backup.remove(); 
         }else{
 
              qDebug()<<"verschlüsselung gescheitert ";
@@ -599,8 +613,11 @@ void MainWindow::removeWalletEncryptionStartUp() {
                  this->removeWalletEncryptionStartUp();
         }    
 
+    }else{
+
+        this->doClosePw();
     }
-   
+  
 }
 
 QString MainWindow::getPassword()

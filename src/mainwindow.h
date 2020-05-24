@@ -88,6 +88,7 @@ public:
     Logger*      logger;
 
     void doClose();
+    void doClosePw();
     QString createHeaderMemo(QString type, QString cid, QString zaddr, int version, int headerNumber);
 
 public slots:
@@ -104,6 +105,7 @@ private:
 
     bool fileExists(QString path);
     void closeEvent(QCloseEvent* event);
+    void closeEventpw(QCloseEvent* event);
 
 
     void setupSendTab();
