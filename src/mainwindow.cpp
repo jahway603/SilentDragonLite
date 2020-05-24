@@ -276,7 +276,7 @@ void MainWindow::closeEvent(QCloseEvent* event) {
         fileoldencryption.remove();
 
          // Encrypt our wallet.dat 
-         QString str = "123";///just for testing. We set the user pw here
+         QString str = this->getPassword();
          //   QString str = ed.txtPassword->text(); // data comes from user inputs
          int length = str.length();
 
@@ -351,6 +351,7 @@ void MainWindow::encryptWallet() {
     auto fnPasswordEdited = [=](const QString&) {
         // Enable the OK button if the passwords match.
         QString password = ed.txtPassword->text();
+        this->setPassword(password);
         if (!ed.txtPassword->text().isEmpty() && 
                 ed.txtPassword->text() == ed.txtConfirmPassword->text() && password.size() >= 16) {
             ed.lblPasswordMatch->setText("");
@@ -544,6 +545,18 @@ void MainWindow::removeWalletEncryptionStartUp() {
         FileEncryption::decrypt(target_decaddr_file, target_encaddr_file, key);
     }
    
+}
+
+QString MainWindow::getPassword()
+{
+
+    return _password;
+}
+
+void MainWindow::setPassword(QString password)
+{
+
+    _password = password;
 }
 
 void MainWindow::setupStatusBar() {

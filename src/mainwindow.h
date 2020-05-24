@@ -51,6 +51,8 @@ public:
     QString doSendChatTxValidations(Tx tx);
     QString doSendRequestTxValidations(Tx tx);
     QString getCid();
+    QString getPassword();
+    void setPassword(QString Password);
 
     void replaceWormholeClient(WormholeClient* newClient);
     bool isWebsocketListening();
@@ -120,6 +122,7 @@ private:
     void setupStatusBar();
     
     void clearSendForm();
+    QString _password;
 
     Tx   createTxFromSendPage();
     bool confirmTx(Tx tx, RecurringPaymentInfo* rpi);
