@@ -477,6 +477,9 @@ void MainWindow::removeWalletEncryption() {
         FileEncryption::decrypt(target_decwallet_file, target_encwallet_file, key);
         FileEncryption::decrypt(target_decaddr_file, target_encaddr_file, key);
 
+        QFile filencrypted(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat"));
+        filencrypted.remove();
+
     } 
 }
 
@@ -486,6 +489,8 @@ void MainWindow::removeWalletEncryptionStartUp() {
     ed.setupUi(&d);
 
     // Handle edits on the password box
+    QString password = ed.txtPassword->text();
+    
     auto fnPasswordEdited = [=](const QString&) {
         // Enable the OK button if the passwords match.
         if (!ed.txtPassword->text().isEmpty() && 
@@ -506,7 +511,7 @@ void MainWindow::removeWalletEncryptionStartUp() {
     {
         QString str = ed.txtPassword->text(); // data comes from user inputs
         int length = str.length();
-
+        this->setPassword(str);
         char *sequence = NULL;
         sequence = new char[length+1];
         strncpy(sequence, str.toLocal8Bit(), length +1);
