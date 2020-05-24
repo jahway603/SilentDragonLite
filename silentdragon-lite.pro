@@ -143,6 +143,7 @@ FORMS += \
     src/requestContactDialog.ui \
     src/newrecurring.ui \
     src/requestdialog.ui \
+    src/removeencryption.ui \
     src/recurringmultiple.ui \ 
     src/chatbubbleme.ui \
     src/chatbubblepartner.ui

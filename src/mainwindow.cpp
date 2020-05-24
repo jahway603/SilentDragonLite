@@ -21,7 +21,8 @@
 #include "ui_requestContactDialog.h"
 #include "chatmodel.h"
 #include "requestdialog.h"
-#include "ui_startupencryption.h"
+#include "ui_startupencryption.h" 
+#include "ui_removeencryption.h"
 #include "websockets.h"
 #include "sodium.h"
 #include "sodium/crypto_generichash_blake2b.h"
@@ -268,18 +269,16 @@ void MainWindow::closeEvent(QCloseEvent* event) {
     if(fileExists(QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat"))) 
    
     {
-       
-
         // delete old file before
 
         auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
-        QFile file1(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat"));
-        file1.remove();
+        QFile fileoldencryption(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat"));
+        fileoldencryption.remove();
 
-        // Encrypt our wallet.dat 
-        QString str = "123";///just for testing. We set the user pw here
-      //   QString str = ed.txtPassword->text(); // data comes from user inputs
-    int length = str.length();
+         // Encrypt our wallet.dat 
+         QString str = "123";///just for testing. We set the user pw here
+         //   QString str = ed.txtPassword->text(); // data comes from user inputs
+         int length = str.length();
 
     char *sequence = NULL;
     sequence = new char[length+1];
@@ -309,7 +308,7 @@ void MainWindow::closeEvent(QCloseEvent* event) {
 }
    
         auto dir =  QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
-     //   auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+       // auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
         QString source_file = dir.filePath("addresslabels.dat");
         QString target_enc_file = dir.filePath("addresslabels.dat.enc");
         QString sourceWallet_file = dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat");
@@ -318,13 +317,15 @@ void MainWindow::closeEvent(QCloseEvent* event) {
         FileEncryption::encrypt(target_enc_file, source_file, key);
         FileEncryption::encrypt(target_encWallet_file, sourceWallet_file, key);      
 
-    }
-///////////////// we rename the plaintext wallet.dat to Backup, for testing. 
-        auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
-        QFile file1(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.datBACKUP"));
-        file1.remove();
+        ///////////////// we rename the plaintext wallet.dat to Backup, for testing. 
+        
+        QFile fileoldbackup(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.datBACKUP"));
+        fileoldbackup.remove();
         QFile file(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.dat"));
         file.rename(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.datBACKUP"));
+
+    }
+
 
     // Bubble up
     if (event)
@@ -351,11 +352,11 @@ void MainWindow::encryptWallet() {
         // Enable the OK button if the passwords match.
         QString password = ed.txtPassword->text();
         if (!ed.txtPassword->text().isEmpty() && 
-                ed.txtPassword->text() == ed.txtConfirmPassword->text() && password.size() >= 10) {
+                ed.txtPassword->text() == ed.txtConfirmPassword->text() && password.size() >= 16) {
             ed.lblPasswordMatch->setText("");
             ed.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
         } else {
-            ed.lblPasswordMatch->setText(tr("Passwords don't match or You have entered too few letters (10 minimum)"));
+            ed.lblPasswordMatch->setText(tr("Passphrase don't match or You have entered too few letters (16 minimum)"));
             ed.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
         }
 
@@ -413,7 +414,7 @@ void MainWindow::encryptWallet() {
 
 void MainWindow::removeWalletEncryption() {
     QDialog d(this);
-    Ui_encryptionDialog ed;
+    Ui_removeencryption ed;
     ed.setupUi(&d);
 
     // Handle edits on the password box
@@ -474,8 +475,6 @@ void MainWindow::removeWalletEncryption() {
         
         FileEncryption::decrypt(target_decwallet_file, target_encwallet_file, key);
         FileEncryption::decrypt(target_decaddr_file, target_encaddr_file, key);
-
-       
 
     } 
 }
