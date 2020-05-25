@@ -39,6 +39,7 @@
         <file>res/lock.svg</file>
         <file>res/lock.png</file>
         <file>res/lock_green.png</file>
+        <file>res/lock_orange.png</file>
         <file>res/unlocked.png</file>
         <file>res/getAddrWhite.png</file>
         <file>res/send-white.png</file>

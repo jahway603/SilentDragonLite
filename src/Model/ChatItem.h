@@ -20,11 +20,12 @@ class ChatItem
         QString _txid;
         int _confirmations;
         bool _outgoing = false;
+        bool _notarize = false;
 
     public:
         ChatItem();
-        ChatItem(long timestamp, QString address, QString contact, QString memo,QString requestZaddr, QString type, QString cid, QString txid, int confirmations);
-        ChatItem(long timestamp, QString address, QString contact, QString memo, QString requestZaddr, QString type,  QString cid, QString txid, int confirmations, bool outgoing);
+        ChatItem(long timestamp, QString address, QString contact, QString memo,QString requestZaddr, QString type, QString cid, QString txid, int confirmations,  bool notarize);
+        ChatItem(long timestamp, QString address, QString contact, QString memo, QString requestZaddr, QString type,  QString cid, QString txid, int confirmations, bool outgoing,  bool notarize);
         long getTimestamp();
         QString getAddress();
         QString getContact();
@@ -35,6 +36,7 @@ class ChatItem
         QString getTxid();
         int getConfirmations();
         bool isOutgoing();
+        bool isNotarized();
         void setTimestamp(long timestamp);
         void setAddress(QString address);
         void setContact(QString contact);
@@ -45,6 +47,7 @@ class ChatItem
         void setTxid(QString txid);
         void setConfirmations(int confirmations);
         void toggleOutgo();
+        void notarized();
         QString toChatLine();
         json toJson();
         ~ChatItem();

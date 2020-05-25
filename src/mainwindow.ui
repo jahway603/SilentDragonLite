@@ -1505,6 +1505,9 @@
           <height>521</height>
          </rect>
         </property>
+        <property name="toolTip">
+         <string>The locks shows you the status of the message. Red lock = unconfirmed, green lock = min. 1 confirmations, orange lock = message is notarized</string>
+        </property>
         <property name="verticalScrollBarPolicy">
          <enum>Qt::ScrollBarAsNeeded</enum>
         </property>

@@ -239,6 +239,12 @@ void Controller::getInfoThenRefresh(bool force)
         int curBlock  = reply["latest_block_height"].get<json::number_integer_t>();
         int longestchain = reply["longestchain"].get<json::number_integer_t>();
         int notarized = reply["notarized"].get<json::number_integer_t>();
+        int lag = longestchain - notarized ;
+        
+      
+        qDebug()<<"Lag :" << lag;
+
+
         int difficulty = reply["difficulty"].get<json::number_integer_t>();
         int blocks_until_halving= 340000 - curBlock;
         int halving_days = (blocks_until_halving * 150) / (60*60*24) ;
@@ -258,7 +264,11 @@ void Controller::getInfoThenRefresh(bool force)
             );
             ui->longestchain->setText(
                 "Block: " + QLocale(QLocale::German).toString(longestchain)
+               
             );
+
+            this->setLag(lag);
+
             ui->difficulty->setText(
                 QLocale(QLocale::German).toString(difficulty)
             );
@@ -285,6 +295,8 @@ void Controller::getInfoThenRefresh(bool force)
                 (QLocale(QLocale::English).toString(blocks_until_halving)) + 
                 " Blocks or , " + (QLocale(QLocale::English).toString(halving_days)  + " days" )
             );
+
+             this->setLag(lag);
         }
 
         ui->Version->setText(
@@ -293,6 +305,7 @@ void Controller::getInfoThenRefresh(bool force)
         ui->Vendor->setText(
             QString::fromStdString(reply["vendor"].get<json::string_t>())
         );
+         this->setLag(lag);
         main->logger->write(
             QString("Refresh. curblock ") % QString::number(curBlock) % ", update=" % (doUpdate ? "true" : "false") 
         );
@@ -560,6 +573,20 @@ void Controller::getInfoThenRefresh(bool force)
 
         prevCallSucceeded = false;
     });
+}
+
+int Controller::getLag()
+{
+
+    return _lag;
+
+}
+
+void Controller::setLag(int lag)
+{
+
+    _lag = lag;
+
 }
 
 void Controller::refreshAddresses() 
@@ -877,6 +904,15 @@ void Controller::refreshTransactions() {
                         memo = QString::fromStdString(o["memo"]);
 
                         QString cid; 
+                        bool isNotarized;
+
+                        if (confirmations > getLag())
+                        {
+                            isNotarized = true;
+                        }else{
+
+                            isNotarized = false;
+                        }
 
                         ChatItem item = ChatItem(
                                 datetime,
@@ -888,10 +924,11 @@ void Controller::refreshTransactions() {
                                 cid, 
                                 txid,
                                 confirmations,
-                                true 
+                                true,
+                                isNotarized
                             );
                               //  qDebug()<<"Memo : " <<memo;
-                             //   qDebug()<<"Confirmation :" << confirmations;
+                             qDebug()<< "Notarized Outgoing : " << isNotarized;
 
                         DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
                     
@@ -973,8 +1010,20 @@ void Controller::refreshTransactions() {
                         requestZaddr = chatModel->getrequestZaddrByTx(txid);
                 }else{
                             requestZaddr = "";
-                    }                 
+                    }     
+
                 position = it["position"].get<json::number_integer_t>(); 
+
+                  bool isNotarized;
+
+                        if (confirmations > getLag())
+                        {
+                            isNotarized = true;
+                        }else{
+
+                            isNotarized = false;
+                        }
+
                     ChatItem item = ChatItem(
                                 datetime,
                                 address,
@@ -985,9 +1034,10 @@ void Controller::refreshTransactions() {
                                 cid, 
                                 txid,
                                 confirmations,
-                                false
+                                false,
+                                isNotarized
                             );
-                          //  qDebug()<< "Position : " << position;
+                            qDebug()<< "Notarized : " << isNotarized;
                           //  qDebug()<<"Confirmation :" << confirmations;
 
                     DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
@@ -995,6 +1045,7 @@ void Controller::refreshTransactions() {
             }
             
         }
+        qDebug()<< getLag();
 
         // Calculate the total unspent amount that's pending. This will need to be 
         // shown in the UI so the user can keep track of pending funds
