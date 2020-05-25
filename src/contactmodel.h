@@ -8,6 +8,7 @@
 
 
 class ContactModel
+
 {
 	public:
 		ContactModel() {}
