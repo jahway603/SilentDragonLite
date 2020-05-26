@@ -349,6 +349,22 @@ void MainWindow::sendChat() {
         return;
     }
 
+    int max = 512;
+    QString chattext = ui->memoTxtChat->toPlainText();
+    int size = chattext.size();
+
+    if (size > max){
+     
+  // auto addr = "";
+  //  if (! Settings::isZAddress(AddressBook::addressFromAddressLabel(addr->text()))) {
+        QMessageBox msg(QMessageBox::Critical, tr("Your Message is too long"),
+        tr("You can only write messages with 512 character maximum \n")  + tr("\n Please reduce your message to 512 character."),
+        QMessageBox::Ok, this);
+
+        msg.exec();
+        return;
+    }
+
     Tx tx = createTxFromChatPage();
 
     QString error = doSendChatTxValidations(tx);
@@ -640,6 +656,22 @@ void MainWindow::ContactRequest() {
   //  if (! Settings::isZAddress(AddressBook::addressFromAddressLabel(addr->text()))) {
         QMessageBox msg(QMessageBox::Critical, tr("You have to select a contact and insert a Memo"),
         tr("You have selected no Contact from Contactlist,\n")  + tr("\nor your Memo is empty"),
+        QMessageBox::Ok, this);
+
+        msg.exec();
+        return;
+    }
+
+     int max = 512;
+    QString chattext = contactRequest.getMemo();;
+    int size = chattext.size();
+
+    if (size > max){
+     
+  // auto addr = "";
+  //  if (! Settings::isZAddress(AddressBook::addressFromAddressLabel(addr->text()))) {
+        QMessageBox msg(QMessageBox::Critical, tr("Your Message is too long"),
+        tr("You can only write messages with 512 character maximum \n")  + tr("\n Please reduce your message to 512 character."),
         QMessageBox::Ok, this);
 
         msg.exec();
