@@ -399,7 +399,7 @@ void MainWindow::sendChat() {
         }
 
         connD->status->setText(tr("Please wait..."));
-        connD->statusDetail->setText(tr("Your Message will be send"));
+        connD->statusDetail->setText(tr("Your Message will be sent"));
 
         d->show();
         ui->memoTxtChat->clear();
@@ -518,7 +518,7 @@ void::MainWindow::addContact()
     });
         
    QObject::connect(request.sendRequestButton, &QPushButton::clicked, this, &MainWindow::saveandsendContact);
-   QObject::connect(request.onlyAdd, &QPushButton::clicked, this, &MainWindow::saveContact);
+  // QObject::connect(request.onlyAdd, &QPushButton::clicked, this, &MainWindow::saveContact);
         
     dialog.exec();
        
@@ -716,7 +716,7 @@ void MainWindow::ContactRequest() {
         }
 
         connD->status->setText(tr("Please wait..."));
-        connD->statusDetail->setText(tr("Your Contact will be send"));
+        connD->statusDetail->setText(tr("Your contact request will be sent"));
 
         d->show();
         ui->memoTxtChat->clear();
