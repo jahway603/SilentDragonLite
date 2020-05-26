@@ -1378,7 +1378,10 @@
          <bool>true</bool>
         </property>
         <property name="editTriggers">
-         <set>QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
+         <set>QAbstractItemView::NoEditTriggers</set>
+        </property>
+        <property name="showDropIndicator" stdset="0">
+         <bool>false</bool>
         </property>
         <property name="alternatingRowColors">
          <bool>false</bool>
@@ -1518,7 +1521,7 @@
          <enum>QAbstractScrollArea::AdjustToContents</enum>
         </property>
         <property name="editTriggers">
-         <set>QAbstractItemView::AllEditTriggers</set>
+         <set>QAbstractItemView::NoEditTriggers</set>
         </property>
         <property name="resizeMode">
          <enum>QListView::Adjust</enum>

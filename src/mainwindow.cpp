@@ -1208,6 +1208,7 @@ void MainWindow::setupTransactionsTab() {
     ui->listChat->setMinimumSize(200,350);
     ui->listChat->setItemDelegate(new ListViewDelegate());
     ui->listChat->show();
+    
     ui->transactionsTable->setContextMenuPolicy(Qt::CustomContextMenu);
     // Table right click
     QObject::connect(ui->transactionsTable, &QTableView::customContextMenuRequested, [=] (QPoint pos) {

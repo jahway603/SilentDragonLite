@@ -53,7 +53,6 @@ void ChatModel::clear()
 void ChatModel::addMessage(ChatItem item)
 {
     QString key = ChatIDGenerator::getInstance()->generateID(item); //this->generateChatItemID(item);
-  //  qDebug() << "inserting chatitem with id: " << key;
     this->chatItems[key] = item;
 }
 
@@ -72,9 +71,7 @@ void ChatModel::showMessages()
     }
           
 }
-
-
-      
+     
 void MainWindow::renderContactRequest(){
 
         Ui_requestDialog requestContact;
@@ -336,7 +333,9 @@ void MainWindow::sendChat() {
 
     // Memos can only be used with zAddrs. So check that first
    // for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
-
+   QString Name = ui->contactNameMemo->text();
+   int sizename = Name.size();
+        qDebug()<< sizename;
       if (ui->contactNameMemo->text().trimmed().isEmpty() || ui->memoTxtChat->toPlainText().trimmed().isEmpty()) {
      
   // auto addr = "";

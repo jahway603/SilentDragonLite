@@ -237,18 +237,15 @@ void Controller::getInfoThenRefresh(bool force)
     zrpc->fetchInfo([=] (const json& reply) {   
         prevCallSucceeded = true;       
         int curBlock  = reply["latest_block_height"].get<json::number_integer_t>();
-        int longestchain = reply["longestchain"].get<json::number_integer_t>();
-        int notarized = reply["notarized"].get<json::number_integer_t>();
-        int lag = longestchain - notarized ;
-        
-      
-        qDebug()<<"Lag :" << lag;
-
-
+        bool doUpdate = force || (model->getLatestBlock() != curBlock);
         int difficulty = reply["difficulty"].get<json::number_integer_t>();
         int blocks_until_halving= 340000 - curBlock;
         int halving_days = (blocks_until_halving * 150) / (60*60*24) ;
-        bool doUpdate = force || (model->getLatestBlock() != curBlock);
+        int longestchain = reply["longestchain"].get<json::number_integer_t>();
+        int notarized = reply["notarized"].get<json::number_integer_t>();
+        
+ 
+      
         model->setLatestBlock(curBlock);
         if (
             Settings::getInstance()->get_currency_name() == "EUR" || 
@@ -267,7 +264,7 @@ void Controller::getInfoThenRefresh(bool force)
                
             );
 
-            this->setLag(lag);
+            
 
             ui->difficulty->setText(
                 QLocale(QLocale::German).toString(difficulty)
@@ -295,8 +292,6 @@ void Controller::getInfoThenRefresh(bool force)
                 (QLocale(QLocale::English).toString(blocks_until_halving)) + 
                 " Blocks or , " + (QLocale(QLocale::English).toString(halving_days)  + " days" )
             );
-
-             this->setLag(lag);
         }
 
         ui->Version->setText(
@@ -305,7 +300,6 @@ void Controller::getInfoThenRefresh(bool force)
         ui->Vendor->setText(
             QString::fromStdString(reply["vendor"].get<json::string_t>())
         );
-         this->setLag(lag);
         main->logger->write(
             QString("Refresh. curblock ") % QString::number(curBlock) % ", update=" % (doUpdate ? "true" : "false") 
         );
@@ -553,8 +547,12 @@ void Controller::getInfoThenRefresh(bool force)
             refreshAddresses();     // This calls refreshZSentTransactions() and refreshReceivedZTrans()
             refreshTransactions();
         }
+
+        int lag = longestchain - notarized ;
+        this->setLag(lag);
     }, [=](QString err) {
         // hushd has probably disappeared.
+        
         this->noConnection();
 
         // Prevent multiple dialog boxes, because these are called async
@@ -914,6 +912,12 @@ void Controller::refreshTransactions() {
                             isNotarized = false;
                         }
 
+                         if (confirmations == 1) {  
+                             DataStore::getChatDataStore()->clear();
+                            this->refresh(true);
+                        } 
+                        qDebug()<<"Conf : " << confirmations;
+
                         ChatItem item = ChatItem(
                                 datetime,
                                 address,
@@ -927,12 +931,10 @@ void Controller::refreshTransactions() {
                                 true,
                                 isNotarized
                             );
-                              //  qDebug()<<"Memo : " <<memo;
-                             qDebug()<< "Notarized Outgoing : " << isNotarized;
-
                         DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
-                    
-                        }                              
+                        } 
+
+                                        
                     
                     items.push_back(TransactionItemDetail{address, amount, memo});
                     total_amount = total_amount + amount;
@@ -1038,7 +1040,6 @@ void Controller::refreshTransactions() {
                                 isNotarized
                             );
                             qDebug()<< "Notarized : " << isNotarized;
-                          //  qDebug()<<"Confirmation :" << confirmations;
 
                     DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
                  } 
