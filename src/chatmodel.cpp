@@ -403,6 +403,7 @@ void MainWindow::sendChat() {
 
         d->show();
         ui->memoTxtChat->clear();
+        
 
         // And send the Tx
         rpc->executeTransaction(tx, 
@@ -411,6 +412,7 @@ void MainWindow::sendChat() {
 
                 connD->status->setText(tr("Done!"));
                 connD->statusDetail->setText(txid);
+                
 
                 QTimer::singleShot(1000, [=]() {
                     d->accept();
@@ -421,7 +423,7 @@ void MainWindow::sendChat() {
                   });
                 
                 // Force a UI update so we get the unconfirmed Tx
-              //  rpc->refresh(true);
+                rpc->refresh(true);
                 ui->memoTxtChat->clear();
 
             },
@@ -440,6 +442,8 @@ void MainWindow::sendChat() {
                 QMessageBox::critical(this, QObject::tr("Transaction Error"), errStr, QMessageBox::Ok);            
             }
         );
+
+      //  rpc->refresh(true);
     }        
 
 QString MainWindow::doSendChatTxValidations(Tx tx) {
@@ -465,7 +469,7 @@ QString MainWindow::doSendChatTxValidations(Tx tx) {
     auto available = rpc->getModel()->getAvailableBalance();
 
     if (available < total) {
-        return tr("Not enough available funds to send this transaction\n\nHave: %1\nNeed: %2\n\nNote: Funds need 3 confirmations before they can be spent")
+        return tr("Not enough available funds to send this transaction\n\nHave: %1\nNeed: %2\n\nNote: Funds need 1 confirmations before they can be spent")
             .arg(available.toDecimalhushString(), total.toDecimalhushString());
     }
 
@@ -662,7 +666,7 @@ void MainWindow::ContactRequest() {
         return;
     }
 
-     int max = 512;
+    int max = 512;
     QString chattext = contactRequest.getMemo();;
     int size = chattext.size();
 
