@@ -896,6 +896,16 @@ void Controller::refreshTransactions() {
                     CAmount amount = CAmount::fromqint64(-1* o["value"].get<json::number_unsigned_t>()); 
                     
                    // Check for Memos
+
+                      if (confirmations == 0) {  
+                             chatModel->addconfirmations(txid, confirmations);
+                        } 
+
+                     if ((confirmations == 1)  && (chatModel->getConfirmationByTx(txid) != QString("0xdeadbeef"))){  
+                             DataStore::getChatDataStore()->clear();
+                             chatModel->killConfirmationCache();
+                             this->refresh(true);
+                        } 
                    
                     QString memo;
                     if (!o["memo"].is_null()) {
@@ -912,10 +922,6 @@ void Controller::refreshTransactions() {
                             isNotarized = false;
                         }
 
-                         if (confirmations == 1) {  
-                             DataStore::getChatDataStore()->clear();
-                            this->refresh(true);
-                        } 
                         qDebug()<<"Conf : " << confirmations;
 
                         ChatItem item = ChatItem(
@@ -932,10 +938,13 @@ void Controller::refreshTransactions() {
                                 isNotarized
                             );
                         DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
+                        
+                        
+
                         } 
 
                                         
-                    
+                  //  this->refresh(true);
                     items.push_back(TransactionItemDetail{address, amount, memo});
                     total_amount = total_amount + amount;
                 }

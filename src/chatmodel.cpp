@@ -216,6 +216,11 @@ void ChatModel::addrequestZaddr(QString tx, QString requestZaddr)
     this->requestZaddrMap[tx] = requestZaddr;
 }
 
+void ChatModel::addconfirmations(QString tx, int confirmation)
+{
+    this->confirmationsMap[tx] = confirmation;
+}
+
 QString ChatModel::getCidByTx(QString tx)
 {
     for(auto& pair : this->cidMap)
@@ -226,6 +231,21 @@ QString ChatModel::getCidByTx(QString tx)
     if(this->cidMap.count(tx) > 0)
     {
         return this->cidMap[tx];
+    }
+
+    return QString("0xdeadbeef");
+}
+
+QString ChatModel::getConfirmationByTx(QString tx)
+{
+    for(auto& pair : this->confirmationsMap)
+    {
+
+    }
+
+    if(this->confirmationsMap.count(tx) > 0)
+    {
+        return this->confirmationsMap[tx];
     }
 
     return QString("0xdeadbeef");
@@ -254,6 +274,11 @@ void ChatModel::killCidCache()
 void ChatModel::killrequestZaddrCache()
 {
     this->requestZaddrMap.clear();
+}
+
+void ChatModel::killConfirmationCache()
+{
+    this->confirmationsMap.clear();
 }
 
 QString MainWindow::createHeaderMemo(QString type, QString cid, QString zaddr,  int version=0, int headerNumber=1)
