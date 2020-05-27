@@ -122,6 +122,7 @@ HEADERS += \
 FORMS += \
     src/contactrequest.ui \
     src/encryption.ui \
+    src/hushrequest.ui \
     src/mainwindow.ui \
     src/migration.ui \
     src/newseed.ui \

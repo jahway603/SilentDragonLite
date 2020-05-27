@@ -1338,9 +1338,6 @@ void MainWindow::setupchatTab() {
             ui->memoTxtChat->setTextColor("Black");
         }
 
-  
-
-
     QObject::connect(ui->sendChatButton, &QPushButton::clicked, this, &MainWindow::sendChat);
     QObject::connect(ui->safeContactRequest, &QPushButton::clicked, this, &MainWindow::addContact);
     QObject::connect(ui->pushContact, &QPushButton::clicked, this , &MainWindow::renderContactRequest);
@@ -1355,17 +1352,13 @@ void MainWindow::setupchatTab() {
         
         for(auto &p : AddressBook::getInstance()->getAllAddressLabels())
         if (label_contact == p.getName()) {
-       // ui->ContactZaddr->setText(p.getPartnerAddress());
-      //  ui->MyZaddr->setText(p.getMyAddress());
-        ui->contactNameMemo->setText(p.getName());
-      //  ui->memoTxtChat->clear();
-        
-    rpc->refresh(true);
-   // updateChat();
+        ui->contactNameMemo->setText(p.getName());    
+        rpc->refresh(true);
+
         }
    });
 
-
+  
     QMenu* contextMenu;
      QAction* requestAction;
      QAction* editAction;
@@ -1382,8 +1375,41 @@ void MainWindow::setupchatTab() {
      ui->listContactWidget->addAction(HushAction);
      ui->listContactWidget->addAction(requestHushAction);
       QObject::connect(requestHushAction, &QAction::triggered, [=]() {
+          QModelIndex index = ui->listContactWidget->currentIndex();
+        QString label_contact = index.data(Qt::DisplayRole).toString();
+        
+        for(auto &p : AddressBook::getInstance()->getAllAddressLabels())
+        if (label_contact == p.getName()) {
+        ui->contactNameMemo->setText(p.getName());    
+        rpc->refresh(true);
+
+        }
+   
      MainWindow::showRequesthush();
      }); 
+
+      QObject::connect(editAction, &QAction::triggered, [=]() {
+          QModelIndex index = ui->listContactWidget->currentIndex();
+        QString label_contact = index.data(Qt::DisplayRole).toString();
+        
+        for(auto &p : AddressBook::getInstance()->getAllAddressLabels())
+        if (label_contact == p.getName()) {
+      
+        
+            QString label1 = p.getName();
+            QString addr = p.getPartnerAddress();
+            QString myzaddr =  p.getMyAddress();
+            QString cid = p.getCid();
+            QString avatar = p.getAvatar();
+
+
+     AddressBook::getInstance()->removeAddressLabel(label1, addr, myzaddr, cid,avatar);
+   // QList<ContactItem> labels = AddressBook::getInstance()->getAllAddressLabels();
+     rpc->refreshContacts(
+            ui->listContactWidget);
+     rpc->refresh(true);
+        }    
+     });
 
     
 ui->memoTxtChat->setLenDisplayLabelChat(ui->memoSizeChat);
