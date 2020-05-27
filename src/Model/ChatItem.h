@@ -36,6 +36,7 @@ class ChatItem
         QString getTxid();
         int getConfirmations();
         bool isOutgoing();
+        bool isdouble();
         bool isNotarized();
         void setTimestamp(long timestamp);
         void setAddress(QString address);

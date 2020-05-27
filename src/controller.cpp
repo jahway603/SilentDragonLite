@@ -943,8 +943,7 @@ void Controller::refreshTransactions() {
 
                         } 
 
-                                        
-                  //  this->refresh(true);
+                                    
                     items.push_back(TransactionItemDetail{address, amount, memo});
                     total_amount = total_amount + amount;
                 }

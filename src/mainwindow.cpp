@@ -1358,12 +1358,32 @@ void MainWindow::setupchatTab() {
        // ui->ContactZaddr->setText(p.getPartnerAddress());
       //  ui->MyZaddr->setText(p.getMyAddress());
         ui->contactNameMemo->setText(p.getName());
-        ui->memoTxtChat->clear();
+      //  ui->memoTxtChat->clear();
         
     rpc->refresh(true);
    // updateChat();
         }
    });
+
+
+    QMenu* contextMenu;
+     QAction* requestAction;
+     QAction* editAction;
+     QAction* HushAction;
+     QAction* requestHushAction;
+     contextMenu = new QMenu(ui->listContactWidget);
+     requestAction = new QAction("Send a contact request",contextMenu);
+     editAction = new QAction("Delete this contact",contextMenu);
+     HushAction = new QAction("Send a friend some Hush",contextMenu);
+     requestHushAction = new QAction("Request some Hush",contextMenu);
+     ui->listContactWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
+     ui->listContactWidget->addAction(requestAction);
+     ui->listContactWidget->addAction(editAction);
+     ui->listContactWidget->addAction(HushAction);
+     ui->listContactWidget->addAction(requestHushAction);
+      QObject::connect(requestHushAction, &QAction::triggered, [=]() {
+     MainWindow::showRequesthush();
+     }); 
 
     
 ui->memoTxtChat->setLenDisplayLabelChat(ui->memoSizeChat);

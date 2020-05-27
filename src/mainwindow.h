@@ -60,6 +60,7 @@ public:
     void stopWebsocket();
     void saveContact();
     void saveandsendContact();
+    void showRequesthush();
    // void setmaxlenChat(int len);
    // void updateDisplay();
     

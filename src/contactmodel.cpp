@@ -5,20 +5,17 @@
 #include "addressbook.h"
 #include "mainwindow.h"
 #include "chatmodel.h"
+#include "requestdialog.h"
+#include "ui_requestdialog.h"
+#include "settings.h"
+#include "controller.h"
+
 
 
 void ContactModel::renderContactList(QListView* view)
 {    
      QStandardItemModel* contact = new QStandardItemModel();
-     QMenu* contextMenu;
-     QAction* requestAction;
-     QAction* editAction;
-     contextMenu = new QMenu(view);
-     requestAction = new QAction("Send a contact request",contextMenu);
-     editAction = new QAction("Edit this contact",contextMenu);
-
-   //  QObject::connect(requestAction,SIGNAL(customContextMenuRequested(const QModelIndex)),this, SLOT(&ContactModel::requestActionClickedSlot));
-       
+         
 	for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
     {
 
@@ -34,9 +31,25 @@ void ContactModel::renderContactList(QListView* view)
              view->setUniformItemSizes(true);
              view->setDragDropMode(QAbstractItemView::DropOnly);      
              view->show();
-             view->setContextMenuPolicy(Qt::ActionsContextMenu);
-             view->addAction(requestAction);
-             view->addAction(editAction);
+             
+           
         
     }
 }
+
+void MainWindow::showRequesthush() {
+ 
+    Ui_RequestDialog req;
+    QDialog d(this);
+    req.setupUi(&d);
+        Settings::saveRestore(&d);
+
+   // setupDialog(main, &d, &req);
+
+    // Setup the Label completer for the Address
+   
+    
+    d.exec();
+   
+}
+
