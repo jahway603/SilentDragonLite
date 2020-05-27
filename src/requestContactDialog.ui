@@ -376,13 +376,6 @@
      </property>
     </widget>
    </item>
-   <item row="9" column="2">
-    <widget class="QLabel" name="requestCID">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
    <item row="10" column="1">
     <widget class="QLabel" name="zaddrold">
      <property name="text">
@@ -392,6 +385,13 @@
    </item>
    <item row="10" column="3">
     <widget class="QLabel" name="zaddrnew">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="2">
+    <widget class="QLabel" name="requestCID">
      <property name="text">
       <string/>
      </property>
