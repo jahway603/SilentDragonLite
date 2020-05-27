@@ -1,8 +1,11 @@
-#include "FileSystem.h"
+// Copyright 2019-2020 The Hush developers
+// GPLv3
 
+#include "FileSystem.h"
 #include <QString>
 #include <QList>
 #include "../Crypto/passwd.h"
+#include "addressbook.h"
 
 FileSystem::FileSystem()
 {
@@ -99,7 +102,6 @@ QList<ContactItem> FileSystem::readContactsOldFormat(QString file)
         qDebug() << "Detected old addressbook format";
         QList<QList<QString>> stuff;
         in >> stuff;
-        //qDebug() << "Stuff: " << stuff;
         for (int i=0; i < stuff.size(); i++) 
         {
             ContactItem contact = ContactItem(stuff[i][0],stuff[i][1], stuff[i][2], stuff[i][3],stuff[i][4]);

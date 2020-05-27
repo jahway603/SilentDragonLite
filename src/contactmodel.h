@@ -15,8 +15,7 @@ class ContactModel
 
 		ContactModel() {}
 		void renderContactList(QListView* view);
-		
-		
+			
 };
 
 #endif

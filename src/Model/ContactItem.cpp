@@ -1,4 +1,9 @@
+// Copyright 2019-2020 The Hush developers
+// GPLv3
 #include "ContactItem.h"
+#include "chatmodel.h"
+#include "Model/ChatItem.h"
+#include "controller.h"
 
 ContactItem::ContactItem() {}
 
@@ -8,7 +13,7 @@ ContactItem::ContactItem(QString name, QString partnerAddress, QString myAddress
     _myAddress = myAddress;
     _partnerAddress = partnerAddress;
     _cid = cid;
-    _avatar = avatar;
+    _avatar = avatar; 
 }
 
 QString ContactItem::getName() const

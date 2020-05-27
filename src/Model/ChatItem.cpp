@@ -5,7 +5,7 @@
 
 ChatItem::ChatItem() {}
 
-ChatItem::ChatItem(long timestamp, QString address, QString contact, QString memo, QString requestZaddr, QString type, QString cid, QString txid, int confirmations, bool notarize)
+ChatItem::ChatItem(long timestamp, QString address, QString contact, QString memo, QString requestZaddr, QString type, QString cid, QString txid, int confirmations, bool notarize,  bool iscontact)
 {
     _timestamp = timestamp;
     _address = address;
@@ -18,9 +18,10 @@ ChatItem::ChatItem(long timestamp, QString address, QString contact, QString mem
     _confirmations = confirmations;
     _outgoing = false;
     _notarize = notarize;
+    _iscontact = iscontact;
 }
 
-ChatItem::ChatItem(long timestamp, QString address, QString contact, QString memo, QString requestZaddr, QString type, QString cid, QString txid, int confirmations, bool outgoing, bool notarize)
+ChatItem::ChatItem(long timestamp, QString address, QString contact, QString memo, QString requestZaddr, QString type, QString cid, QString txid, int confirmations, bool outgoing, bool notarize,  bool iscontact)
 {
     _timestamp = timestamp;
     _address = address;
@@ -33,6 +34,8 @@ ChatItem::ChatItem(long timestamp, QString address, QString contact, QString mem
     _confirmations = confirmations;
     _outgoing = outgoing;
     _notarize = notarize;
+    _iscontact = iscontact;
+     
 }
 
 long ChatItem::getTimestamp()
@@ -88,6 +91,11 @@ bool ChatItem::isNotarized()
     return _notarize;
 }
 
+bool ChatItem::isContact()
+{
+    return _iscontact;
+}
+
 void ChatItem::setTimestamp(long timestamp)
 {
     _timestamp = timestamp;
@@ -138,6 +146,11 @@ void ChatItem::toggleOutgo()
 void ChatItem::notarized()
 {
     _notarize = false;
+}
+
+void ChatItem::contact(bool iscontact)
+{
+    _iscontact = iscontact;
 }
 
 

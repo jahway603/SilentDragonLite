@@ -935,7 +935,8 @@ void Controller::refreshTransactions() {
                                 txid,
                                 confirmations,
                                 true,
-                                isNotarized
+                                isNotarized,
+                                false
                             );
                         DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
                         
@@ -991,6 +992,28 @@ void Controller::refreshTransactions() {
                     QString cid;
                     int position;
                     QString requestZaddr;
+                    bool isContact;
+                    
+
+                for (auto &p : AddressBook::getInstance()->getAllAddressLabels())
+                {
+
+                      if (p.getPartnerAddress() == requestZaddr) 
+                      {
+
+                          chatModel->addAddressbylabel(address, requestZaddr);
+                      } else{}
+               
+                     
+                if (chatModel->Addressbylabel(address) != QString("0xdeadbeef")){
+
+                     isContact = true;
+
+                }else{
+
+                     isContact = false;
+
+                }
 
                 if (!it["memo"].is_null()) {
 
@@ -1005,7 +1028,8 @@ void Controller::refreshTransactions() {
                     chatModel->addCid(txid, cid);
                     chatModel->addrequestZaddr(txid, requestZaddr);
 
-                }       
+                }     
+                 
             
                 if (chatModel->getCidByTx(txid) != QString("0xdeadbeef")){
 
@@ -1045,16 +1069,16 @@ void Controller::refreshTransactions() {
                                 txid,
                                 confirmations,
                                 false,
-                                isNotarized
+                                isNotarized,
+                                isContact
                             );
-                            qDebug()<< "Notarized : " << isNotarized;
-
+        
                     DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
                  } 
             }
-            
+             }
         }
-        qDebug()<< getLag();
+        qDebug()<<"get Lag" << getLag();
 
         // Calculate the total unspent amount that's pending. This will need to be 
         // shown in the UI so the user can keep track of pending funds

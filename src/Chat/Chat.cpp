@@ -55,7 +55,6 @@ void Chat::renderChatBox(Ui::MainWindow *ui, QListView *view, QLabel *label)
     {
         for (auto &c : DataStore::getChatDataStore()->getAllMemos())
         {
-            //////Render only Memos for selected contacts. Do not render empty Memos //// Render only memos where cid=cid
 
             if (
                 (p.getName() == ui->contactNameMemo->text().trimmed()) &&

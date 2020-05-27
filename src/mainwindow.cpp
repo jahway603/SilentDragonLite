@@ -1358,7 +1358,6 @@ void MainWindow::setupchatTab() {
         }
    });
 
-  
     QMenu* contextMenu;
      QAction* requestAction;
      QAction* editAction;
@@ -1397,7 +1396,6 @@ void MainWindow::setupchatTab() {
         
         for(auto &p : AddressBook::getInstance()->getAllAddressLabels())
         if (label_contact == p.getName()) {
-      
         
             QString label1 = p.getName();
             QString addr = p.getPartnerAddress();
@@ -1407,7 +1405,6 @@ void MainWindow::setupchatTab() {
 
 
      AddressBook::getInstance()->removeAddressLabel(label1, addr, myzaddr, cid,avatar);
-   // QList<ContactItem> labels = AddressBook::getInstance()->getAllAddressLabels();
      rpc->refreshContacts(
             ui->listContactWidget);
      rpc->refresh(true);
@@ -1424,13 +1421,11 @@ void MainWindow::updateChat()
 {
     rpc->refreshChat(ui->listChat,ui->memoSizeChat);
     rpc->refresh(true);
-    
-
 }
 
 void MainWindow::updateContacts()
 {
-    //rpc->refreshContacts(ui->listContactWidget);
+    
 }
 
 void MainWindow::addNewZaddr(bool sapling) {

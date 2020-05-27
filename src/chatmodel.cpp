@@ -71,6 +71,26 @@ void ChatModel::showMessages()
     }
           
 }
+
+void ChatModel::addAddressbylabel(QString address, QString label)
+{
+    this->AddressbyLabelMap[address] = label;
+}
+
+QString ChatModel::Addressbylabel(QString address)
+{
+    for(auto& pair : this->AddressbyLabelMap)
+    {
+
+    }
+
+    if(this->AddressbyLabelMap.count(address) > 0)
+    {
+        return this->AddressbyLabelMap[address];
+    }
+
+    return QString("0xdeadbeef");
+}
      
 void MainWindow::renderContactRequest(){
 
@@ -89,17 +109,22 @@ void MainWindow::renderContactRequest(){
                 contactRequest->appendRow(Items);
                 requestContact.requestContact->setModel(contactRequest);
                 requestContact.requestContact->show();
+                requestContact.zaddrnew->setVisible(false);
+                requestContact.zaddrnew->setText(c.second.getAddress());
             }
 
             QStandardItemModel* contactRequestOld = new QStandardItemModel();
+            
              for (auto &p : AddressBook::getInstance()->getAllAddressLabels())
               for (auto &c : DataStore::getChatDataStore()->getAllOldContactRequests())
             {
                if (p.getPartnerAddress() == c.second.getRequestZaddr())
                {
-                QStandardItem* Items = new QStandardItem(c.second.getAddress());
+                QStandardItem* Items = new QStandardItem(p.getName());
                 contactRequestOld->appendRow(Items);
                 requestContact.requestContactOld->setModel(contactRequestOld);
+                requestContact.zaddrold->setVisible(false);
+                requestContact.zaddrold->setText(c.second.getAddress());
                 requestContact.requestContactOld->show();
                }else{}
             }
@@ -135,11 +160,11 @@ void MainWindow::renderContactRequest(){
    QObject::connect(requestContact.requestContactOld, &QTableView::clicked, [&] () {
 
     for (auto &c : DataStore::getChatDataStore()->getAllRawChatItems()){
-        QModelIndex index = requestContact.requestContactOld->currentIndex();
-        QString label_contactold = index.data(Qt::DisplayRole).toString();
+       /* QModelIndex index = requestContact.requestContactOld->currentIndex();
+        QString label_contactold = index.data(Qt::DisplayRole).toString();*/
         QStandardItemModel* contactMemo = new QStandardItemModel();
            
-        if  ((c.second.isOutgoing() == false) && (label_contactold == c.second.getAddress()) && (c.second.getType() != "Cont"))
+        if  ((c.second.isOutgoing() == false) && (requestContact.zaddrold->text() == c.second.getAddress()) && (c.second.getType() != "Cont"))
         
         {
 
@@ -809,7 +834,7 @@ QString MainWindow::doSendRequestTxValidations(Tx tx) {
     auto available = rpc->getModel()->getAvailableBalance();
 
     if (available < total) {
-        return tr("Not enough available funds to send this transaction\n\nHave: %1\nNeed: %2\n\nNote: Funds need 5 confirmations before they can be spent")
+        return tr("Not enough available funds to send this transaction\n\nHave: %1\nNeed: %2\n\nNote: Funds need 1 confirmations before they can be spent")
             .arg(available.toDecimalhushString(), total.toDecimalhushString());
     }
 
