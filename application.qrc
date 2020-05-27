@@ -33,11 +33,7 @@
         <file>res/add_contact.png</file>
         <file>res/notification.png</file>
         <file>res/rahmen-message.png</file>
-        <file>res/upload.png</file>
-        <file>res/upload.svg</file>
         <file>res/message-icon.svg</file>
-        <file>res/lock.svg</file>
-        <file>res/lock.png</file>
         <file>res/lock_green.png</file>
         <file>res/lock_orange.png</file>
         <file>res/unlocked.png</file>
@@ -49,6 +45,8 @@
         <file>res/sendBlack.png</file>
         <file>res/requestBlack.png</file>
         <file>res/addContactBlack.png</file>
+        <file>res/unknownBlack.png</file>
+        <file>res/unknownWhite.png</file>
        
     </qresource>
     <qresource prefix="/img">

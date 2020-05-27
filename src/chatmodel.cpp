@@ -99,18 +99,39 @@ void MainWindow::renderContactRequest(){
         requestContact.setupUi(&dialog);
         Settings::saveRestore(&dialog);
 
+        QString icon;
+        auto theme = Settings::getInstance()->get_theme_name();
+        if (theme == "dark" || theme == "midnight") {
+           icon = ":/icons/res/unknownWhite.png";
+        }else{
+            icon = ":/icons/res/unknownBlack.png";
+        }
+
+         QPixmap unknownWhite(icon);
+         QIcon addnewAddrIcon(unknownWhite);
+       
+        
+       
+
        QStandardItemModel* contactRequest = new QStandardItemModel();
 
             for (auto &c : DataStore::getChatDataStore()->getAllNewContactRequests())
 
+
+
             {
 
-                QStandardItem* Items = new QStandardItem(c.second.getAddress());
+                QStandardItem* Items = new QStandardItem(QString("Unknown Sender"));
                 contactRequest->appendRow(Items);
                 requestContact.requestContact->setModel(contactRequest);
+                
+                Items->setData(QIcon(addnewAddrIcon),Qt::DecorationRole);
+                requestContact.requestContact->setIconSize(QSize(40,50));
+                requestContact.requestContact->setUniformItemSizes(true);
                 requestContact.requestContact->show();
                 requestContact.zaddrnew->setVisible(false);
                 requestContact.zaddrnew->setText(c.second.getAddress());
+
             }
 
             QStandardItemModel* contactRequestOld = new QStandardItemModel();
@@ -137,7 +158,7 @@ void MainWindow::renderContactRequest(){
         QString label_contact = index.data(Qt::DisplayRole).toString();
         QStandardItemModel* contactMemo = new QStandardItemModel();
            
-        if  ((c.second.isOutgoing() == false) && (label_contact == c.second.getAddress()) && (c.second.getType() != "Cont"))
+        if  ((c.second.isOutgoing() == false) && (requestContact.zaddrnew->text() == c.second.getAddress()) && (c.second.getType() != "Cont"))
         
         {
 
