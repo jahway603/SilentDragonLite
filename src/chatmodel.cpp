@@ -114,7 +114,7 @@ void MainWindow::renderContactRequest(){
             }
 
             QStandardItemModel* contactRequestOld = new QStandardItemModel();
-            
+
              for (auto &p : AddressBook::getInstance()->getAllAddressLabels())
               for (auto &c : DataStore::getChatDataStore()->getAllOldContactRequests())
             {
@@ -380,16 +380,12 @@ void MainWindow::sendChat() {
 
     // Create a Tx from the values on the send tab. Note that this Tx object
     // might not be valid yet.
-
-    // Memos can only be used with zAddrs. So check that first
-   // for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
+ 
    QString Name = ui->contactNameMemo->text();
    int sizename = Name.size();
         qDebug()<< sizename;
       if (ui->contactNameMemo->text().trimmed().isEmpty() || ui->memoTxtChat->toPlainText().trimmed().isEmpty()) {
      
-  // auto addr = "";
-  //  if (! Settings::isZAddress(AddressBook::addressFromAddressLabel(addr->text()))) {
         QMessageBox msg(QMessageBox::Critical, tr("You have to select a contact and insert a Memo"),
         tr("You have selected no Contact from Contactlist,\n")  + tr("\nor your Memo is empty"),
         QMessageBox::Ok, this);
@@ -404,8 +400,6 @@ void MainWindow::sendChat() {
 
     if (size > max){
      
-  // auto addr = "";
-  //  if (! Settings::isZAddress(AddressBook::addressFromAddressLabel(addr->text()))) {
         QMessageBox msg(QMessageBox::Critical, tr("Your Message is too long"),
         tr("You can only write messages with 512 character maximum \n")  + tr("\n Please reduce your message to 512 character."),
         QMessageBox::Ok, this);
@@ -578,96 +572,7 @@ void::MainWindow::addContact()
 void MainWindow::saveandsendContact()
 {
         this->ContactRequest();
-        QString addr = contactRequest.getReceiverAddress();
-        QString newLabel = contactRequest.getLabel();
-        QString myAddr = contactRequest.getSenderAddress();
-        QString cid = contactRequest.getCid();
-        QString avatar = contactRequest.getAvatar();
-        contactRequest.clear();
         
-        if (addr.isEmpty() || newLabel.isEmpty()) 
-        {
-            QMessageBox::critical(
-                this, 
-                QObject::tr("Address or Label Error"), 
-                QObject::tr("Address or Label cannot be empty"), 
-                QMessageBox::Ok
-                );
-            return;
-        }
-
-        // Test if address is valid.
-        if (!Settings::isValidAddress(addr)) 
-        {
-            QMessageBox::critical(
-                this, 
-                QObject::tr("Address Format Error"), 
-                QObject::tr("%1 doesn't seem to be a valid hush address.").arg(addr), 
-                QMessageBox::Ok
-            );
-            return;
-        } 
-
-        ///////Todo: Test if label allready exist!
-
-        ////// Success, so show it
-        AddressBook::getInstance()->addAddressLabel(newLabel, addr, myAddr, cid, avatar);
-        QMessageBox::information(
-            this, 
-            QObject::tr("Added Contact"), 
-            QObject::tr("successfully added your new contact").arg(newLabel), 
-            QMessageBox::Ok
-        );
-        return;
-        
-
-
-}
-
-void MainWindow::saveContact()
-{
-
-        QString addr = contactRequest.getReceiverAddress();
-        QString newLabel = contactRequest.getLabel();
-        QString myAddr = contactRequest.getSenderAddress();
-        QString cid = contactRequest.getCid();
-        QString avatar = contactRequest.getAvatar();
-        
-        if (addr.isEmpty() || newLabel.isEmpty()) 
-        {
-            QMessageBox::critical(
-                this, 
-                QObject::tr("Address or Label Error"), 
-                QObject::tr("Address or Label cannot be empty"), 
-                QMessageBox::Ok
-                );
-            return;
-        }
-
-        // Test if address is valid.
-        if (!Settings::isValidAddress(addr)) 
-        {
-            QMessageBox::critical(
-                this, 
-                QObject::tr("Address Format Error"), 
-                QObject::tr("%1 doesn't seem to be a valid hush address.").arg(addr), 
-                QMessageBox::Ok
-            );
-            return;
-        } 
-
-        ///////Todo: Test if label allready exist!
-
-        ////// Success, so show it
-        AddressBook::getInstance()->addAddressLabel(newLabel, addr, myAddr, cid, avatar);
-        QMessageBox::information(
-            this, 
-            QObject::tr("Added Contact"), 
-            QObject::tr("successfully added your new contact").arg(newLabel), 
-            QMessageBox::Ok
-        );
-        return;
-
 }
 
 // Create a Tx for a contact Request 
@@ -785,7 +690,46 @@ void MainWindow::ContactRequest() {
                     delete d;
                     
                   });
-                
+                        QString addr = contactRequest.getReceiverAddress();
+        QString newLabel = contactRequest.getLabel();
+        QString myAddr = contactRequest.getSenderAddress();
+        QString cid = contactRequest.getCid();
+        QString avatar = contactRequest.getAvatar();
+        
+        if (addr.isEmpty() || newLabel.isEmpty()) 
+        {
+            QMessageBox::critical(
+                this, 
+                QObject::tr("Address or Label Error"), 
+                QObject::tr("Address or Label cannot be empty"), 
+                QMessageBox::Ok
+                );
+            return;
+        }
+
+        // Test if address is valid.
+        if (!Settings::isValidAddress(addr)) 
+        {
+            QMessageBox::critical(
+                this, 
+                QObject::tr("Address Format Error"), 
+                QObject::tr("%1 doesn't seem to be a valid hush address.").arg(addr), 
+                QMessageBox::Ok
+            );
+            return;
+        } 
+
+        ///////Todo: Test if label allready exist!
+
+        ////// Success, so show it
+        AddressBook::getInstance()->addAddressLabel(newLabel, addr, myAddr, cid, avatar);
+        QMessageBox::information(
+            this, 
+            QObject::tr("Added Contact"), 
+            QObject::tr("successfully added your new contact").arg(newLabel), 
+            QMessageBox::Ok
+        );
+        return;
                 // Force a UI update so we get the unconfirmed Tx
               //  rpc->refresh(true);
                 ui->memoTxtChat->clear();
@@ -840,3 +784,5 @@ QString MainWindow::doSendRequestTxValidations(Tx tx) {
 
     return "";
 }
+
+
