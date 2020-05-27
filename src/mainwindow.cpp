@@ -1364,16 +1364,19 @@ void MainWindow::setupchatTab() {
      QAction* editAction;
      QAction* HushAction;
      QAction* requestHushAction;
+     QAction* subatomicAction;
      contextMenu = new QMenu(ui->listContactWidget);
-     requestAction = new QAction("Send a contact request",contextMenu);
+     requestAction = new QAction("Send a contact request - coming soon",contextMenu);
      editAction = new QAction("Delete this contact",contextMenu);
-     HushAction = new QAction("Send a friend some Hush",contextMenu);
-     requestHushAction = new QAction("Request some Hush",contextMenu);
+     HushAction = new QAction("Send a friend some Hush - coming soon",contextMenu);
+     requestHushAction = new QAction("Request some Hush - coming soon",contextMenu);
+     subatomicAction = new QAction("Make a subatomic swap with a friend- coming soon",contextMenu);
      ui->listContactWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
      ui->listContactWidget->addAction(requestAction);
      ui->listContactWidget->addAction(editAction);
      ui->listContactWidget->addAction(HushAction);
      ui->listContactWidget->addAction(requestHushAction);
+     ui->listContactWidget->addAction(subatomicAction);
       QObject::connect(requestHushAction, &QAction::triggered, [=]() {
           QModelIndex index = ui->listContactWidget->currentIndex();
         QString label_contact = index.data(Qt::DisplayRole).toString();
