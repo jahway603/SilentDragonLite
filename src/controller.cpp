@@ -237,12 +237,15 @@ void Controller::getInfoThenRefresh(bool force)
     zrpc->fetchInfo([=] (const json& reply) {   
         prevCallSucceeded = true;       
         int curBlock  = reply["latest_block_height"].get<json::number_integer_t>();
-        int longestchain = reply["longestchain"].get<json::number_integer_t>();
-        int notarized = reply["notarized"].get<json::number_integer_t>();
+        bool doUpdate = force || (model->getLatestBlock() != curBlock);
         int difficulty = reply["difficulty"].get<json::number_integer_t>();
         int blocks_until_halving= 340000 - curBlock;
         int halving_days = (blocks_until_halving * 150) / (60*60*24) ;
-        bool doUpdate = force || (model->getLatestBlock() != curBlock);
+        int longestchain = reply["longestchain"].get<json::number_integer_t>();
+        int notarized = reply["notarized"].get<json::number_integer_t>();
+        
+ 
+      
         model->setLatestBlock(curBlock);
         if (
             Settings::getInstance()->get_currency_name() == "EUR" || 
@@ -258,7 +261,11 @@ void Controller::getInfoThenRefresh(bool force)
             );
             ui->longestchain->setText(
                 "Block: " + QLocale(QLocale::German).toString(longestchain)
+               
             );
+
+            
+
             ui->difficulty->setText(
                 QLocale(QLocale::German).toString(difficulty)
             );
@@ -540,8 +547,12 @@ void Controller::getInfoThenRefresh(bool force)
             refreshAddresses();     // This calls refreshZSentTransactions() and refreshReceivedZTrans()
             refreshTransactions();
         }
+
+        int lag = longestchain - notarized ;
+        this->setLag(lag);
     }, [=](QString err) {
         // hushd has probably disappeared.
+        
         this->noConnection();
 
         // Prevent multiple dialog boxes, because these are called async
@@ -560,6 +571,20 @@ void Controller::getInfoThenRefresh(bool force)
 
         prevCallSucceeded = false;
     });
+}
+
+int Controller::getLag()
+{
+
+    return _lag;
+
+}
+
+void Controller::setLag(int lag)
+{
+
+    _lag = lag;
+
 }
 
 void Controller::refreshAddresses() 
@@ -871,12 +896,33 @@ void Controller::refreshTransactions() {
                     CAmount amount = CAmount::fromqint64(-1* o["value"].get<json::number_unsigned_t>()); 
                     
                    // Check for Memos
+
+                      if (confirmations == 0) {  
+                             chatModel->addconfirmations(txid, confirmations);
+                        } 
+
+                     if ((confirmations == 1)  && (chatModel->getConfirmationByTx(txid) != QString("0xdeadbeef"))){  
+                             DataStore::getChatDataStore()->clear();
+                             chatModel->killConfirmationCache();
+                             this->refresh(true);
+                        } 
                    
                     QString memo;
                     if (!o["memo"].is_null()) {
                         memo = QString::fromStdString(o["memo"]);
 
                         QString cid; 
+                        bool isNotarized;
+
+                        if (confirmations > getLag())
+                        {
+                            isNotarized = true;
+                        }else{
+
+                            isNotarized = false;
+                        }
+
+                        qDebug()<<"Conf : " << confirmations;
 
                         ChatItem item = ChatItem(
                                 datetime,
@@ -888,15 +934,17 @@ void Controller::refreshTransactions() {
                                 cid, 
                                 txid,
                                 confirmations,
-                                true 
+                                true,
+                                isNotarized,
+                                false
                             );
-                              //  qDebug()<<"Memo : " <<memo;
-                             //   qDebug()<<"Confirmation :" << confirmations;
-
                         DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
-                    
-                        }                              
-                    
+                        
+                        
+
+                        } 
+
+                                    
                     items.push_back(TransactionItemDetail{address, amount, memo});
                     total_amount = total_amount + amount;
                 }
@@ -944,6 +992,28 @@ void Controller::refreshTransactions() {
                     QString cid;
                     int position;
                     QString requestZaddr;
+                    bool isContact;
+                    
+
+                for (auto &p : AddressBook::getInstance()->getAllAddressLabels())
+                {
+
+                      if (p.getPartnerAddress() == requestZaddr) 
+                      {
+
+                          chatModel->addAddressbylabel(address, requestZaddr);
+                      } else{}
+               
+                     
+                if (chatModel->Addressbylabel(address) != QString("0xdeadbeef")){
+
+                     isContact = true;
+
+                }else{
+
+                     isContact = false;
+
+                }
 
                 if (!it["memo"].is_null()) {
 
@@ -958,7 +1028,8 @@ void Controller::refreshTransactions() {
                     chatModel->addCid(txid, cid);
                     chatModel->addrequestZaddr(txid, requestZaddr);
 
-                }       
+                }     
+                 
             
                 if (chatModel->getCidByTx(txid) != QString("0xdeadbeef")){
 
@@ -973,8 +1044,20 @@ void Controller::refreshTransactions() {
                         requestZaddr = chatModel->getrequestZaddrByTx(txid);
                 }else{
                             requestZaddr = "";
-                    }                 
+                    }     
+
                 position = it["position"].get<json::number_integer_t>(); 
+
+                  bool isNotarized;
+
+                        if (confirmations > getLag())
+                        {
+                            isNotarized = true;
+                        }else{
+
+                            isNotarized = false;
+                        }
+
                     ChatItem item = ChatItem(
                                 datetime,
                                 address,
@@ -985,16 +1068,17 @@ void Controller::refreshTransactions() {
                                 cid, 
                                 txid,
                                 confirmations,
-                                false
+                                false,
+                                isNotarized,
+                                isContact
                             );
-                          //  qDebug()<< "Position : " << position;
-                          //  qDebug()<<"Confirmation :" << confirmations;
-
+        
                     DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
                  } 
             }
-            
+             }
         }
+        qDebug()<<"get Lag" << getLag();
 
         // Calculate the total unspent amount that's pending. This will need to be 
         // shown in the UI so the user can keep track of pending funds

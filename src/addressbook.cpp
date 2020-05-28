@@ -40,7 +40,10 @@ void AddressBookModel::loadData()
         QSettings().value(
             "addresstablegeometry"
         ).toByteArray()
+
+        
     );
+    
 }
 
 void AddressBookModel::addNewLabel(QString label, QString addr, QString myAddr, QString cid, QString avatar) 

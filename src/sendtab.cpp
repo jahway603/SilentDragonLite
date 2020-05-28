@@ -937,7 +937,7 @@ QString MainWindow::doSendTxValidations(Tx tx) {
     auto available = rpc->getModel()->getAvailableBalance();
 
     if (available < total) {
-        return tr("Not enough available funds to send this transaction\n\nHave: %1\nNeed: %2\n\nNote: Funds need 5 confirmations before they can be spent")
+        return tr("Not enough available funds to send this transaction\n\nHave: %1\nNeed: %2\n\nNote: Funds need 1 confirmations before they can be spent")
             .arg(available.toDecimalhushString(), total.toDecimalhushString());
     }
 

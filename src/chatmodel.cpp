@@ -8,7 +8,6 @@
 #include "ui_mainwindow.h"
 #include "ui_requestContactDialog.h"
 #include "addressbook.h"
-#include "ui_memodialog.h"
 #include "ui_contactrequest.h"
 #include <QtWidgets>
 #include <QUuid>
@@ -54,7 +53,6 @@ void ChatModel::clear()
 void ChatModel::addMessage(ChatItem item)
 {
     QString key = ChatIDGenerator::getInstance()->generateID(item); //this->generateChatItemID(item);
-  //  qDebug() << "inserting chatitem with id: " << key;
     this->chatItems[key] = item;
 }
 
@@ -74,8 +72,26 @@ void ChatModel::showMessages()
           
 }
 
+void ChatModel::addAddressbylabel(QString address, QString label)
+{
+    this->AddressbyLabelMap[address] = label;
+}
 
-      
+QString ChatModel::Addressbylabel(QString address)
+{
+    for(auto& pair : this->AddressbyLabelMap)
+    {
+
+    }
+
+    if(this->AddressbyLabelMap.count(address) > 0)
+    {
+        return this->AddressbyLabelMap[address];
+    }
+
+    return QString("0xdeadbeef");
+}
+     
 void MainWindow::renderContactRequest(){
 
         Ui_requestDialog requestContact;
@@ -83,27 +99,53 @@ void MainWindow::renderContactRequest(){
         requestContact.setupUi(&dialog);
         Settings::saveRestore(&dialog);
 
+        QString icon;
+        auto theme = Settings::getInstance()->get_theme_name();
+        if (theme == "dark" || theme == "midnight") {
+           icon = ":/icons/res/unknownWhite.png";
+        }else{
+            icon = ":/icons/res/unknownBlack.png";
+        }
+
+         QPixmap unknownWhite(icon);
+         QIcon addnewAddrIcon(unknownWhite);
+       
+        
+       
+
        QStandardItemModel* contactRequest = new QStandardItemModel();
 
             for (auto &c : DataStore::getChatDataStore()->getAllNewContactRequests())
 
+
+
             {
 
-                QStandardItem* Items = new QStandardItem(c.second.getAddress());
+                QStandardItem* Items = new QStandardItem(QString("Unknown Sender"));
                 contactRequest->appendRow(Items);
                 requestContact.requestContact->setModel(contactRequest);
+                
+                Items->setData(QIcon(addnewAddrIcon),Qt::DecorationRole);
+                requestContact.requestContact->setIconSize(QSize(40,50));
+                requestContact.requestContact->setUniformItemSizes(true);
                 requestContact.requestContact->show();
+                requestContact.zaddrnew->setVisible(false);
+                requestContact.zaddrnew->setText(c.second.getAddress());
+
             }
 
             QStandardItemModel* contactRequestOld = new QStandardItemModel();
+
              for (auto &p : AddressBook::getInstance()->getAllAddressLabels())
               for (auto &c : DataStore::getChatDataStore()->getAllOldContactRequests())
             {
                if (p.getPartnerAddress() == c.second.getRequestZaddr())
                {
-                QStandardItem* Items = new QStandardItem(c.second.getAddress());
+                QStandardItem* Items = new QStandardItem(p.getName());
                 contactRequestOld->appendRow(Items);
                 requestContact.requestContactOld->setModel(contactRequestOld);
+                requestContact.zaddrold->setVisible(false);
+                requestContact.zaddrold->setText(c.second.getAddress());
                 requestContact.requestContactOld->show();
                }else{}
             }
@@ -116,7 +158,7 @@ void MainWindow::renderContactRequest(){
         QString label_contact = index.data(Qt::DisplayRole).toString();
         QStandardItemModel* contactMemo = new QStandardItemModel();
            
-        if  ((c.second.isOutgoing() == false) && (label_contact == c.second.getAddress()) && (c.second.getType() != "Cont"))
+        if  ((c.second.isOutgoing() == false) && (requestContact.zaddrnew->text() == c.second.getAddress()) && (c.second.getType() != "Cont"))
         
         {
 
@@ -139,11 +181,11 @@ void MainWindow::renderContactRequest(){
    QObject::connect(requestContact.requestContactOld, &QTableView::clicked, [&] () {
 
     for (auto &c : DataStore::getChatDataStore()->getAllRawChatItems()){
-        QModelIndex index = requestContact.requestContactOld->currentIndex();
-        QString label_contactold = index.data(Qt::DisplayRole).toString();
+       /* QModelIndex index = requestContact.requestContactOld->currentIndex();
+        QString label_contactold = index.data(Qt::DisplayRole).toString();*/
         QStandardItemModel* contactMemo = new QStandardItemModel();
            
-        if  ((c.second.isOutgoing() == false) && (label_contactold == c.second.getAddress()) && (c.second.getType() != "Cont"))
+        if  ((c.second.isOutgoing() == false) && (requestContact.zaddrold->text() == c.second.getAddress()) && (c.second.getType() != "Cont"))
         
         {
 
@@ -220,6 +262,11 @@ void ChatModel::addrequestZaddr(QString tx, QString requestZaddr)
     this->requestZaddrMap[tx] = requestZaddr;
 }
 
+void ChatModel::addconfirmations(QString tx, int confirmation)
+{
+    this->confirmationsMap[tx] = confirmation;
+}
+
 QString ChatModel::getCidByTx(QString tx)
 {
     for(auto& pair : this->cidMap)
@@ -230,6 +277,21 @@ QString ChatModel::getCidByTx(QString tx)
     if(this->cidMap.count(tx) > 0)
     {
         return this->cidMap[tx];
+    }
+
+    return QString("0xdeadbeef");
+}
+
+QString ChatModel::getConfirmationByTx(QString tx)
+{
+    for(auto& pair : this->confirmationsMap)
+    {
+
+    }
+
+    if(this->confirmationsMap.count(tx) > 0)
+    {
+        return this->confirmationsMap[tx];
     }
 
     return QString("0xdeadbeef");
@@ -258,6 +320,11 @@ void ChatModel::killCidCache()
 void ChatModel::killrequestZaddrCache()
 {
     this->requestZaddrMap.clear();
+}
+
+void ChatModel::killConfirmationCache()
+{
+    this->confirmationsMap.clear();
 }
 
 QString MainWindow::createHeaderMemo(QString type, QString cid, QString zaddr,  int version=0, int headerNumber=1)
@@ -334,16 +401,28 @@ void MainWindow::sendChat() {
 
     // Create a Tx from the values on the send tab. Note that this Tx object
     // might not be valid yet.
-
-    // Memos can only be used with zAddrs. So check that first
-   // for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
-
+ 
+   QString Name = ui->contactNameMemo->text();
+   int sizename = Name.size();
+        qDebug()<< sizename;
       if (ui->contactNameMemo->text().trimmed().isEmpty() || ui->memoTxtChat->toPlainText().trimmed().isEmpty()) {
      
-  // auto addr = "";
-  //  if (! Settings::isZAddress(AddressBook::addressFromAddressLabel(addr->text()))) {
         QMessageBox msg(QMessageBox::Critical, tr("You have to select a contact and insert a Memo"),
         tr("You have selected no Contact from Contactlist,\n")  + tr("\nor your Memo is empty"),
+        QMessageBox::Ok, this);
+
+        msg.exec();
+        return;
+    }
+
+    int max = 512;
+    QString chattext = ui->memoTxtChat->toPlainText();
+    int size = chattext.size();
+
+    if (size > max){
+     
+        QMessageBox msg(QMessageBox::Critical, tr("Your Message is too long"),
+        tr("You can only write messages with 512 character maximum \n")  + tr("\n Please reduce your message to 512 character."),
         QMessageBox::Ok, this);
 
         msg.exec();
@@ -384,10 +463,11 @@ void MainWindow::sendChat() {
         }
 
         connD->status->setText(tr("Please wait..."));
-        connD->statusDetail->setText(tr("Your Message will be send"));
+        connD->statusDetail->setText(tr("Your Message will be sent"));
 
         d->show();
         ui->memoTxtChat->clear();
+        
 
         // And send the Tx
         rpc->executeTransaction(tx, 
@@ -396,6 +476,7 @@ void MainWindow::sendChat() {
 
                 connD->status->setText(tr("Done!"));
                 connD->statusDetail->setText(txid);
+                
 
                 QTimer::singleShot(1000, [=]() {
                     d->accept();
@@ -406,7 +487,7 @@ void MainWindow::sendChat() {
                   });
                 
                 // Force a UI update so we get the unconfirmed Tx
-              //  rpc->refresh(true);
+                rpc->refresh(true);
                 ui->memoTxtChat->clear();
 
             },
@@ -425,6 +506,8 @@ void MainWindow::sendChat() {
                 QMessageBox::critical(this, QObject::tr("Transaction Error"), errStr, QMessageBox::Ok);            
             }
         );
+
+      //  rpc->refresh(true);
     }        
 
 QString MainWindow::doSendChatTxValidations(Tx tx) {
@@ -450,7 +533,7 @@ QString MainWindow::doSendChatTxValidations(Tx tx) {
     auto available = rpc->getModel()->getAvailableBalance();
 
     if (available < total) {
-        return tr("Not enough available funds to send this transaction\n\nHave: %1\nNeed: %2\n\nNote: Funds need 3 confirmations before they can be spent")
+        return tr("Not enough available funds to send this transaction\n\nHave: %1\nNeed: %2\n\nNote: Funds need 1 confirmations before they can be spent")
             .arg(available.toDecimalhushString(), total.toDecimalhushString());
     }
 
@@ -499,7 +582,7 @@ void::MainWindow::addContact()
     });
         
    QObject::connect(request.sendRequestButton, &QPushButton::clicked, this, &MainWindow::saveandsendContact);
-   QObject::connect(request.onlyAdd, &QPushButton::clicked, this, &MainWindow::saveContact);
+  // QObject::connect(request.onlyAdd, &QPushButton::clicked, this, &MainWindow::saveContact);
         
     dialog.exec();
        
@@ -510,96 +593,7 @@ void::MainWindow::addContact()
 void MainWindow::saveandsendContact()
 {
         this->ContactRequest();
-        QString addr = contactRequest.getReceiverAddress();
-        QString newLabel = contactRequest.getLabel();
-        QString myAddr = contactRequest.getSenderAddress();
-        QString cid = contactRequest.getCid();
-        QString avatar = contactRequest.getAvatar();
-        contactRequest.clear();
         
-        if (addr.isEmpty() || newLabel.isEmpty()) 
-        {
-            QMessageBox::critical(
-                this, 
-                QObject::tr("Address or Label Error"), 
-                QObject::tr("Address or Label cannot be empty"), 
-                QMessageBox::Ok
-                );
-            return;
-        }
-
-        // Test if address is valid.
-        if (!Settings::isValidAddress(addr)) 
-        {
-            QMessageBox::critical(
-                this, 
-                QObject::tr("Address Format Error"), 
-                QObject::tr("%1 doesn't seem to be a valid hush address.").arg(addr), 
-                QMessageBox::Ok
-            );
-            return;
-        } 
-
-        ///////Todo: Test if label allready exist!
-
-        ////// Success, so show it
-        AddressBook::getInstance()->addAddressLabel(newLabel, addr, myAddr, cid, avatar);
-        QMessageBox::information(
-            this, 
-            QObject::tr("Added Contact"), 
-            QObject::tr("successfully added your new contact").arg(newLabel), 
-            QMessageBox::Ok
-        );
-        return;
-        
-
-
-}
-
-void MainWindow::saveContact()
-{
-
-        QString addr = contactRequest.getReceiverAddress();
-        QString newLabel = contactRequest.getLabel();
-        QString myAddr = contactRequest.getSenderAddress();
-        QString cid = contactRequest.getCid();
-        QString avatar = contactRequest.getAvatar();
-        
-        if (addr.isEmpty() || newLabel.isEmpty()) 
-        {
-            QMessageBox::critical(
-                this, 
-                QObject::tr("Address or Label Error"), 
-                QObject::tr("Address or Label cannot be empty"), 
-                QMessageBox::Ok
-                );
-            return;
-        }
-
-        // Test if address is valid.
-        if (!Settings::isValidAddress(addr)) 
-        {
-            QMessageBox::critical(
-                this, 
-                QObject::tr("Address Format Error"), 
-                QObject::tr("%1 doesn't seem to be a valid hush address.").arg(addr), 
-                QMessageBox::Ok
-            );
-            return;
-        } 
-
-        ///////Todo: Test if label allready exist!
-
-        ////// Success, so show it
-        AddressBook::getInstance()->addAddressLabel(newLabel, addr, myAddr, cid, avatar);
-        QMessageBox::information(
-            this, 
-            QObject::tr("Added Contact"), 
-            QObject::tr("successfully added your new contact").arg(newLabel), 
-            QMessageBox::Ok
-        );
-        return;
-
 }
 
 // Create a Tx for a contact Request 
@@ -647,6 +641,22 @@ void MainWindow::ContactRequest() {
         return;
     }
 
+    int max = 512;
+    QString chattext = contactRequest.getMemo();;
+    int size = chattext.size();
+
+    if (size > max){
+     
+  // auto addr = "";
+  //  if (! Settings::isZAddress(AddressBook::addressFromAddressLabel(addr->text()))) {
+        QMessageBox msg(QMessageBox::Critical, tr("Your Message is too long"),
+        tr("You can only write messages with 512 character maximum \n")  + tr("\n Please reduce your message to 512 character."),
+        QMessageBox::Ok, this);
+
+        msg.exec();
+        return;
+    }
+
   Tx tx = createTxForSafeContactRequest();
 
     QString error = doSendRequestTxValidations(tx);
@@ -681,7 +691,7 @@ void MainWindow::ContactRequest() {
         }
 
         connD->status->setText(tr("Please wait..."));
-        connD->statusDetail->setText(tr("Your Contact will be send"));
+        connD->statusDetail->setText(tr("Your contact request will be sent"));
 
         d->show();
         ui->memoTxtChat->clear();
@@ -701,7 +711,46 @@ void MainWindow::ContactRequest() {
                     delete d;
                     
                   });
-                
+                        QString addr = contactRequest.getReceiverAddress();
+        QString newLabel = contactRequest.getLabel();
+        QString myAddr = contactRequest.getSenderAddress();
+        QString cid = contactRequest.getCid();
+        QString avatar = contactRequest.getAvatar();
+        
+        if (addr.isEmpty() || newLabel.isEmpty()) 
+        {
+            QMessageBox::critical(
+                this, 
+                QObject::tr("Address or Label Error"), 
+                QObject::tr("Address or Label cannot be empty"), 
+                QMessageBox::Ok
+                );
+            return;
+        }
+
+        // Test if address is valid.
+        if (!Settings::isValidAddress(addr)) 
+        {
+            QMessageBox::critical(
+                this, 
+                QObject::tr("Address Format Error"), 
+                QObject::tr("%1 doesn't seem to be a valid hush address.").arg(addr), 
+                QMessageBox::Ok
+            );
+            return;
+        } 
+
+        ///////Todo: Test if label allready exist!
+
+        ////// Success, so show it
+        AddressBook::getInstance()->addAddressLabel(newLabel, addr, myAddr, cid, avatar);
+        QMessageBox::information(
+            this, 
+            QObject::tr("Added Contact"), 
+            QObject::tr("successfully added your new contact").arg(newLabel), 
+            QMessageBox::Ok
+        );
+        return;
                 // Force a UI update so we get the unconfirmed Tx
               //  rpc->refresh(true);
                 ui->memoTxtChat->clear();
@@ -750,9 +799,11 @@ QString MainWindow::doSendRequestTxValidations(Tx tx) {
     auto available = rpc->getModel()->getAvailableBalance();
 
     if (available < total) {
-        return tr("Not enough available funds to send this transaction\n\nHave: %1\nNeed: %2\n\nNote: Funds need 5 confirmations before they can be spent")
+        return tr("Not enough available funds to send this transaction\n\nHave: %1\nNeed: %2\n\nNote: Funds need 1 confirmations before they can be spent")
             .arg(available.toDecimalhushString(), total.toDecimalhushString());
     }
 
     return "";
 }
+
+

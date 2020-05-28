@@ -51,6 +51,8 @@ public:
     QString doSendChatTxValidations(Tx tx);
     QString doSendRequestTxValidations(Tx tx);
     QString getCid();
+    QString getPassword();
+    void setPassword(QString Password);
 
     void replaceWormholeClient(WormholeClient* newClient);
     bool isWebsocketListening();
@@ -58,8 +60,9 @@ public:
     void stopWebsocket();
     void saveContact();
     void saveandsendContact();
-    void setMaxLen(int len);
-    void updateDisplay();
+    void showRequesthush();
+   // void setmaxlenChat(int len);
+   // void updateDisplay();
     
 
     void balancesReady();
@@ -86,6 +89,7 @@ public:
     Logger*      logger;
 
     void doClose();
+    void doClosePw();
     QString createHeaderMemo(QString type, QString cid, QString zaddr, int version, int headerNumber);
 
 public slots:
@@ -100,7 +104,9 @@ private slots:
 
 private:
 
+    bool fileExists(QString path);
     void closeEvent(QCloseEvent* event);
+    void closeEventpw(QCloseEvent* event);
 
 
     void setupSendTab();
@@ -119,6 +125,7 @@ private:
     void setupStatusBar();
     
     void clearSendForm();
+    QString _password;
 
     Tx   createTxFromSendPage();
     bool confirmTx(Tx tx, RecurringPaymentInfo* rpi);
@@ -129,6 +136,7 @@ private:
 
     void encryptWallet();
     void removeWalletEncryption();
+    void removeWalletEncryptionStartUp();
 
     void cancelButton();
     void sendButton();
@@ -192,14 +200,14 @@ class ChatMemoEdit : public QTextEdit
 public:
     ChatMemoEdit(QWidget* parent);
 
-    void setMaxLen(int len);
-    void setLenDisplayLabel(QLabel* label);
+    void setMaxLenChat(int len);
+    void setLenDisplayLabelChat(QLabel* label);
     void SetSendChatButton(QPushButton* button);
-    void updateDisplay();
+    void updateDisplayChat();
 
 private:
-    int             maxlen             = 512;
-    QLabel*         lenDisplayLabel    = nullptr;
+    int             maxlenchat             = 512;
+    QLabel*         lenDisplayLabelchat    = nullptr;
     QPushButton*    sendChatButton     = nullptr;
 };
 

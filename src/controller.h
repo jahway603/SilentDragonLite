@@ -1,3 +1,6 @@
+// Copyright 2019-2020 The Hush developers
+// GPLv3
+
 #ifndef RPCCLIENT_H
 #define RPCCLIENT_H
 
@@ -37,7 +40,10 @@ public:
     Connection* getConnection() { return zrpc->getConnection(); }
     void setConnection(Connection* c);
     void refresh(bool force = false);
-    void refreshAddresses();    
+    void refreshAddresses(); 
+    int getLag();   
+    void setLag(int lag);
+    int _lag;
     
     void checkForUpdate(bool silent = true);
     void refreshZECPrice();

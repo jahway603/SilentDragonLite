@@ -3,6 +3,8 @@
 
 #include "ChatDataStore.h"
 #include "addressbook.h"
+#include "chatmodel.h"
+
 
 ChatDataStore* ChatDataStore::getInstance()
 {
@@ -53,15 +55,14 @@ std::map<QString, ChatItem> ChatDataStore::getAllNewContactRequests()
 {
     std::map<QString, ChatItem> filteredItems;
   
-    for(auto &c: this->data)
+    for(auto &c: this->data)   
     {
         if (
             (c.second.isOutgoing() == false) &&
             (c.second.getType() == "Cont")  &&
-            (c.second.getContact() == "")
-            
-           
+            (c.second.isContact() == false)           
         ) 
+        
         {
             filteredItems[c.first] = c.second;
         }

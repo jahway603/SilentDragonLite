@@ -83,7 +83,8 @@ SOURCES += \
     src/Chat/Helper/ChatIDGenerator.cpp \
     src/Chat/Chat.cpp \
     src/FileSystem/FileSystem.cpp \
-    src/Crypto/FileEncryption.cpp
+    src/Crypto/FileEncryption.cpp \
+    src/Crypto/passwd.cpp
 
 HEADERS += \
     src/firsttimewizard.h \
@@ -121,6 +122,7 @@ HEADERS += \
 FORMS += \
     src/contactrequest.ui \
     src/encryption.ui \
+    src/hushrequest.ui \
     src/mainwindow.ui \
     src/migration.ui \
     src/newseed.ui \
@@ -132,6 +134,7 @@ FORMS += \
     src/confirm.ui \
     src/privkey.ui \
     src/memodialog.ui \ 
+    src/startupencryption.ui \
     src/viewalladdresses.ui \
     src/connection.ui \
     src/addressbook.ui \
@@ -141,6 +144,7 @@ FORMS += \
     src/requestContactDialog.ui \
     src/newrecurring.ui \
     src/requestdialog.ui \
+    src/removeencryption.ui \
     src/recurringmultiple.ui \ 
     src/chatbubbleme.ui \
     src/chatbubblepartner.ui
@@ -155,6 +159,7 @@ TRANSLATIONS = res/silentdragonlite_es.ts \
                res/silentdragonlite_hr.ts \
                res/silentdragonlite_sr.ts \
                res/silentdragonlite_fa.ts \
+               res/silentdragonlite_id.ts \
                res/silentdragonlite_tr.ts 
              
 include(singleapplication/singleapplication.pri)

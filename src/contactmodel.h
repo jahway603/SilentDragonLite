@@ -5,13 +5,17 @@
 
 #include "Model/ContactItem.h"
 #include <QListWidget>
+#include "mainwindow.h"
 
 
 class ContactModel
+
 {
 	public:
+
 		ContactModel() {}
 		void renderContactList(QListView* view);
+			
 };
 
 #endif
