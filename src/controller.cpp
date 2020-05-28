@@ -563,7 +563,7 @@ void Controller::getInfoThenRefresh(bool force)
             QMessageBox::critical(
                 main, 
                 QObject::tr("Connection Error"), 
-                QObject::tr("There was an error connecting to hushd. The error was") + ": \n\n"+ err,
+                QObject::tr("There was an error connecting to the server. Please check your internet connection. The error was") + ": \n\n"+ err,
                 QMessageBox::StandardButton::Ok
             );
             shown = false;
