@@ -7,6 +7,20 @@
 
 ContactItem::ContactItem() {}
 
+ContactItem::ContactItem(QString name, QString partnerAddress)
+{
+    _name = name;
+    _partnerAddress = partnerAddress;
+}
+
+ContactItem::ContactItem(QString name, QString partnerAddress, QString myAddress, QString cid)
+{
+    _name = name;
+    _myAddress = myAddress;
+    _partnerAddress = partnerAddress;
+    _cid = cid;
+}
+
 ContactItem::ContactItem(QString name, QString partnerAddress, QString myAddress, QString cid, QString avatar)
 {
     _name = name;

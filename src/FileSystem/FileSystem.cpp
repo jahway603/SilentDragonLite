@@ -118,7 +118,24 @@ QList<ContactItem> FileSystem::readContactsOldFormat(QString file)
             in >> stuff;
             for (int i=0; i < stuff.size(); i++) 
             {
-                ContactItem contact = ContactItem(stuff[i][0],stuff[i][1], stuff[i][2], stuff[i][3],stuff[i][4]);
+                qDebug() << stuff[i].size();
+                ContactItem contact;
+                if(stuff[i].size() == 2)
+                {
+                    contact = ContactItem(stuff[i][0],stuff[i][1]);
+                    
+                }
+                else if(stuff[i].size() == 4)
+                {
+                    contact = ContactItem(stuff[i][0],stuff[i][1]);
+                    
+                }
+                else
+                {
+                    contact = ContactItem(stuff[i][0],stuff[i][1], stuff[i][2], stuff[i][3],stuff[i][4]);
+                }
+                
+                
                 contacts.push_back(contact);
             }
 

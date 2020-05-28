@@ -19,6 +19,8 @@ private:
     
 public:
     ContactItem();
+    ContactItem(QString name, QString partnerAddress);
+    ContactItem(QString name, QString partnerAddress, QString myAddress, QString cid);
     ContactItem(QString name, QString partnerAddress, QString myAddress, QString cid, QString avatar);
     QString getName() const;
     QString getMyAddress() const;
