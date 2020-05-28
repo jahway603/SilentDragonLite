@@ -100,12 +100,29 @@ QList<ContactItem> FileSystem::readContactsOldFormat(QString file)
         in >> version;
         qDebug() << "Read " << version << " Hush contacts from disk...";
         qDebug() << "Detected old addressbook format";
-        QList<QList<QString>> stuff;
-        in >> stuff;
-        for (int i=0; i < stuff.size(); i++) 
+        if(in.status() == QDataStream::ReadCorruptData)
         {
-            ContactItem contact = ContactItem(stuff[i][0],stuff[i][1], stuff[i][2], stuff[i][3],stuff[i][4]);
-            contacts.push_back(contact);
+           qDebug() << "Error reading contacts! ---> Your hush contacts from disk maybe corrupted";
+           QFile::rename(file, file +  QString(".corrupted"));
+           QMessageBox::critical(
+                nullptr, 
+                QObject::tr("Error reading contacts!"), 
+                QObject::tr("Your hush contacts from disk maybe corrupted"), 
+                QMessageBox::Ok
+            );
+        }
+        else
+        {
+            qDebug() << "Read " << version << " Hush contacts from disk...";
+            QList<QList<QString>> stuff;
+            in >> stuff;
+            for (int i=0; i < stuff.size(); i++) 
+            {
+                ContactItem contact = ContactItem(stuff[i][0],stuff[i][1], stuff[i][2], stuff[i][3],stuff[i][4]);
+                contacts.push_back(contact);
+            }
+
+            qDebug() << "Hush contacts readed from disk...";
         }
         
         _file.close();
