@@ -7,43 +7,43 @@
 Chat::Chat() {}
 
 ChatMemoEdit::ChatMemoEdit(QWidget* parent) : QTextEdit(parent) {
-    QObject::connect(this, &QTextEdit::textChanged, this, &ChatMemoEdit::updateDisplay);
+    QObject::connect(this, &QTextEdit::textChanged, this, &ChatMemoEdit::updateDisplayChat);
 }
 
-void ChatMemoEdit::updateDisplay() {
+void ChatMemoEdit::updateDisplayChat() {
     QString txt = this->toPlainText();
-    if (lenDisplayLabel)
-        lenDisplayLabel->setText(QString::number(txt.toUtf8().size()) + "/" + QString::number(maxlen));
+    if (lenDisplayLabelchat)
+        lenDisplayLabelchat->setText(QString::number(txt.toUtf8().size()) + "/" + QString::number(maxlenchat));
 
-    if (txt.toUtf8().size() <= maxlen) {
+    if (txt.toUtf8().size() <= maxlenchat) {
         // Everything is fine
         if (sendChatButton)
             sendChatButton->setEnabled(true);
 
-        if (lenDisplayLabel)
-            lenDisplayLabel->setStyleSheet("");
+        if (lenDisplayLabelchat)
+            lenDisplayLabelchat->setStyleSheet("");
     }
     else {
         // Overweight
         if (sendChatButton)
             sendChatButton->setEnabled(false);
 
-        if (lenDisplayLabel)
-            lenDisplayLabel->setStyleSheet("color: red;");
+        if (lenDisplayLabelchat)
+            lenDisplayLabelchat->setStyleSheet("color: red;");
     }
 }
 
-void ChatMemoEdit::setMaxLen(int len) {
-    this->maxlen = len;
-    updateDisplay();
+void ChatMemoEdit::setMaxLenChat(int len) {
+    this->maxlenchat = len;
+    updateDisplayChat();
 }
 
 void ChatMemoEdit::SetSendChatButton(QPushButton* button) {
     this->sendChatButton = button;
 }
 
-void ChatMemoEdit::setLenDisplayLabel(QLabel* label) {
-    this->lenDisplayLabel = label;
+void ChatMemoEdit::setLenDisplayLabelChat(QLabel* label) {
+    this->lenDisplayLabelchat = label;
 }
 
 void Chat::renderChatBox(Ui::MainWindow *ui, QListView *view, QLabel *label)
@@ -55,7 +55,6 @@ void Chat::renderChatBox(Ui::MainWindow *ui, QListView *view, QLabel *label)
     {
         for (auto &c : DataStore::getChatDataStore()->getAllMemos())
         {
-            //////Render only Memos for selected contacts. Do not render empty Memos //// Render only memos where cid=cid
 
             if (
                 (p.getName() == ui->contactNameMemo->text().trimmed()) &&
@@ -67,7 +66,8 @@ void Chat::renderChatBox(Ui::MainWindow *ui, QListView *view, QLabel *label)
 
                 Items->setData(OUTGOING, Qt::UserRole + 1);
                 chat->appendRow(Items);
-                ui->listChat->setModel(chat);      
+                ui->listChat->setModel(chat);   
+            
        
             }
             else
@@ -86,6 +86,8 @@ void Chat::renderChatBox(Ui::MainWindow *ui, QListView *view, QLabel *label)
                 Items1->setData(INCOMING, Qt::UserRole + 1);
                 chat->appendRow(Items1);
                 ui->listChat->setModel(chat);
+                
+               
             }
             else
             {
@@ -93,5 +95,7 @@ void Chat::renderChatBox(Ui::MainWindow *ui, QListView *view, QLabel *label)
                 ui->listChat->setModel(chat);
             }
         }
-    }   
-}
+    } 
+}  
+
+  

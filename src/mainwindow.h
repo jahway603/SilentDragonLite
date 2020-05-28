@@ -60,8 +60,9 @@ public:
     void stopWebsocket();
     void saveContact();
     void saveandsendContact();
-    void setMaxLen(int len);
-    void updateDisplay();
+    void showRequesthush();
+   // void setmaxlenChat(int len);
+   // void updateDisplay();
     
 
     void balancesReady();
@@ -199,14 +200,14 @@ class ChatMemoEdit : public QTextEdit
 public:
     ChatMemoEdit(QWidget* parent);
 
-    void setMaxLen(int len);
-    void setLenDisplayLabel(QLabel* label);
+    void setMaxLenChat(int len);
+    void setLenDisplayLabelChat(QLabel* label);
     void SetSendChatButton(QPushButton* button);
-    void updateDisplay();
+    void updateDisplayChat();
 
 private:
-    int             maxlen             = 512;
-    QLabel*         lenDisplayLabel    = nullptr;
+    int             maxlenchat             = 512;
+    QLabel*         lenDisplayLabelchat    = nullptr;
     QPushButton*    sendChatButton     = nullptr;
 };
 

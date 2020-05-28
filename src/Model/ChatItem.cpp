@@ -5,7 +5,7 @@
 
 ChatItem::ChatItem() {}
 
-ChatItem::ChatItem(long timestamp, QString address, QString contact, QString memo, QString requestZaddr, QString type, QString cid, QString txid, int confirmations)
+ChatItem::ChatItem(long timestamp, QString address, QString contact, QString memo, QString requestZaddr, QString type, QString cid, QString txid, int confirmations, bool notarize,  bool iscontact)
 {
     _timestamp = timestamp;
     _address = address;
@@ -17,9 +17,11 @@ ChatItem::ChatItem(long timestamp, QString address, QString contact, QString mem
     _txid = txid;
     _confirmations = confirmations;
     _outgoing = false;
+    _notarize = notarize;
+    _iscontact = iscontact;
 }
 
-ChatItem::ChatItem(long timestamp, QString address, QString contact, QString memo, QString requestZaddr, QString type, QString cid, QString txid, int confirmations, bool outgoing)
+ChatItem::ChatItem(long timestamp, QString address, QString contact, QString memo, QString requestZaddr, QString type, QString cid, QString txid, int confirmations, bool outgoing, bool notarize,  bool iscontact)
 {
     _timestamp = timestamp;
     _address = address;
@@ -31,6 +33,9 @@ ChatItem::ChatItem(long timestamp, QString address, QString contact, QString mem
     _txid = txid;
     _confirmations = confirmations;
     _outgoing = outgoing;
+    _notarize = notarize;
+    _iscontact = iscontact;
+     
 }
 
 long ChatItem::getTimestamp()
@@ -81,6 +86,16 @@ bool ChatItem::isOutgoing()
     return _outgoing;
 }
 
+bool ChatItem::isNotarized()
+{
+    return _notarize;
+}
+
+bool ChatItem::isContact()
+{
+    return _iscontact;
+}
+
 void ChatItem::setTimestamp(long timestamp)
 {
     _timestamp = timestamp;
@@ -128,6 +143,15 @@ void ChatItem::toggleOutgo()
 {
     _outgoing = true;
 }
+void ChatItem::notarized()
+{
+    _notarize = false;
+}
+
+void ChatItem::contact(bool iscontact)
+{
+    _iscontact = iscontact;
+}
 
 
 QString ChatItem::toChatLine()
@@ -136,14 +160,25 @@ QString ChatItem::toChatLine()
     QString lock;
     myDateTime.setTime_t(_timestamp);
 
-    if (_confirmations == 0){
+    if (_notarize == true)
+
+    {
+
+        lock = "<b> <img src=':/icons/res/lock_orange.png'><b>";
+
+    }else{
+        
          lock = "<b> <img src=':/icons/res/unlocked.png'><b>";
-        }else{
+        }
+        if ((_confirmations > 0) && (_notarize == false))
+        
+        {
 
         lock = "<b> <img src=':/icons/res/lock_green.png'><b>";
+        }
+    
 
-    }
-
+qDebug()<<_notarize;
     QString line = QString("<small>") + myDateTime.toString("dd.MM.yyyy hh:mm");
     line += QString(lock) + QString("</small>");
     line += QString("<p>") + _memo.toHtmlEscaped() + QString("</p>");

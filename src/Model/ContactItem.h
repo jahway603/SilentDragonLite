@@ -1,21 +1,26 @@
+// Copyright 2019-2020 The Hush developers
+// GPLv3
 #ifndef CONTACTITEM_H
 #define CONTACTITEM_H
 
 #include <vector>
 #include <QString>
+#include "mainwindow.h"
 using json = nlohmann::json;
 
 class ContactItem
 {
 private:
-    QString _myAddress;
-    QString _partnerAddress;
-    QString _name;
-    QString _cid;
-    QString _avatar;
-
+    QString _myAddress = "";
+    QString _partnerAddress = "";
+    QString _name = "";
+    QString _cid = "";
+    QString _avatar = ":/icons/res/sdlogo.png";
+    
 public:
     ContactItem();
+    ContactItem(QString name, QString partnerAddress);
+    ContactItem(QString name, QString partnerAddress, QString myAddress, QString cid);
     ContactItem(QString name, QString partnerAddress, QString myAddress, QString cid, QString avatar);
     QString getName() const;
     QString getMyAddress() const;

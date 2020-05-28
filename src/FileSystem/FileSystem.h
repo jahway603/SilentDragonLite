@@ -1,3 +1,5 @@
+// Copyright 2019-2020 The Hush developers
+// GPLv3
 #ifndef FILESYSTEM_H
 #define FILESYSTEM_H
 
@@ -13,7 +15,7 @@ class FileSystem
         static bool instanced;
         static FileSystem* instance;
         FileSystem();
-
+        
     public:
         static FileSystem* getInstance();
         QList<ContactItem> readContacts(QString file);

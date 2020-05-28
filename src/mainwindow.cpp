@@ -59,7 +59,7 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     catch (...)
     {
-        theme_name = "default";
+        theme_name = "dark";
     }
 
     this->slot_change_theme(theme_name);
@@ -1208,6 +1208,7 @@ void MainWindow::setupTransactionsTab() {
     ui->listChat->setMinimumSize(200,350);
     ui->listChat->setItemDelegate(new ListViewDelegate());
     ui->listChat->show();
+    
     ui->transactionsTable->setContextMenuPolicy(Qt::CustomContextMenu);
     // Table right click
     QObject::connect(ui->transactionsTable, &QTableView::customContextMenuRequested, [=] (QPoint pos) {
@@ -1337,9 +1338,6 @@ void MainWindow::setupchatTab() {
             ui->memoTxtChat->setTextColor("Black");
         }
 
-  
-
-
     QObject::connect(ui->sendChatButton, &QPushButton::clicked, this, &MainWindow::sendChat);
     QObject::connect(ui->safeContactRequest, &QPushButton::clicked, this, &MainWindow::addContact);
     QObject::connect(ui->pushContact, &QPushButton::clicked, this , &MainWindow::renderContactRequest);
@@ -1354,18 +1352,67 @@ void MainWindow::setupchatTab() {
         
         for(auto &p : AddressBook::getInstance()->getAllAddressLabels())
         if (label_contact == p.getName()) {
-       // ui->ContactZaddr->setText(p.getPartnerAddress());
-      //  ui->MyZaddr->setText(p.getMyAddress());
-        ui->contactNameMemo->setText(p.getName());
-        ui->memoTxtChat->clear();
-        
-    rpc->refresh(true);
-   // updateChat();
+        ui->contactNameMemo->setText(p.getName());    
+        rpc->refresh(true);
+
         }
    });
 
+    QMenu* contextMenu;
+     QAction* requestAction;
+     QAction* editAction;
+     QAction* HushAction;
+     QAction* requestHushAction;
+     QAction* subatomicAction;
+     contextMenu = new QMenu(ui->listContactWidget);
+     requestAction = new QAction("Send a contact request - coming soon",contextMenu);
+     editAction = new QAction("Delete this contact",contextMenu);
+     HushAction = new QAction("Send a friend some Hush - coming soon",contextMenu);
+     requestHushAction = new QAction("Request some Hush - coming soon",contextMenu);
+     subatomicAction = new QAction("Make a subatomic swap with a friend- coming soon",contextMenu);
+     ui->listContactWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
+     ui->listContactWidget->addAction(requestAction);
+     ui->listContactWidget->addAction(editAction);
+     ui->listContactWidget->addAction(HushAction);
+     ui->listContactWidget->addAction(requestHushAction);
+     ui->listContactWidget->addAction(subatomicAction);
+      QObject::connect(requestHushAction, &QAction::triggered, [=]() {
+          QModelIndex index = ui->listContactWidget->currentIndex();
+        QString label_contact = index.data(Qt::DisplayRole).toString();
+        
+        for(auto &p : AddressBook::getInstance()->getAllAddressLabels())
+        if (label_contact == p.getName()) {
+        ui->contactNameMemo->setText(p.getName());    
+        rpc->refresh(true);
+
+        }
+   
+     MainWindow::showRequesthush();
+     }); 
+
+      QObject::connect(editAction, &QAction::triggered, [=]() {
+          QModelIndex index = ui->listContactWidget->currentIndex();
+        QString label_contact = index.data(Qt::DisplayRole).toString();
+        
+        for(auto &p : AddressBook::getInstance()->getAllAddressLabels())
+        if (label_contact == p.getName()) {
+        
+            QString label1 = p.getName();
+            QString addr = p.getPartnerAddress();
+            QString myzaddr =  p.getMyAddress();
+            QString cid = p.getCid();
+            QString avatar = p.getAvatar();
+
+
+     AddressBook::getInstance()->removeAddressLabel(label1, addr, myzaddr, cid,avatar);
+     rpc->refreshContacts(
+            ui->listContactWidget);
+     rpc->refresh(true);
+        }    
+     });
+
     
-ui->memoTxtChat->setLenDisplayLabel(ui->memoSizeChat);
+ui->memoTxtChat->setLenDisplayLabelChat(ui->memoSizeChat);
 }
 
 
@@ -1374,13 +1421,11 @@ void MainWindow::updateChat()
 {
     rpc->refreshChat(ui->listChat,ui->memoSizeChat);
     rpc->refresh(true);
-    
-
 }
 
 void MainWindow::updateContacts()
 {
-    //rpc->refreshContacts(ui->listContactWidget);
+    
 }
 
 void MainWindow::addNewZaddr(bool sapling) {
@@ -1778,7 +1823,7 @@ void MainWindow::slot_change_theme(const QString& theme_name)
     }
     catch (...)
     {
-        saved_theme_name = "default";
+        saved_theme_name = "dark";
     }
 
     QFile qFile(":/css/res/css/" + saved_theme_name +".css");

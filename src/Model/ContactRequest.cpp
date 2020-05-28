@@ -80,7 +80,7 @@ QString ContactRequest::toString()
     return "sender: " + _senderAddress + " receiver: " + _receiverAddress + " memo: " + _memo + " cid: " + _cid + " label: " + _label + " avatar: " + _avatar; 
 }
 
-ContactRequest::~ContactRequest()
+void ContactRequest::clear()
 {
     _senderAddress = "";
     _receiverAddress = "";
@@ -88,4 +88,9 @@ ContactRequest::~ContactRequest()
     _cid = "";
     _label = "";
     _avatar = "";
+}
+
+ContactRequest::~ContactRequest()
+{
+   clear();
 }
