@@ -127,7 +127,7 @@ QList<ContactItem> FileSystem::readContactsOldFormat(QString file)
                 }
                 else if(stuff[i].size() == 4)
                 {
-                    contact = ContactItem(stuff[i][0],stuff[i][1]);
+                    contact = ContactItem(stuff[i][0],stuff[i][1], stuff[i][2], stuff[i][3]);
                     
                 }
                 else
