@@ -1,2 +1,2 @@
-break FileEncryption::encrypt
+break FileSystem::readContactsOldFormat
 
