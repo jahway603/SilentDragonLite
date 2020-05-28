@@ -417,12 +417,7 @@ void AddressBook::readFromStorage()
     allLabels = FileSystem::getInstance()->readContacts(AddressBook::writeableFile());
 
     // test to see if the contact items in datastore are correctly dumped to json
-    for(ContactItem item: allLabels)
-    {
-        DataStore::getContactDataStore()->setData(item.getCid(), item);
-    }
     DataStore::getContactDataStore()->dump(); 
-    AddressBook::writeToStorage();
 }
 
 void AddressBook::writeToStorage() 
