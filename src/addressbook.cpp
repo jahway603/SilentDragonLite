@@ -380,7 +380,7 @@ AddressBook::AddressBook()
 
 void AddressBook::readFromStorage() 
 {
-    /*QFile file(AddressBook::writeableFile());
+    QFile file(AddressBook::writeableFile());
 
     if (file.exists()) 
     {
@@ -413,21 +413,26 @@ void AddressBook::readFromStorage()
         {
             qDebug() << "No Hush contacts found on disk!";
         }
-    }*/
-    allLabels = FileSystem::getInstance()->readContacts(AddressBook::writeableFile());
+    }
+   // allLabels = FileSystem::getInstance()->readContacts(AddressBook::writeableFile());
 
     // test to see if the contact items in datastore are correctly dumped to json
-    DataStore::getContactDataStore()->dump(); 
+        for(ContactItem item: allLabels)
+    {
+        DataStore::getContactDataStore()->setData(item.getCid(), item);
+    }
+
+     AddressBook::writeToStorage();
 }
 
 void AddressBook::writeToStorage() 
 {
     //FileSystem::getInstance()->writeContacts(AddressBook::writeableFile(), DataStore::getContactDataStore()->dump());
     
-    FileSystem::getInstance()->writeContactsOldFormat(AddressBook::writeableFile(), allLabels);
+   // FileSystem::getInstance()->writeContactsOldFormat(AddressBook::writeableFile(), allLabels);
     
     
-    /*QFile file(AddressBook::writeableFile());
+    QFile file(AddressBook::writeableFile());
     file.open(QIODevice::ReadWrite | QIODevice::Truncate);
     QDataStream out(&file);   // we will serialize the data into the file
     QList<QList<QString>> contacts;
@@ -442,7 +447,7 @@ void AddressBook::writeToStorage()
         contacts.push_back(c);
     }
     out << QString("v1") << contacts;
-    file.close();*/
+    file.close();
 }
 
 QString AddressBook::writeableFile() 
