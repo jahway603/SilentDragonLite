@@ -240,16 +240,18 @@ void MainWindow::renderContactRequest(){
                 qDebug()<<"Beginn kopiert" <<cid << addr << newLabel << myAddr;
                 AddressBook::getInstance()->addAddressLabel(newLabel, addr, myAddr, cid, avatar);
 
-                  QMessageBox::information(this, "Added Contact","successfully added your new contact. You can now Chat with this contact");      
+                  QMessageBox::information(this, "Added Contact","successfully added your new contact. You can now Chat with this contact");  
+                   rpc->refreshContacts(
+            ui->listContactWidget
+            
+        );
+
             
     });
 
  dialog.exec();
 
- rpc->refreshContacts(
-            ui->listContactWidget
-            
-        );
+
 }
 
 void ChatModel::addCid(QString tx, QString cid)
@@ -374,10 +376,7 @@ Tx MainWindow::createTxFromChatPage() {
            
      
         QString hmemo= createHeaderMemo(type,cid,myAddr);
-        QString memo = ui->memoTxtChat->toPlainText().trimmed();
-        
-
-        
+        QString memo = ui->memoTxtChat->toPlainText().trimmed();     
      
      tx.toAddrs.push_back(ToFields{addr, amt, hmemo});
      tx.toAddrs.push_back(ToFields{addr, amt, memo});
@@ -547,7 +546,8 @@ void::MainWindow::addContact()
     request.setupUi(&dialog);
     Settings::saveRestore(&dialog);
 
-
+ try 
+    {   
     bool sapling = true;
     rpc->createNewZaddr(sapling, [=] (json reply) {
         QString myAddr = QString::fromStdString(reply.get<json::array_t>()[0]);
@@ -557,8 +557,20 @@ void::MainWindow::addContact()
         ui->listReceiveAddresses->setCurrentIndex(0);
         qDebug() << "new generated myAddr add Contact" << myAddr;
     });
+
+    }catch(...)
+       {
+
+            
+            qDebug() << QString("Caught something nasty with myZaddr Contact");
+       }
+
+     QString cid = QUuid::createUuid().toString(QUuid::WithoutBraces);
+       
+
+     
       
-        QString cid = QUuid::createUuid().toString(QUuid::WithoutBraces);
+       
         
        
    
