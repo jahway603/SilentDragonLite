@@ -239,18 +239,14 @@ void MainWindow::renderContactRequest(){
 
                 qDebug()<<"Beginn kopiert" <<cid << addr << newLabel << myAddr;
                 AddressBook::getInstance()->addAddressLabel(newLabel, addr, myAddr, cid, avatar);
+                  rpc->refreshContacts(
+                  ui->listContactWidget);
 
                   QMessageBox::information(this, "Added Contact","successfully added your new contact. You can now Chat with this contact");  
-                   rpc->refreshContacts(
-            ui->listContactWidget
-            
-        );
-
             
     });
 
  dialog.exec();
-
 
 }
 
@@ -565,15 +561,7 @@ void::MainWindow::addContact()
             qDebug() << QString("Caught something nasty with myZaddr Contact");
        }
 
-     QString cid = QUuid::createUuid().toString(QUuid::WithoutBraces);
-       
-
-     
-      
-       
-        
-       
-   
+        QString cid = QUuid::createUuid().toString(QUuid::WithoutBraces);
 
     QObject::connect(request.sendRequestButton, &QPushButton::clicked, [&] () {
         
@@ -723,7 +711,10 @@ void MainWindow::ContactRequest() {
                     delete d;
                     
                   });
-                        QString addr = contactRequest.getReceiverAddress();
+
+                  /////Add this contact after we sent the request
+
+        QString addr = contactRequest.getReceiverAddress();
         QString newLabel = contactRequest.getLabel();
         QString myAddr = contactRequest.getSenderAddress();
         QString cid = contactRequest.getCid();
@@ -756,17 +747,22 @@ void MainWindow::ContactRequest() {
 
         ////// Success, so show it
         AddressBook::getInstance()->addAddressLabel(newLabel, addr, myAddr, cid, avatar);
+        rpc->refreshContacts(
+        ui->listContactWidget);
         QMessageBox::information(
             this, 
             QObject::tr("Added Contact"), 
             QObject::tr("successfully added your new contact").arg(newLabel), 
             QMessageBox::Ok
+          
         );
         return;
                 // Force a UI update so we get the unconfirmed Tx
               //  rpc->refresh(true);
                 ui->memoTxtChat->clear();
                 rpc->refresh(true);
+                rpc->refreshContacts(
+                ui->listContactWidget);
 
             },
             // Errored out
