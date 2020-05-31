@@ -910,10 +910,24 @@ void Controller::refreshTransactions() {
                    // QString memo1;
 
                     QString memo;
+                     QString cid; 
                     if (!o["memo"].is_null()) {
                      QString memo = QString::fromStdString(o["memo"].get<json::string_t>());
+
+                       if (memo.startsWith("{")) {
+
+                  QJsonDocument headermemo = QJsonDocument::fromJson(memo.toUtf8());
+
+                  cid = headermemo["cid"].toString();
+             
+               
+
+                    chatModel->addCid(txid, cid);
+                   
+
+                }  
                        
-                        QString cid; 
+                       
                         bool isNotarized;
 
                         if (confirmations > getLag())
@@ -923,10 +937,25 @@ void Controller::refreshTransactions() {
 
                             isNotarized = false;
                         }
+
+                    if (chatModel->getCidByTx(txid) != QString("0xdeadbeef")){
+
+                        cid = chatModel->getCidByTx(txid);
+
+                }else{
+                    cid = "";
+                    }
+
+                     int lengthcid = cid.length();
+
+                    char *cidchar = NULL;
+                    cidchar = new char[lengthcid+1];
+                    strncpy(cidchar, cid.toLocal8Bit(), lengthcid +1);
+
 /////////////////////////////////Now we create Bobs keys, just for testing at this place. If the encryption/decryption works we put it in Controller.cpp (RefreshTransactions)
     
                 /////////////////Alice Pubkey bob create
-    #define MESSAGEAP ((const unsigned char *) "Hallo")///////////static atm, in future we will use the CID here
+    #define MESSAGEAP ((const unsigned char *) cidchar)///////////static atm, in future we will use the CID here
     #define MESSAGEAP_LEN 5
 
     unsigned char alice_publickey[crypto_box_PUBLICKEYBYTES];

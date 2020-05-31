@@ -374,19 +374,26 @@ Tx MainWindow::createTxFromChatPage() {
         QString hmemo= createHeaderMemo(type,cid,myAddr);
 
              /////////User input for chatmemos
-        QString memounencrypt = ui->memoTxtChat->toPlainText().trimmed();
+        QString memoplain = ui->memoTxtChat->toPlainText().trimmed();
 
   /////////We convert the user input from QString to unsigned char*, so we can encrypt it later
-        int length = memounencrypt.length();
+        int lengthmemo = memoplain.length();
 
-          char *sequence = NULL;
-         sequence = new char[length+1];
-         strncpy(sequence, memounencrypt.toLocal8Bit(), length +1);
+        char *memoplainchar = NULL;
+         memoplainchar = new char[lengthmemo+1];
+         strncpy(memoplainchar, memoplain.toLocal8Bit(), lengthmemo +1);
+
+           /////////We convert the CID from QString to unsigned char*, so we can encrypt it later
+        int lengthcid = cid.length();
+
+          char *cidchar = NULL;
+         cidchar = new char[lengthcid+1];
+         strncpy(cidchar, cid.toLocal8Bit(), lengthcid +1);
 
 //////////////////////////////////////////////////Lets create Alice keys for the conversation///////////////////////////////////
 
                 /////////////////Alice Pubkey 
-    #define MESSAGEAP ((const unsigned char *) "Hallo")///////////static atm, in future we will use the CID here
+    #define MESSAGEAP ((const unsigned char *) cidchar)///////////static atm, in future we will use the CID here
     #define MESSAGEAP_LEN 5
 
     unsigned char alice_publickey[crypto_box_PUBLICKEYBYTES];
@@ -418,8 +425,8 @@ Tx MainWindow::createTxFromChatPage() {
                    NULL, 0);
 
   ////////////Now lets encrypt the message Alice send to Bob//////////////////////////////
-    #define MESSAGE (const unsigned char *) sequence
-    #define MESSAGE_LEN length
+    #define MESSAGE (const unsigned char *) memoplainchar
+    #define MESSAGE_LEN lengthmemo
     #define CIPHERTEXT_LEN (crypto_box_MACBYTES + MESSAGE_LEN)
     unsigned char ciphertext[CIPHERTEXT_LEN];
 
