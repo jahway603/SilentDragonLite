@@ -956,7 +956,7 @@ void Controller::refreshTransactions() {
     
                 /////////////////Alice Pubkey bob create
     #define MESSAGEAP ((const unsigned char *) cidchar)///////////static atm, in future we will use the CID here
-    #define MESSAGEAP_LEN 5
+    #define MESSAGEAP_LEN lengthcid
 
     unsigned char alice_publickey[crypto_box_PUBLICKEYBYTES];
 
