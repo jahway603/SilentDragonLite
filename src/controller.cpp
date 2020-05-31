@@ -907,10 +907,12 @@ void Controller::refreshTransactions() {
                              this->refresh(true);
                         } 
                    
+                   // QString memo1;
+
                     QString memo;
                     if (!o["memo"].is_null()) {
-                        memo = QString::fromStdString(o["memo"]);
-
+                     QString memo = QString::fromStdString(o["memo"].get<json::string_t>());
+                       
                         QString cid; 
                         bool isNotarized;
 
@@ -921,8 +923,106 @@ void Controller::refreshTransactions() {
 
                             isNotarized = false;
                         }
+/////////////////////////////////Now we create Bobs keys, just for testing at this place. If the encryption/decryption works we put it in Controller.cpp (RefreshTransactions)
+    
+                /////////////////Alice Pubkey bob create
+    #define MESSAGEAP ((const unsigned char *) "Hallo")///////////static atm, in future we will use the CID here
+    #define MESSAGEAP_LEN 5
 
-                        ChatItem item = ChatItem(
+    unsigned char alice_publickey[crypto_box_PUBLICKEYBYTES];
+
+       crypto_generichash(alice_publickey, sizeof alice_publickey,
+                   MESSAGEAP, MESSAGEAP_LEN,
+                   NULL, 0);
+
+
+    /////////////////Bob Secretkey 
+
+     #define MESSAGEAS ((const unsigned char *) "Hallo")///////////static atm, in future we will use the Passphrase here
+        #define MESSAGEAS_LEN 5
+
+    unsigned char bob_secretkey[crypto_box_SECRETKEYBYTES];
+
+      crypto_generichash(bob_secretkey, sizeof bob_secretkey,
+                   MESSAGEAS, MESSAGEAS_LEN,
+                   NULL, 0);
+
+ /////////////////Bob Pubkey 
+     #define MESSAGEBAP ((const unsigned char *) "Hallo")///////////static atm, in future we will use the CID here
+    #define MESSAGEBAP_LEN 5
+
+    unsigned char bob_publickey[crypto_box_PUBLICKEYBYTES];
+
+    crypto_generichash(bob_publickey, sizeof bob_publickey,
+                   MESSAGEBAP, MESSAGEBAP_LEN,
+                   NULL, 0);
+
+
+
+                /////We need to filter out Memos smaller then the ciphertext size, or it will dump
+
+         if ((memo.length() > 120) &&  (memo.startsWith("{") == false))
+        {   
+
+ 
+        const QByteArray ba = QByteArray::fromHex(memo.toLatin1());
+        const unsigned char *encryptedMemo = reinterpret_cast<const unsigned char *>(ba.constData());
+
+        int encryptedMemoSize1 = ba.length();
+
+        //////unsigned char* as message from QString
+         #define MESSAGE2 (const unsigned char *) encryptedMemo 
+
+         ///////// length of the encrypted message
+         #define CIPHERTEXT1_LEN  encryptedMemoSize1
+
+         ///////Message length is smaller then the encrypted message
+         #define MESSAGE1_LEN encryptedMemoSize1 - crypto_box_MACBYTES 
+
+            //////Set the length of the decrypted message
+
+         unsigned char decrypted[MESSAGE1_LEN];
+
+        ///////Decrypt the message
+        if (crypto_box_open_easy(decrypted, MESSAGE2, CIPHERTEXT1_LEN, alice_publickey,
+                         alice_publickey, alice_publickey) != 0) {
+            /* message for Bob pretending to be from Alice has been forged! */
+            }
+  
+            /////Our decrypted message is now in decrypted. We need it as QString to render it
+                /////Only the QString gives weird data, so convert first to std::string
+
+            std::string decryptedMemo(reinterpret_cast<char*>(decrypted),MESSAGE1_LEN);
+
+              /////Now we can convert it to QString
+            QString memodecrypt = QString::fromUtf8( decryptedMemo.data(), decryptedMemo.size());
+
+         //////////////Give us the output of the decrypted message as debug to see if it was successfully
+                         qDebug()<<"OUT  decrypt:" << memodecrypt;   
+
+
+                         ChatItem item = ChatItem(
+                                datetime,
+                                address,
+                                QString(""),
+                                memodecrypt,
+                                QString(""),
+                                QString(""),
+                                cid, 
+                                txid,
+                                confirmations,
+                                true,
+                                isNotarized,
+                                false
+                            );
+                        DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
+                        
+                        
+
+                        }else{
+
+
+                            ChatItem item = ChatItem(
                                 datetime,
                                 address,
                                 QString(""),
@@ -938,11 +1038,9 @@ void Controller::refreshTransactions() {
                             );
                         DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
                         
-                        
+                        }
 
-                        } 
-
-                                    
+                        }            
                     items.push_back(TransactionItemDetail{address, amount, memo});
                     total_amount = total_amount + amount;
                 }

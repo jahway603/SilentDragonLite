@@ -386,217 +386,53 @@ Tx MainWindow::createTxFromChatPage() {
 //////////////////////////////////////////////////Lets create Alice keys for the conversation///////////////////////////////////
 
                 /////////////////Alice Pubkey 
-    #define MESSAGEAP ((const unsigned char *) "Ioesd")///////////static atm, in future we will use the CID here
+    #define MESSAGEAP ((const unsigned char *) "Hallo")///////////static atm, in future we will use the CID here
     #define MESSAGEAP_LEN 5
 
-    unsigned char alice_publickey[crypto_secretstream_xchacha20poly1305_KEYBYTES];
+    unsigned char alice_publickey[crypto_box_PUBLICKEYBYTES];
 
        crypto_generichash(alice_publickey, sizeof alice_publickey,
                    MESSAGEAP, MESSAGEAP_LEN,
                    NULL, 0);
                     QString alice = QString::fromLocal8Bit((char*)alice_publickey);
-                   qDebug()<<"Alice Pubkey : "<<alice;
-
 
     /////////////////Alice Secretkey 
 
        #define MESSAGEAS ((const unsigned char *) "Hallo")///////////static atm, in future we will use the Passphrase here
         #define MESSAGEAS_LEN 5
 
-    unsigned char alice_secretkey[crypto_secretstream_xchacha20poly1305_KEYBYTES];
+    unsigned char alice_secretkey[crypto_box_SECRETKEYBYTES];
 
       crypto_generichash(alice_secretkey, sizeof alice_secretkey,
                    MESSAGEAS, MESSAGEAS_LEN,
                    NULL, 0);
 
  /////////////////Bob Pubkey that Alice creates 
-     #define MESSAGEBAP ((const unsigned char *) "Hal11")///////////static atm, in future we will use the CID here
+     #define MESSAGEBAP ((const unsigned char *) "Hallo")///////////static atm, in future we will use the CID here
     #define MESSAGEBAP_LEN 5
 
-    unsigned char bob_publickey[crypto_secretstream_xchacha20poly1305_KEYBYTES];
+    unsigned char bob_publickey[crypto_box_PUBLICKEYBYTES];
 
     crypto_generichash(bob_publickey, sizeof bob_publickey,
                    MESSAGEBAP, MESSAGEBAP_LEN,
                    NULL, 0);
 
-    qDebug()<<"Alice version of Bobs Pubkey created";
-
-
-         ////////////Now we create shared keys for the conversation//////////////////////////////
-
-    unsigned char server_rx[crypto_kx_SESSIONKEYBYTES], server_tx[crypto_kx_SESSIONKEYBYTES];
-    /* Generate the server's key pair */
-    crypto_kx_keypair(alice_publickey, alice_secretkey);
-
-    /* Prerequisite after this point: the client's public key must be known by the server */
-
-    /* Compute two shared keys using the client's public key and the server's secret key.
-     server_rx will be used by the server to receive data from the client,
-     server_tx will by used by the server to send data to the client. */
-    if (crypto_kx_server_session_keys(server_rx, server_tx,
-                                      alice_publickey, alice_secretkey, bob_publickey) != 0) {
-    /* Suspicious client public key, bail out */
-
-}
-
   ////////////Now lets encrypt the message Alice send to Bob//////////////////////////////
     #define MESSAGE (const unsigned char *) sequence
     #define MESSAGE_LEN length
-    #define CIPHERTEXT_LEN (MESSAGE_LEN + crypto_secretstream_xchacha20poly1305_ABYTES)
+    #define CIPHERTEXT_LEN (crypto_box_MACBYTES + MESSAGE_LEN)
+    unsigned char ciphertext[CIPHERTEXT_LEN];
 
+            //////Encrypt the message. ATM static keys, this will change!
+        if (crypto_box_easy(ciphertext, MESSAGE, MESSAGE_LEN, alice_publickey,
+                    alice_publickey, alice_publickey) != 0) {
+            /* error */
+                    }          
     
-        crypto_secretstream_xchacha20poly1305_state state;
-        /////The Header must be known by both, so we can use alice or bobs pubkey here
-
-    //unsigned char header[crypto_secretstream_xchacha20poly1305_HEADERBYTES];
-
-    unsigned char c1[CIPHERTEXT_LEN];
-
-    /* Shared secret key required to encrypt/decrypt the stream */
-    crypto_secretstream_xchacha20poly1305_keygen(alice_publickey);
-
-    /* Set up a new stream: initialize the state and create the header */
-    ////////////Bobs pubkey will be use as header here, and alice_publickey as Key. Just for testing, we will switch to server_tx here //////////////////////////////
-    crypto_secretstream_xchacha20poly1305_init_push(&state, bob_publickey, alice_publickey);
-
-   ////Now encrypt the Message///////////////////////////////////
-    crypto_secretstream_xchacha20poly1305_push
-    (&state, c1, NULL, MESSAGE, MESSAGE_LEN, NULL, 0, 0);
-
-    ///////////Ciphertext is now in c1 as unsigned char*, we need it as QString, to send it as memo to Bob//////////////////////
-
-            /////This is not working. It seems the QString has not exact the ciphertext in it. It will not decrypt with it////////////////
-                QString memo( reinterpret_cast< char* >( c1 ) );
-
-    qDebug()<<"Size QString with encrypted data :"<< memo.length(); ////We check the length here, to compare it with the length our QString 
-
-                ///////Just for testing we convert the unsigned char* to std::string, to see if we can decrypt,and that works.////////////
-
-                std::string encryptedMemo(reinterpret_cast<char*>(c1), CIPHERTEXT_LEN);
-
-
-    qDebug()<<"Size std::string with encrypted data :"<< encryptedMemo.length(); ////We check the length here, to compare it with the length our QString
-
-        
-
- /////////////////////////////////Now we create Bobs keys, just for testing at this place. If the encryption/decryption works we put it in Controller.cpp (RefreshTransactions)
-    
-     /////////////////Bob Pubkey/////////////////////////////////
-    #define MESSAGEBAP1 ((const unsigned char *) "Hal12")///////////static atm, in future we will use the CID here
-    #define MESSAGEBAP1_LEN 5
-
-    unsigned char bob1_publickey[crypto_secretstream_xchacha20poly1305_KEYBYTES];
-
-    crypto_generichash(bob1_publickey, sizeof bob1_publickey,
-                   MESSAGEBAP1, MESSAGEBAP1_LEN,
-                   NULL, 0);
-
-    qDebug()<<"Bobs Pubkey created";
-
-       /////////////////Bob Secretkey 
-    #define MESSAGEBS ((const unsigned char *) "Hal11")///////////static atm, in future we will use the Passphrase here
-    #define MESSAGEBS_LEN 5
-
-    unsigned char bob_secretkey[crypto_secretstream_xchacha20poly1305_HEADERBYTES];
-
-    crypto_generichash(bob_secretkey, sizeof bob_secretkey,
-                   MESSAGEBS, MESSAGEBS_LEN,
-                   NULL, 0);
-
-    qDebug()<<"Bobs Pubkey created";
-
-    /////////////////Alice Pubkey bob creates
-   #define MESSAGEA121 ((const unsigned char *) "Ioesd")///////////static atm, in future we will use the CID here
-    #define MESSAGEAP121_LEN 5
-
-    unsigned char alice1_publickey[crypto_secretstream_xchacha20poly1305_KEYBYTES];
-
-       crypto_generichash(alice1_publickey, sizeof alice1_publickey,
-                   MESSAGEA121, MESSAGEAP121_LEN,
-                   NULL, 0);
-
-                   QString alice1 = QString::fromLocal8Bit((char*)alice1_publickey);
-                   qDebug()<<"Alice Pubkey Bob create: "<<alice1;
-
-
-    
-
-////////////Now we create the shared keys for Bob///////////////////////////////////////////////
-
-        unsigned char client_rx[crypto_kx_SESSIONKEYBYTES], client_tx[crypto_kx_SESSIONKEYBYTES];
-
-        /* Generate the client's key pair */
-        crypto_kx_keypair(bob1_publickey, bob_secretkey);
-
-        /* Prerequisite after this point: the server's public key must be known by the client */
-
-        /* Compute two shared keys using the server's public key and the client's secret key.
-         client_rx will be used by the client to receive data from the server,
-         client_tx will by used by the client to send data to the server. */
-        if (crypto_kx_client_session_keys(client_rx, client_tx,
-                                          bob1_publickey, bob_secretkey, alice1_publickey) != 0) {
-         /* Suspicious server public key, bail out */
-        } 
-
-
-
-///////////////Now we simuldate the decryption. Our memo comes as QString, so we have to convert it again to unsigned char*////////////////////
-
-        ////QString to char+ (not working, it will not decrypt)
-
-          /*char *memoIncoming = NULL;
-         memoIncoming = new char[memo.length()+1];
-         strncpy(memoIncoming, memo.toLocal8Bit(), [memo.length()+1);*/
-
-           
-///////////////////////////if we take the std::string (of the encryption output) instead of QString memo, it will decrypt////////
-
-/////////////Convert std::string to unsigned char*/////////////////////
-        unsigned char *pwa=new unsigned char[encryptedMemo.length()];
-        strncpy((char *)pwa,encryptedMemo.c_str(), encryptedMemo.length());
-
-//////We set the values to decrypt the message///////////////////////////////
-
-
-        //////unsigned char* as message from std::string
-         #define MESSAGE2 (const unsigned char *) pwa 
-         ///////// length of the encrypted message
-         #define CIPHERTEXT1_LEN  encryptedMemo.length()  
-         ///////Message length is smaller then the encrypted message
-         #define MESSAGE1_LEN encryptedMemo.length()  - crypto_secretstream_xchacha20poly1305_ABYTES 
-         ///////we could use tags here 
-         unsigned char tag;
-
-            //////Set the length of the decrypted message
-        unsigned char m[MESSAGE1_LEN];
-
-                ///////In future we use the shared keys here//////
-        /* Shared secret key required to encrypt/decrypt the stream */
-        //crypto_secretstream_xchacha20poly1305_keygen(alice1_publickey);
-
-        /* Set up a new stream: initialize the state and create the header */
-        //crypto_secretstream_xchacha20poly1305_init_push(&state, alice_publickey, client_rx);
-
-        ////////Again, we use Bobs pubkey as header and alice pubkey as key
-        /* Decrypt the stream: initializes the state, using the key and a header */
-        if (crypto_secretstream_xchacha20poly1305_init_pull(&state, bob_publickey, alice_publickey) != 0) {
-        /* Invalid header, no need to go any further */
-        }
-          //////And decrypt it
-        if (crypto_secretstream_xchacha20poly1305_pull
-        (&state, m, NULL, &tag, MESSAGE2, encryptedMemo.length(), NULL, 0) != 0) {
-         /* Invalid/incomplete/corrupted ciphertext - abort */
-        }
-
-            /////Our decrypted message is now in m. We need it as QString to render it
-                /////Only the QString gives weird data, so convert first to std::string
-            std::string decryptedMemo(reinterpret_cast<char*>(m),MESSAGE1_LEN);
-              /////Now we can convert it to QString
-            QString memodecrypt = QString::fromUtf8( decryptedMemo.data(), decryptedMemo.size());
-
-         //////////////Give us the output of the decrypted message as debug to see if it was successfully
-            qDebug()<<"OUT  decrypt:" << memodecrypt;      
-     
+    /////CIphertext Memo
+  QString memo = QByteArray(reinterpret_cast<const char*>(ciphertext), CIPHERTEXT_LEN).toHex();
+         
+   
      tx.toAddrs.push_back(ToFields{addr, amt, hmemo});
      tx.toAddrs.push_back(ToFields{addr, amt, memo});
 
