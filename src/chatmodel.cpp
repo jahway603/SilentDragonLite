@@ -545,8 +545,8 @@ Tx MainWindow::createTxFromChatPage() {
         ////QString to char+ (not working, it will not decrypt)
 
           /*char *memoIncoming = NULL;
-         memoIncoming = new char[lenght1+1];
-         strncpy(memoIncoming, memo.toLocal8Bit(), lenght1+1);*/
+         memoIncoming = new char[memo.length()+1];
+         strncpy(memoIncoming, memo.toLocal8Bit(), [memo.length()+1);*/
 
            
 ///////////////////////////if we take the std::string (of the encryption output) instead of QString memo, it will decrypt////////
