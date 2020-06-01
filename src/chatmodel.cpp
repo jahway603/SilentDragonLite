@@ -429,8 +429,9 @@ Tx MainWindow::createTxFromChatPage() {
 
  ////////////////Generate the secretkey for our message encryption
 
-        const QByteArray ba2 = QByteArray::fromHex(hashEncryptionKey.toLatin1());
-        const unsigned char *hashEncryptionKeyraw = reinterpret_cast<const unsigned char *>(ba2.constData());
+              char *hashEncryptionKeyraw = NULL;
+                    hashEncryptionKeyraw = new char[length+1];
+                    strncpy(hashEncryptionKeyraw, hashEncryptionKey.toLocal8Bit(), length +1);
 
         #define MESSAGEAS1 ((const unsigned char *) hashEncryptionKeyraw)
         #define MESSAGEAS1_LEN length
@@ -732,15 +733,15 @@ Tx MainWindow::createTxForSafeContactRequest()
             QString memo = contactRequest.getMemo();
           //  QString privkey = rpc->fetchPrivKey(myAddr);
             QString passphrase = this->getPassword();
-            QString hashEncryptionKey =  passphrase;
+            QString hashEncryptionKey =  "Test";
             int length = hashEncryptionKey.length();
 
             qDebug()<<"Encryption String :"<<hashEncryptionKey;
 
  ////////////////Generate the secretkey for our message encryption
-
-        const QByteArray ba2 = QByteArray::fromHex(hashEncryptionKey.toLatin1());
-        const unsigned char *hashEncryptionKeyraw = reinterpret_cast<const unsigned char *>(ba2.constData());
+      char *hashEncryptionKeyraw = NULL;
+                    hashEncryptionKeyraw = new char[length+1];
+                    strncpy(hashEncryptionKeyraw, hashEncryptionKey.toLocal8Bit(), length +1);
         #define MESSAGEAS1 ((const unsigned char *) hashEncryptionKeyraw)
         #define MESSAGEAS1_LEN length
 
