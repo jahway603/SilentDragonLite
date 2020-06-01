@@ -255,6 +255,11 @@ void ChatModel::addCid(QString tx, QString cid)
     this->cidMap[tx] = cid;
 }
 
+void ChatModel::addHeader(QString tx, QString headerbytes)
+{
+    this->headerMap[tx] = headerbytes;
+}
+
 void ChatModel::addrequestZaddr(QString tx, QString requestZaddr)
 {
     this->requestZaddrMap[tx] = requestZaddr;
@@ -275,6 +280,21 @@ QString ChatModel::getCidByTx(QString tx)
     if(this->cidMap.count(tx) > 0)
     {
         return this->cidMap[tx];
+    }
+
+    return QString("0xdeadbeef");
+}
+
+QString ChatModel::getHeaderByTx(QString tx)
+{
+    for(auto& pair : this->headerMap)
+    {
+
+    }
+
+    if(this->headerMap.count(tx) > 0)
+    {
+        return this->headerMap[tx];
     }
 
     return QString("0xdeadbeef");
@@ -325,7 +345,7 @@ void ChatModel::killConfirmationCache()
     this->confirmationsMap.clear();
 }
 
-QString MainWindow::createHeaderMemo(QString type, QString cid, QString zaddr,  int version=0, int headerNumber=1)
+QString MainWindow::createHeaderMemo(QString type, QString cid, QString zaddr, QString headerbytes, QString publickey, int version=0, int headerNumber=1)
 {
     
     QString header="";
@@ -338,6 +358,9 @@ QString MainWindow::createHeaderMemo(QString type, QString cid, QString zaddr,  
     h["z"]   = zaddr;           // zaddr to respond to
     h["cid"] = cid;             // conversation id
     h["t"] = type;       // Memo or incoming contact request
+    h["e"] = headerbytes;       // Memo or incoming contact request
+    h["p"] = publickey;       // Memo or incoming contact request
+
 
     j.setObject(h);
     header = j.toJson();
@@ -345,6 +368,7 @@ QString MainWindow::createHeaderMemo(QString type, QString cid, QString zaddr,  
     return header;
    
 }
+
 
 // Create a Tx from the current state of the Chat page. 
 Tx MainWindow::createTxFromChatPage() {
@@ -370,8 +394,7 @@ Tx MainWindow::createTxFromChatPage() {
             QString type = "Memo";
             QString addr = c.getPartnerAddress();
            
-
-        QString hmemo= createHeaderMemo(type,cid,myAddr);
+   
 
              /////////User input for chatmemos
         QString memoplain = ui->memoTxtChat->toPlainText().trimmed();
@@ -390,58 +413,76 @@ Tx MainWindow::createTxFromChatPage() {
          cidchar = new char[lengthcid+1];
          strncpy(cidchar, cid.toLocal8Bit(), lengthcid +1);
 
-//////////////////////////////////////////////////Lets create Alice keys for the conversation///////////////////////////////////
+  
 
-                /////////////////Alice Pubkey 
-    #define MESSAGEAP ((const unsigned char *) cidchar)///////////static atm, in future we will use the CID here
-    #define MESSAGEAP_LEN lengthcid
+            QString pubkey = "test";
+            QString passphrase = this->getPassword();
+            QString hashEncryptionKey = passphrase;
+            int length = hashEncryptionKey.length();
 
-    unsigned char alice_publickey[crypto_box_PUBLICKEYBYTES];
+            qDebug()<<"Encryption String :"<<hashEncryptionKey;
 
-       crypto_generichash(alice_publickey, sizeof alice_publickey,
-                   MESSAGEAP, MESSAGEAP_LEN,
-                   NULL, 0);
-                    QString alice = QString::fromLocal8Bit((char*)alice_publickey);
+ ////////////////Generate the secretkey for our message encryption
 
-    /////////////////Alice Secretkey 
+        const QByteArray ba2 = QByteArray::fromHex(hashEncryptionKey.toLatin1());
+        const unsigned char *hashEncryptionKeyraw = reinterpret_cast<const unsigned char *>(ba2.constData());
 
-       #define MESSAGEAS ((const unsigned char *) "Hallo")///////////static atm, in future we will use the Passphrase here
-        #define MESSAGEAS_LEN 5
+        #define MESSAGEAS1 ((const unsigned char *) hashEncryptionKeyraw)
+        #define MESSAGEAS1_LEN length
+        unsigned char hash[crypto_kx_SEEDBYTES];
 
-    unsigned char alice_secretkey[crypto_box_SECRETKEYBYTES];
+            crypto_hash_sha256(hash,MESSAGEAS1, MESSAGEAS1_LEN);
 
-      crypto_generichash(alice_secretkey, sizeof alice_secretkey,
-                   MESSAGEAS, MESSAGEAS_LEN,
-                   NULL, 0);
 
- /////////////////Bob Pubkey that Alice creates 
-     #define MESSAGEBAP ((const unsigned char *) "Hallo")///////////static atm, in future we will use the CID here
-    #define MESSAGEBAP_LEN 5
+        unsigned char sk[crypto_kx_SECRETKEYBYTES];
+        unsigned char pk[crypto_kx_PUBLICKEYBYTES];
+        unsigned char server_rx[crypto_kx_SESSIONKEYBYTES], server_tx[crypto_kx_SESSIONKEYBYTES];
+      
+                if (crypto_kx_seed_keypair(pk,sk,
+                           hash) !=0) {
+                           }
+         ////////////////Get the pubkey from Bob, so we can create the share key
 
-    unsigned char bob_publickey[crypto_box_PUBLICKEYBYTES];
+        const QByteArray pubkeyBobArray = QByteArray::fromHex(pubkey.toLatin1());
+        const unsigned char *pubkeyBob = reinterpret_cast<const unsigned char *>(pubkeyBobArray.constData());
+                    /////Create the shared key for sending the message
 
-    crypto_generichash(bob_publickey, sizeof bob_publickey,
-                   MESSAGEBAP, MESSAGEBAP_LEN,
-                   NULL, 0);
+            if (crypto_kx_server_session_keys(server_rx, server_tx,
+                                  pk, sk, pubkeyBob) != 0) {
+            /* Suspicious client public key, bail out */
+             }
 
-  ////////////Now lets encrypt the message Alice send to Bob//////////////////////////////
-    #define MESSAGE (const unsigned char *) memoplainchar
-    #define MESSAGE_LEN lengthmemo
-    #define CIPHERTEXT_LEN (crypto_box_MACBYTES + MESSAGE_LEN)
-    unsigned char ciphertext[CIPHERTEXT_LEN];
-
-            //////Encrypt the message. ATM static keys, this will change!
-        if (crypto_box_easy(ciphertext, MESSAGE, MESSAGE_LEN, alice_publickey,
-                    alice_publickey, alice_publickey) != 0) {
-            /* error */
-                    }          
     
-    /////CIphertext Memo
-  QString memo = QByteArray(reinterpret_cast<const char*>(ciphertext), CIPHERTEXT_LEN).toHex();
+
+    ////////////Now lets encrypt the message Alice send to Bob//////////////////////////////
+             #define MESSAGE (const unsigned char *) memoplainchar
+             #define MESSAGE_LEN lengthmemo
+             #define CIPHERTEXT_LEN (crypto_secretstream_xchacha20poly1305_ABYTES + MESSAGE_LEN)
+             unsigned char ciphertext[CIPHERTEXT_LEN];
+             unsigned char header[crypto_secretstream_xchacha20poly1305_HEADERBYTES];
+
+            crypto_secretstream_xchacha20poly1305_state state;
+
+            /* Set up a new stream: initialize the state and create the header */
+            crypto_secretstream_xchacha20poly1305_init_push(&state, header, server_tx);
+
+
+             /* Now, encrypt the first chunk. `c1` will contain an encrypted,
+            * authenticated representation of `MESSAGE_PART1`. */
+            crypto_secretstream_xchacha20poly1305_push
+            (&state, ciphertext, NULL, MESSAGE, MESSAGE_LEN, NULL, 0, crypto_secretstream_xchacha20poly1305_TAG_FINAL);
+
+            ////Create the HM for this message
+            QString headerbytes = QByteArray(reinterpret_cast<const char*>(header), crypto_secretstream_xchacha20poly1305_HEADERBYTES).toHex();
+
+            QString hmemo= createHeaderMemo(type,cid,myAddr,"",headerbytes);
+
+             /////Ciphertext Memo
+            QString memo = QByteArray(reinterpret_cast<const char*>(ciphertext), CIPHERTEXT_LEN).toHex();
          
    
-     tx.toAddrs.push_back(ToFields{addr, amt, hmemo});
-     tx.toAddrs.push_back(ToFields{addr, amt, memo});
+             tx.toAddrs.push_back(ToFields{addr, amt, hmemo});
+             tx.toAddrs.push_back(ToFields{addr, amt, memo});
 
      
 
@@ -670,6 +711,7 @@ Tx MainWindow::createTxForSafeContactRequest()
     CAmount totalAmt;
     QString amtStr = "0";
     CAmount amt;  
+    QString headerbytes = "";
     amt = CAmount::fromDecimalString("0");
     totalAmt = totalAmt + amt;
    
@@ -678,8 +720,38 @@ Tx MainWindow::createTxForSafeContactRequest()
             QString type = "Cont";
             QString addr = contactRequest.getReceiverAddress();
 
-            QString hmemo= createHeaderMemo(type,cid,myAddr);
+            
             QString memo = contactRequest.getMemo();
+          //  QString privkey = rpc->fetchPrivKey(myAddr);
+            QString passphrase = this->getPassword();
+            QString hashEncryptionKey =  passphrase;
+            int length = hashEncryptionKey.length();
+
+            qDebug()<<"Encryption String :"<<hashEncryptionKey;
+
+ ////////////////Generate the secretkey for our message encryption
+
+        const QByteArray ba2 = QByteArray::fromHex(hashEncryptionKey.toLatin1());
+        const unsigned char *hashEncryptionKeyraw = reinterpret_cast<const unsigned char *>(ba2.constData());
+        #define MESSAGEAS1 ((const unsigned char *) hashEncryptionKeyraw)
+        #define MESSAGEAS1_LEN length
+
+   
+             unsigned char hash[crypto_kx_SEEDBYTES];
+
+            crypto_hash_sha256(hash,MESSAGEAS1, MESSAGEAS1_LEN);
+
+
+             unsigned char sk[crypto_kx_SECRETKEYBYTES];
+             unsigned char pk[crypto_kx_PUBLICKEYBYTES];
+      
+                if (crypto_kx_seed_keypair(pk,sk,
+                           hash) !=0) {
+                           }
+
+            QString publicKey = QByteArray(reinterpret_cast<const char*>(pk), crypto_kx_PUBLICKEYBYTES).toHex();
+
+            QString hmemo= createHeaderMemo(type,cid,myAddr,"", publicKey);
 
      
             tx.toAddrs.push_back(ToFields{addr, amt, hmemo});

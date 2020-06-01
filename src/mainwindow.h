@@ -90,7 +90,7 @@ public:
 
     void doClose();
     void doClosePw();
-    QString createHeaderMemo(QString type, QString cid, QString zaddr, int version, int headerNumber);
+    QString createHeaderMemo(QString type, QString cid, QString zaddr,QString headerbytes,QString publickey, int version, int headerNumber);
 
 public slots:
     void slot_change_theme(const QString& themeName);
