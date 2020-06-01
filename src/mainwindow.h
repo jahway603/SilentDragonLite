@@ -12,6 +12,7 @@ class Controller;
 class Settings;
 class WSServer;
 class WormholeClient;
+class ChatModel;
 
 using json = nlohmann::json;
 
@@ -52,7 +53,11 @@ public:
     QString doSendRequestTxValidations(Tx tx);
     QString getCid();
     QString getPassword();
+    std::map<QString, QString> pubkeyMap;
+    QString getPubkeyByAddress(QString requestZaddr);
     void setPassword(QString Password);
+    void addPubkey(QString requestZaddr, QString pubkey);
+    
 
     void replaceWormholeClient(WormholeClient* newClient);
     bool isWebsocketListening();

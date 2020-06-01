@@ -910,7 +910,7 @@ void Controller::refreshTransactions() {
                     QString memo;
                     QString cid;
                     QString headerbytes;
-                    QString pubkey;
+                    QString publickey;
                     if (!o["memo"].is_null()) {
                      memo = QString::fromStdString(o["memo"].get<json::string_t>());
                     
@@ -953,7 +953,15 @@ void Controller::refreshTransactions() {
                     headerbytes = "";
                     }
 
-                    qDebug()<<"Headerbytes :"<<headerbytes;
+                  if (main->getPubkeyByAddress(address) != QString("0xdeadbeef")){
+
+                        publickey = main->getPubkeyByAddress(address);
+
+                }else{
+                    publickey = "";
+                    } 
+
+                    qDebug()<<"Pubkey :"<<publickey;
 
                      int lengthcid = cid.length();
 
@@ -1179,8 +1187,9 @@ void Controller::refreshTransactions() {
                     chatModel->addCid(txid, cid);
                     chatModel->addrequestZaddr(txid, requestZaddr);
                     chatModel->addHeader(txid, headerbytes);
+                    main->addPubkey(requestZaddr, publickey);
 
-                }     
+                }
                  
             
                 if (chatModel->getCidByTx(txid) != QString("0xdeadbeef")){
@@ -1207,6 +1216,14 @@ void Controller::refreshTransactions() {
                     headerbytes = "";
                     }  
 
+            if (main->getPubkeyByAddress(requestZaddr) != QString("0xdeadbeef")){
+
+                        publickey = main->getPubkeyByAddress(requestZaddr);
+
+                }else{
+                    publickey = "";
+                    } 
+
                 //position = it["position"].get<json::number_integer_t>(); 
 
                   bool isNotarized;
@@ -1226,7 +1243,7 @@ void Controller::refreshTransactions() {
                     cidchar = new char[lengthcid+1];
                     strncpy(cidchar, cid.toLocal8Bit(), lengthcid +1);
 
- if ((memo.startsWith("{") == false) && (headerbytes > 0))
+        if ((memo.startsWith("{") == false) && (headerbytes > 0))
         {   
 
         #define MESSAGEAS ((const unsigned char *) cidchar)
@@ -1298,7 +1315,7 @@ void Controller::refreshTransactions() {
                         DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
                         
                         
-
+       
                         }else{
 
 
@@ -1320,6 +1337,7 @@ void Controller::refreshTransactions() {
                         
                         }
                 }
+                 }
             }
              }
         }

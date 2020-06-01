@@ -37,6 +37,7 @@ class ChatModel
         std::map<int, std::tuple<QString, QString, QString>> sendrequestMap;
         std::map<QString, QString> headerMap;
         std::map<QString, QString> AddressbyLabelMap;
+        
 
     public:
         ChatModel() {};

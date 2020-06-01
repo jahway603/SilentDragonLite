@@ -260,6 +260,8 @@ void ChatModel::addHeader(QString tx, QString headerbytes)
     this->headerMap[tx] = headerbytes;
 }
 
+
+
 void ChatModel::addrequestZaddr(QString tx, QString requestZaddr)
 {
     this->requestZaddrMap[tx] = requestZaddr;
@@ -284,6 +286,9 @@ QString ChatModel::getCidByTx(QString tx)
 
     return QString("0xdeadbeef");
 }
+
+
+
 
 QString ChatModel::getHeaderByTx(QString tx)
 {
@@ -415,7 +420,7 @@ Tx MainWindow::createTxFromChatPage() {
 
   
 
-            QString pubkey = "test";
+            QString pubkey = this->getPubkeyByAddress(addr);
             QString passphrase = this->getPassword();
             QString hashEncryptionKey = passphrase;
             int length = hashEncryptionKey.length();
@@ -474,8 +479,9 @@ Tx MainWindow::createTxFromChatPage() {
 
             ////Create the HM for this message
             QString headerbytes = QByteArray(reinterpret_cast<const char*>(header), crypto_secretstream_xchacha20poly1305_HEADERBYTES).toHex();
+            QString publickeyAlice = QByteArray(reinterpret_cast<const char*>(pk), crypto_kx_PUBLICKEYBYTES).toHex();
 
-            QString hmemo= createHeaderMemo(type,cid,myAddr,"",headerbytes);
+            QString hmemo= createHeaderMemo(type,cid,myAddr,publickeyAlice,headerbytes);
 
              /////Ciphertext Memo
             QString memo = QByteArray(reinterpret_cast<const char*>(ciphertext), CIPHERTEXT_LEN).toHex();
@@ -750,6 +756,8 @@ Tx MainWindow::createTxForSafeContactRequest()
                            }
 
             QString publicKey = QByteArray(reinterpret_cast<const char*>(pk), crypto_kx_PUBLICKEYBYTES).toHex();
+
+            qDebug()<<"Publickey created Request: "<<publicKey;
 
             QString hmemo= createHeaderMemo(type,cid,myAddr,"", publicKey);
 
