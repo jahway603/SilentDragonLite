@@ -995,10 +995,13 @@ void Controller::refreshTransactions() {
         const QByteArray ba2 = QByteArray::fromHex(hashEncryptionKey.toLatin1());
         const unsigned char *hashEncryptionKeyraw = reinterpret_cast<const unsigned char *>(ba2.constData());
         #define MESSAGEAS1 ((const unsigned char *) hashEncryptionKeyraw)
-        #define MESSAGEAS1_LEN length   
+        #define MESSAGEAS1_LEN length 
+
+         const QByteArray pubkeyBobArray = QByteArray::fromHex(publickey.toLatin1());
+        const unsigned char *pubkeyBob = reinterpret_cast<const unsigned char *>(pubkeyBobArray.constData());  
 
 
-    #define MESSAGEAS1 ((const unsigned char *) hashEncryptionKeyraw)///////////static atm, in future we will use the Passphrase here
+    #define MESSAGEAS1 ((const unsigned char *) hashEncryptionKeyraw)///////////
     #define MESSAGEAS1_LEN 12
 
    
@@ -1015,6 +1018,17 @@ void Controller::refreshTransactions() {
                            }
 
         unsigned char client_rx[crypto_kx_SESSIONKEYBYTES], client_tx[crypto_kx_SESSIONKEYBYTES];
+
+      
+         ////////////////Get the pubkey from Bob, so we can create the share key
+
+       
+                    /////Create the shared key for sending the message
+
+            if (crypto_kx_server_session_keys(client_rx, client_tx,
+                                  pk, sk, pubkeyBob) != 0) {
+            /* Suspicious client public key, bail out */
+             }
     
 
         const QByteArray ba = QByteArray::fromHex(memo.toLatin1());
@@ -1243,6 +1257,11 @@ void Controller::refreshTransactions() {
 
 
                     int lengthcid = cid.length();
+                      QString passphrase = main->getPassword();
+            QString hashEncryptionKey = passphrase;
+            int length = hashEncryptionKey.length();
+
+            qDebug()<<"Encryption String :"<<hashEncryptionKey;
 
                     char *cidchar = NULL;
                     cidchar = new char[lengthcid+1];
@@ -1251,12 +1270,44 @@ void Controller::refreshTransactions() {
         if ((memo.startsWith("{") == false) && (headerbytes > 0))
         {   
 
-        #define MESSAGEAS ((const unsigned char *) cidchar)
-        #define MESSAGEAS_LEN lengthcid
+        const QByteArray ba2 = QByteArray::fromHex(hashEncryptionKey.toLatin1());
+        const unsigned char *hashEncryptionKeyraw = reinterpret_cast<const unsigned char *>(ba2.constData());
+        #define MESSAGEAS1 ((const unsigned char *) hashEncryptionKeyraw)
+        #define MESSAGEAS1_LEN length 
 
-        unsigned char hash[crypto_secretstream_xchacha20poly1305_KEYBYTES];
+         const QByteArray pubkeyBobArray = QByteArray::fromHex(publickey.toLatin1());
+        const unsigned char *pubkeyBob = reinterpret_cast<const unsigned char *>(pubkeyBobArray.constData());  
 
-        crypto_hash_sha256(hash,MESSAGEAS, MESSAGEAS_LEN);
+
+    #define MESSAGEAS1 ((const unsigned char *) hashEncryptionKeyraw)///////////
+    #define MESSAGEAS1_LEN 12
+
+   
+    unsigned char hash1[crypto_kx_SECRETKEYBYTES];
+
+    crypto_hash_sha256(hash1,MESSAGEAS1, MESSAGEAS1_LEN);
+    unsigned char sk[crypto_kx_SECRETKEYBYTES];
+    unsigned char pk[crypto_kx_PUBLICKEYBYTES];
+      
+        if (crypto_kx_seed_keypair(pk,sk,
+                           hash1) !=0) {
+
+
+                           }
+
+        unsigned char client_rx[crypto_kx_SESSIONKEYBYTES], client_tx[crypto_kx_SESSIONKEYBYTES];
+
+      
+         ////////////////Get the pubkey from Bob, so we can create the share key
+
+       
+                    /////Create the shared key for sending the message
+
+            if (crypto_kx_server_session_keys(client_rx, client_tx,
+                                  pk, sk, pubkeyBob) != 0) {
+            /* Suspicious client public key, bail out */
+             }
+    
 
         const QByteArray ba = QByteArray::fromHex(memo.toLatin1());
         const unsigned char *encryptedMemo = reinterpret_cast<const unsigned char *>(ba.constData());
@@ -1284,8 +1335,8 @@ void Controller::refreshTransactions() {
 
             /////Our decrypted message is now in decrypted. We need it as QString to render it
                 /////Only the QString gives weird data, so convert first to std::string
-
-                if (crypto_secretstream_xchacha20poly1305_init_pull(&state, header, hash) != 0) {
+                 //   crypto_secretstream_xchacha20poly1305_keygen(client_rx);
+                if (crypto_secretstream_xchacha20poly1305_init_pull(&state, header, client_rx) != 0) {
                  /* Invalid header, no need to go any further */
                     }
 
@@ -1300,7 +1351,7 @@ void Controller::refreshTransactions() {
             QString memodecrypt = QString::fromUtf8( decryptedMemo.data(), decryptedMemo.size());
 
          //////////////Give us the output of the decrypted message as debug to see if it was successfully
-                         qDebug()<<"OUT  decrypt:" << memodecrypt;   
+                         qDebug()<<"OUT  decrypt:" << memodecrypt;  
 
 
                          ChatItem item = ChatItem(
