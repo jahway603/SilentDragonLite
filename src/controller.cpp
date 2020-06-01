@@ -957,6 +957,8 @@ void Controller::refreshTransactions() {
 
                         publickey = main->getPubkeyByAddress(address);
 
+                        qDebug()<<"Pubkey outgoing found"<<publickey;
+
                 }else{
                     publickey = "";
                     } 
@@ -1187,7 +1189,10 @@ void Controller::refreshTransactions() {
                     chatModel->addCid(txid, cid);
                     chatModel->addrequestZaddr(txid, requestZaddr);
                     chatModel->addHeader(txid, headerbytes);
+                
+                if (publickey.length() > 0){
                     main->addPubkey(requestZaddr, publickey);
+                }
 
                 }
                  
@@ -1336,7 +1341,7 @@ void Controller::refreshTransactions() {
                         DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
                         
                         }
-                }
+                
                  }
             }
              }
