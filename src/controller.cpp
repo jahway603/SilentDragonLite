@@ -1239,6 +1239,8 @@ void Controller::refreshTransactions() {
             if (main->getPubkeyByAddress(requestZaddr) != QString("0xdeadbeef")){
 
                         publickey = main->getPubkeyByAddress(requestZaddr);
+                        qDebug()<<"Incoming Pubkey :"<<publickey;
+                        qDebug()<<"requestZaddr Pubkey :"<<requestZaddr;
 
                 }else{
                     publickey = "";
@@ -1293,8 +1295,7 @@ void Controller::refreshTransactions() {
 
 
                            }
-
-        unsigned char client_rx[crypto_kx_SESSIONKEYBYTES], client_tx[crypto_kx_SESSIONKEYBYTES];
+  unsigned char server_rx[crypto_kx_SESSIONKEYBYTES], server_tx[crypto_kx_SESSIONKEYBYTES];
 
       
          ////////////////Get the pubkey from Bob, so we can create the share key
@@ -1302,10 +1303,11 @@ void Controller::refreshTransactions() {
        
                     /////Create the shared key for sending the message
 
-            if (crypto_kx_client_session_keys(client_rx, client_tx,
+            if (crypto_kx_server_session_keys(server_rx, server_tx,
                                   pk, sk, pubkeyBob) != 0) {
             /* Suspicious client public key, bail out */
              }
+    
     
 
         const QByteArray ba = QByteArray::fromHex(memo.toLatin1());
@@ -1335,7 +1337,7 @@ void Controller::refreshTransactions() {
             /////Our decrypted message is now in decrypted. We need it as QString to render it
                 /////Only the QString gives weird data, so convert first to std::string
                  //   crypto_secretstream_xchacha20poly1305_keygen(client_rx);
-                if (crypto_secretstream_xchacha20poly1305_init_pull(&state, header, client_rx) != 0) {
+                if (crypto_secretstream_xchacha20poly1305_init_pull(&state, header, server_tx) != 0) {
                  /* Invalid header, no need to go any further */
                     }
 
