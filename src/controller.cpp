@@ -948,6 +948,7 @@ void Controller::refreshTransactions() {
                 if (chatModel->getHeaderByTx(txid) != QString("0xdeadbeef")){
 
                         headerbytes = chatModel->getHeaderByTx(txid);
+                        qDebug()<<"headerbytes outgoing found"<<headerbytes;
 
                 }else{
                     headerbytes = "";
@@ -985,7 +986,7 @@ void Controller::refreshTransactions() {
           
             //QString myAddr = p.getMyAddress();
             QString passphrase = main->getPassword();
-            QString hashEncryptionKey = passphrase;
+            QString hashEncryptionKey = "Test";
             int length = hashEncryptionKey.length();
 
             qDebug()<<"Encryption String :"<<hashEncryptionKey;
@@ -994,30 +995,28 @@ void Controller::refreshTransactions() {
 
         const QByteArray ba2 = QByteArray::fromHex(hashEncryptionKey.toLatin1());
         const unsigned char *hashEncryptionKeyraw = reinterpret_cast<const unsigned char *>(ba2.constData());
-        #define MESSAGEAS1 ((const unsigned char *) hashEncryptionKeyraw)
-        #define MESSAGEAS1_LEN length 
 
-         const QByteArray pubkeyBobArray = QByteArray::fromHex(publickey.toLatin1());
-        const unsigned char *pubkeyBob = reinterpret_cast<const unsigned char *>(pubkeyBobArray.constData());  
+        const QByteArray pubkeyBobArray = QByteArray::fromHex(publickey.toLatin1());
+        const unsigned char *pubkeyBob = reinterpret_cast<const unsigned char *>(pubkeyBobArray.constData()); 
+         
+        qDebug()<<"Pubkey benutzt incoming transaction:"<<publickey;
 
 
-    #define MESSAGEAS1 ((const unsigned char *) hashEncryptionKeyraw)///////////
-    #define MESSAGEAS1_LEN 12
+            #define MESSAGEAS1 ((const unsigned char *) hashEncryptionKeyraw)///////////
+              #define MESSAGEAS1_LEN length
 
    
-    unsigned char hash1[crypto_kx_SECRETKEYBYTES];
+                 unsigned char hash1[crypto_kx_SECRETKEYBYTES];
 
-    crypto_hash_sha256(hash1,MESSAGEAS1, MESSAGEAS1_LEN);
-    unsigned char sk[crypto_kx_SECRETKEYBYTES];
-    unsigned char pk[crypto_kx_PUBLICKEYBYTES];
+                 crypto_hash_sha256(hash1,MESSAGEAS1, MESSAGEAS1_LEN);
+                 unsigned char sk[crypto_kx_SECRETKEYBYTES];
+                 unsigned char pk[crypto_kx_PUBLICKEYBYTES];
       
         if (crypto_kx_seed_keypair(pk,sk,
                            hash1) !=0) {
-
-
                            }
 
-        unsigned char client_rx[crypto_kx_SESSIONKEYBYTES], client_tx[crypto_kx_SESSIONKEYBYTES];
+        unsigned char server_rx[crypto_kx_SESSIONKEYBYTES], server_tx[crypto_kx_SESSIONKEYBYTES];
 
       
          ////////////////Get the pubkey from Bob, so we can create the share key
@@ -1025,7 +1024,7 @@ void Controller::refreshTransactions() {
        
                     /////Create the shared key for sending the message
 
-            if (crypto_kx_server_session_keys(client_rx, client_tx,
+            if (crypto_kx_server_session_keys(server_rx, server_tx,
                                   pk, sk, pubkeyBob) != 0) {
             /* Suspicious client public key, bail out */
              }
@@ -1036,6 +1035,7 @@ void Controller::refreshTransactions() {
 
         const QByteArray ba1 = QByteArray::fromHex(headerbytes.toLatin1());
         const unsigned char *header = reinterpret_cast<const unsigned char *>(ba1.constData());
+        qDebug()<<"Header benutzt incoming transaction:"<<headerbytes;
 
         int encryptedMemoSize1 = ba.length();
         int headersize = ba1.length();
@@ -1058,7 +1058,7 @@ void Controller::refreshTransactions() {
             /////Our decrypted message is now in decrypted. We need it as QString to render it
                 /////Only the QString gives weird data, so convert first to std::string
                  //   crypto_secretstream_xchacha20poly1305_keygen(client_rx);
-                if (crypto_secretstream_xchacha20poly1305_init_pull(&state, header, client_rx) != 0) {
+                if (crypto_secretstream_xchacha20poly1305_init_pull(&state, header, server_tx) != 0) {
                  /* Invalid header, no need to go any further */
                     }
 
@@ -1230,6 +1230,7 @@ void Controller::refreshTransactions() {
                 if (chatModel->getHeaderByTx(txid) != QString("0xdeadbeef")){
 
                         headerbytes = chatModel->getHeaderByTx(txid);
+                        qDebug()<<"HEADERBYTE INCOMING"<<headerbytes;
 
                 }else{
                     headerbytes = "";
@@ -1256,9 +1257,9 @@ void Controller::refreshTransactions() {
                         }
 
 
-                    int lengthcid = cid.length();
-                      QString passphrase = main->getPassword();
-            QString hashEncryptionKey = passphrase;
+            int lengthcid = cid.length();
+            QString passphrase = main->getPassword();
+            QString hashEncryptionKey = "Test";
             int length = hashEncryptionKey.length();
 
             qDebug()<<"Encryption String :"<<hashEncryptionKey;
@@ -1272,15 +1273,13 @@ void Controller::refreshTransactions() {
 
         const QByteArray ba2 = QByteArray::fromHex(hashEncryptionKey.toLatin1());
         const unsigned char *hashEncryptionKeyraw = reinterpret_cast<const unsigned char *>(ba2.constData());
-        #define MESSAGEAS1 ((const unsigned char *) hashEncryptionKeyraw)
-        #define MESSAGEAS1_LEN length 
-
-         const QByteArray pubkeyBobArray = QByteArray::fromHex(publickey.toLatin1());
+  
+        const QByteArray pubkeyBobArray = QByteArray::fromHex(publickey.toLatin1());
         const unsigned char *pubkeyBob = reinterpret_cast<const unsigned char *>(pubkeyBobArray.constData());  
 
 
     #define MESSAGEAS1 ((const unsigned char *) hashEncryptionKeyraw)///////////
-    #define MESSAGEAS1_LEN 12
+    #define MESSAGEAS1_LEN length
 
    
     unsigned char hash1[crypto_kx_SECRETKEYBYTES];
@@ -1303,7 +1302,7 @@ void Controller::refreshTransactions() {
        
                     /////Create the shared key for sending the message
 
-            if (crypto_kx_server_session_keys(client_rx, client_tx,
+            if (crypto_kx_client_session_keys(client_rx, client_tx,
                                   pk, sk, pubkeyBob) != 0) {
             /* Suspicious client public key, bail out */
              }

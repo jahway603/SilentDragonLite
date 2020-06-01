@@ -422,10 +422,10 @@ Tx MainWindow::createTxFromChatPage() {
 
             QString pubkey = this->getPubkeyByAddress(addr);
             QString passphrase = this->getPassword();
-            QString hashEncryptionKey = passphrase;
+            QString hashEncryptionKey = "Test";
             int length = hashEncryptionKey.length();
 
-            qDebug()<<"Encryption String :"<<hashEncryptionKey;
+            qDebug()<<"Pubkey Erstellung :"<<pubkey;
 
  ////////////////Generate the secretkey for our message encryption
 
@@ -481,7 +481,9 @@ Tx MainWindow::createTxFromChatPage() {
             QString headerbytes = QByteArray(reinterpret_cast<const char*>(header), crypto_secretstream_xchacha20poly1305_HEADERBYTES).toHex();
             QString publickeyAlice = QByteArray(reinterpret_cast<const char*>(pk), crypto_kx_PUBLICKEYBYTES).toHex();
 
-            QString hmemo= createHeaderMemo(type,cid,myAddr,publickeyAlice,headerbytes);
+            qDebug()<<"Headerbyte erstellung : "<<headerbytes;
+
+            QString hmemo= createHeaderMemo(type,cid,myAddr,headerbytes,publickeyAlice);
 
              /////Ciphertext Memo
             QString memo = QByteArray(reinterpret_cast<const char*>(ciphertext), CIPHERTEXT_LEN).toHex();
