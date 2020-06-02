@@ -948,7 +948,7 @@ void Controller::refreshTransactions() {
                 if (chatModel->getHeaderByTx(txid) != QString("0xdeadbeef")){
 
                         headerbytes = chatModel->getHeaderByTx(txid);
-                        qDebug()<<"headerbytes outgoing found"<<headerbytes;
+                
 
                 }else{
                     headerbytes = "";
@@ -958,13 +958,13 @@ void Controller::refreshTransactions() {
 
                         publickey = main->getPubkeyByAddress(address);
 
-                        qDebug()<<"Pubkey outgoing found"<<publickey;
+                 
 
                 }else{
                     publickey = "";
                     } 
 
-                    qDebug()<<"Pubkey :"<<publickey;
+       
 
                      int lengthcid = cid.length();
 
@@ -976,20 +976,14 @@ void Controller::refreshTransactions() {
 
          if ((memo.startsWith("{") == false) && (headerbytes > 0))
         {   
-                 /*for (auto &p : AddressBook::getInstance()->getAllAddressLabels())
-                {
-
-                      if (p.getPartnerAddress() == address) 
-                      { pubkey = p.getPubkey();
-                      }else {pubkey = "";
-                      }*/
+               
           
             //QString myAddr = p.getMyAddress();
             QString passphrase = main->getPassword();
-            QString hashEncryptionKey = "Test";
+            QString hashEncryptionKey = passphrase;
             int length = hashEncryptionKey.length();
 
-            qDebug()<<"Encryption String :"<<hashEncryptionKey;
+       
 
  ////////////////Generate the secretkey for our message encryption
 
@@ -1000,7 +994,7 @@ void Controller::refreshTransactions() {
         const QByteArray pubkeyBobArray = QByteArray::fromHex(publickey.toLatin1());
         const unsigned char *pubkeyBob = reinterpret_cast<const unsigned char *>(pubkeyBobArray.constData()); 
          
-        qDebug()<<"Pubkey benutzt incoming transaction:"<<publickey;
+
 
 
             #define MESSAGEAS1 ((const unsigned char *) hashEncryptionKeyraw)///////////
@@ -1036,7 +1030,7 @@ void Controller::refreshTransactions() {
 
         const QByteArray ba1 = QByteArray::fromHex(headerbytes.toLatin1());
         const unsigned char *header = reinterpret_cast<const unsigned char *>(ba1.constData());
-        qDebug()<<"Header benutzt incoming transaction:"<<headerbytes;
+       
 
         int encryptedMemoSize1 = ba.length();
         int headersize = ba1.length();
@@ -1069,9 +1063,19 @@ void Controller::refreshTransactions() {
                 }
 
             std::string decryptedMemo(reinterpret_cast<char*>(decrypted),MESSAGE1_LEN);
-
+                QString memodecrypt;
               /////Now we can convert it to QString
-            QString memodecrypt = QString::fromUtf8( decryptedMemo.data(), decryptedMemo.size());
+               if (ui->decryptionMessage->isChecked()){
+             memodecrypt = QString::fromUtf8( decryptedMemo.data(), decryptedMemo.size());
+              DataStore::getChatDataStore()->clear();
+              this->refresh(true);
+               chat->renderChatBox(ui, ui->listChat,ui->memoSizeChat);
+              }else{ memodecrypt = memo;
+  DataStore::getChatDataStore()->clear();
+              this->refresh(true);
+               chat->renderChatBox(ui, ui->listChat,ui->memoSizeChat);
+              }
+          
 
          //////////////Give us the output of the decrypted message as debug to see if it was successfully
                          qDebug()<<"OUT  decrypt:" << memodecrypt;   
@@ -1094,7 +1098,7 @@ void Controller::refreshTransactions() {
                         DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
                         
                         
-               // }
+      
                         }else{
 
 
@@ -1143,7 +1147,6 @@ void Controller::refreshTransactions() {
                 model->markAddressUsed(address);
 
                 QString memo;
-                QString test;
                 if (!it["memo"].is_null()) {
                     memo = QString::fromStdString(it["memo"]);
                 }
@@ -1205,10 +1208,11 @@ void Controller::refreshTransactions() {
                     chatModel->addrequestZaddr(txid, requestZaddr);
                     chatModel->addHeader(txid, headerbytes);
                 
-                if (publickey.length() > 0){
+                if (publickey.length() > 10){
                     main->addPubkey(requestZaddr, publickey);
                 }
-
+                     qDebug()<<"Scane HM Incoming:";  
+                     qDebug()<<"Scane HM Incoming:"<<publickey;
                 }
                  
             
@@ -1231,7 +1235,7 @@ void Controller::refreshTransactions() {
                 if (chatModel->getHeaderByTx(txid) != QString("0xdeadbeef")){
 
                         headerbytes = chatModel->getHeaderByTx(txid);
-                        qDebug()<<"HEADERBYTE INCOMING"<<headerbytes;
+           
 
                 }else{
                     headerbytes = "";
@@ -1240,8 +1244,7 @@ void Controller::refreshTransactions() {
             if (main->getPubkeyByAddress(requestZaddr) != QString("0xdeadbeef")){
 
                         publickey = main->getPubkeyByAddress(requestZaddr);
-                        qDebug()<<"Incoming Pubkey :"<<publickey;
-                        qDebug()<<"requestZaddr Pubkey :"<<requestZaddr;
+             
 
                 }else{
                     publickey = "";
@@ -1260,19 +1263,21 @@ void Controller::refreshTransactions() {
                         }
 
 
-            int lengthcid = cid.length();
+          qDebug()<<"Kurz vor decryption:";  
+
+        if ((memo.startsWith("{") == false) && (headerbytes > 20))
+        {   
+
+               int lengthcid = cid.length();
             QString passphrase = main->getPassword();
-            QString hashEncryptionKey = "Test";
+            QString hashEncryptionKey = passphrase;
             int length = hashEncryptionKey.length();
 
-            qDebug()<<"Encryption String :"<<hashEncryptionKey;
+            qDebug()<<"Encryption passphrase :"<<hashEncryptionKey;
 
                     char *hashEncryptionKeyraw = NULL;
                     hashEncryptionKeyraw = new char[length+1];
                     strncpy(hashEncryptionKeyraw, hashEncryptionKey.toLocal8Bit(), length +1);
-
-        if ((memo.startsWith("{") == false) && (headerbytes > 0))
-        {   
 
         //const QByteArray ba2 = QByteArray::fromHex(hashEncryptionKey.toLatin1());
        // const unsigned char *hashEncryptionKeyraw = reinterpret_cast<const unsigned char *>(ba2.constData());
@@ -1296,7 +1301,7 @@ void Controller::refreshTransactions() {
 
 
                            }
-  unsigned char server_rx[crypto_kx_SESSIONKEYBYTES], server_tx[crypto_kx_SESSIONKEYBYTES];
+  unsigned char client_rx[crypto_kx_SESSIONKEYBYTES], client_tx[crypto_kx_SESSIONKEYBYTES];
 
       
          ////////////////Get the pubkey from Bob, so we can create the share key
@@ -1304,7 +1309,7 @@ void Controller::refreshTransactions() {
        
                     /////Create the shared key for sending the message
 
-            if (crypto_kx_server_session_keys(server_rx, server_tx,
+            if (crypto_kx_client_session_keys(client_rx, client_tx,
                                   pk, sk, pubkeyBob) != 0) {
             /* Suspicious client public key, bail out */
              }
@@ -1338,7 +1343,7 @@ void Controller::refreshTransactions() {
             /////Our decrypted message is now in decrypted. We need it as QString to render it
                 /////Only the QString gives weird data, so convert first to std::string
                  //   crypto_secretstream_xchacha20poly1305_keygen(client_rx);
-                if (crypto_secretstream_xchacha20poly1305_init_pull(&state, header, server_tx) != 0) {
+                if (crypto_secretstream_xchacha20poly1305_init_pull(&state, header, client_rx) != 0) {
                  /* Invalid header, no need to go any further */
                     }
 
@@ -1350,10 +1355,22 @@ void Controller::refreshTransactions() {
             std::string decryptedMemo(reinterpret_cast<char*>(decrypted),MESSAGE1_LEN);
 
               /////Now we can convert it to QString
-            QString memodecrypt = QString::fromUtf8( decryptedMemo.data(), decryptedMemo.size());
+                    QString memodecrypt;
+               if (ui->decryptionMessage->isChecked()){
+             memodecrypt = QString::fromUtf8( decryptedMemo.data(), decryptedMemo.size());
+              DataStore::getChatDataStore()->clear();
+              this->refresh(true);
+               chat->renderChatBox(ui, ui->listChat,ui->memoSizeChat);
+              }else{ memodecrypt = memo;
+  DataStore::getChatDataStore()->clear();
+              this->refresh(true);
+               chat->renderChatBox(ui, ui->listChat,ui->memoSizeChat);
+              }
 
+
+             // }
          //////////////Give us the output of the decrypted message as debug to see if it was successfully
-                         qDebug()<<"OUT  decrypt:" << memodecrypt;  
+                          
 
 
                          ChatItem item = ChatItem(
@@ -1372,12 +1389,13 @@ void Controller::refreshTransactions() {
                             );
                         DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
                         
+                        qDebug()<<"Pushe  decrypte Items:";  
                         
        
                         }else{
 
-
-                            ChatItem item = ChatItem(
+                                qDebug()<<"Pushe  plain Items 1:";  
+                                ChatItem item = ChatItem(
                                 datetime,
                                 address,
                                 QString(""),
@@ -1392,13 +1410,15 @@ void Controller::refreshTransactions() {
                                 isContact
                             );
                         DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
+
+                         qDebug()<<"Pushe  Plain items 2:";  
                         
                         }
                 
                  }
             }
-             }
         }
+    }
 
         // Calculate the total unspent amount that's pending. This will need to be 
         // shown in the UI so the user can keep track of pending funds
@@ -1410,7 +1430,8 @@ void Controller::refreshTransactions() {
                 }
             }
         }
-                getModel()->setTotalPending(totalPending);
+
+        getModel()->setTotalPending(totalPending);
 
         // Update UI Balance
         updateUIBalances();

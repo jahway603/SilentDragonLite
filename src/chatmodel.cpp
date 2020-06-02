@@ -422,7 +422,7 @@ Tx MainWindow::createTxFromChatPage() {
 
             QString pubkey = this->getPubkeyByAddress(addr);
             QString passphrase = this->getPassword();
-            QString hashEncryptionKey = "Test";
+            QString hashEncryptionKey = passphrase;
             int length = hashEncryptionKey.length();
 
             qDebug()<<"Pubkey Erstellung :"<<pubkey;
@@ -618,7 +618,7 @@ void MainWindow::sendChat() {
             }
         );
 
-      //  rpc->refresh(true);
+        rpc->refresh(true);
     }        
 
 QString MainWindow::doSendChatTxValidations(Tx tx) {
@@ -733,7 +733,7 @@ Tx MainWindow::createTxForSafeContactRequest()
             QString memo = contactRequest.getMemo();
           //  QString privkey = rpc->fetchPrivKey(myAddr);
             QString passphrase = this->getPassword();
-            QString hashEncryptionKey =  "Test";
+            QString hashEncryptionKey =  passphrase;
             int length = hashEncryptionKey.length();
 
             qDebug()<<"Encryption String :"<<hashEncryptionKey;
