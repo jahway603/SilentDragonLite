@@ -1062,6 +1062,26 @@ void MainWindow::exportSeed() {
     });
 }
 
+void MainWindow::addPubkey(QString requestZaddr, QString pubkey)
+{
+    this->pubkeyMap[requestZaddr] = pubkey;
+}
+
+QString MainWindow::getPubkeyByAddress(QString requestZaddr)
+{
+    for(auto& pair : this->pubkeyMap)
+    {
+
+    }
+
+    if(this->pubkeyMap.count(requestZaddr) > 0)
+    {
+        return this->pubkeyMap[requestZaddr];
+    }
+
+    return QString("0xdeadbeef");
+}
+
 void MainWindow::exportAllKeys() {
     exportKeys("");
 }
@@ -1337,7 +1357,9 @@ void MainWindow::setupchatTab() {
 
             ui->memoTxtChat->setTextColor("Black");
         }
-
+   
+    ui->decryptionMessage->setChecked(true);
+    
     QObject::connect(ui->sendChatButton, &QPushButton::clicked, this, &MainWindow::sendChat);
     QObject::connect(ui->safeContactRequest, &QPushButton::clicked, this, &MainWindow::addContact);
     QObject::connect(ui->pushContact, &QPushButton::clicked, this , &MainWindow::renderContactRequest);

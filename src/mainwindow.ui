@@ -1703,6 +1703,19 @@
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
+       <widget class="QCheckBox" name="decryptionMessage">
+        <property name="geometry">
+         <rect>
+          <x>900</x>
+          <y>10</y>
+          <width>281</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Message encryption/decryption ON</string>
+        </property>
+       </widget>
        <zorder>listContactWidget</zorder>
        <zorder>label_39</zorder>
        <zorder>contactNameMemo</zorder>
@@ -1714,6 +1727,7 @@
        <zorder>listChat</zorder>
        <zorder>memoTxtChat</zorder>
        <zorder>sendChatButton</zorder>
+       <zorder>decryptionMessage</zorder>
       </widget>
      </widget>
     </item>

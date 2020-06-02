@@ -392,7 +392,7 @@ void AddressBook::readFromStorage()
         QDataStream in(&file);    // read the data serialized from the file
         QString version;
         in >> version;
-        qDebug() << "Detected old addressbook format";
+       // qDebug() << "Detected old addressbook format";
             // Convert old addressbook format v1 to v2
                 QList<QList<QString>> stuff;
         in >> stuff;
@@ -408,7 +408,7 @@ void AddressBook::readFromStorage()
             allLabels.push_back(contact);
         }
  
-        qDebug() << "Read " << version << " Hush contacts from disk...";
+      //  qDebug() << "Read " << version << " Hush contacts from disk...";
         file.close();
     }
     else 

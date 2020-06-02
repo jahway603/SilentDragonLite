@@ -60,7 +60,8 @@ std::map<QString, ChatItem> ChatDataStore::getAllNewContactRequests()
         if (
             (c.second.isOutgoing() == false) &&
             (c.second.getType() == "Cont")  &&
-            (c.second.isContact() == false)           
+            (c.second.isContact() == false)  &&
+            (c.second.getMemo().isEmpty())         
         ) 
         
         {
