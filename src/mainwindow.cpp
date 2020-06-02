@@ -538,34 +538,15 @@ void MainWindow::removeWalletEncryptionStartUp() {
    QDialog d(this);
     Ui_startup ed;
     ed.setupUi(&d);
-
-    // Handle edits on the password box
     
-    auto fnPasswordEdited = [=](const QString&) {
-        QString password = ed.txtPassword->text();
-        // Enable the OK button if the passwords match.
-        if (!ed.txtPassword->text().isEmpty() && 
-                ed.txtPassword->text() == ed.txtConfirmPassword->text() && password.size() >= 16) {
-            ed.lblPasswordMatch->setText("");
-            ed.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
-        } else {
-            ed.lblPasswordMatch->setText(tr("Passwords don't match or under-lettered"));
-            ed.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
-        }
-
-    };
-
-    QObject::connect(ed.txtConfirmPassword, &QLineEdit::textChanged, fnPasswordEdited);
-    QObject::connect(ed.txtPassword, &QLineEdit::textChanged, fnPasswordEdited);
-
     if (d.exec() == QDialog::Accepted) 
     {
-        QString str = ed.txtPassword->text(); // data comes from user inputs
-        int length = str.length();
-        this->setPassword(str);
+        QString password = ed.txtPassword->text(); // data comes from user inputs
+        int length = password.length();
+        this->setPassword(password);
         char *sequence = NULL;
         sequence = new char[length+1];
-        strncpy(sequence, str.toLocal8Bit(), length +1);
+        strncpy(sequence, password.toLocal8Bit(), length +1);
 
         #define MESSAGE ((const unsigned char *) sequence)
         #define MESSAGE_LEN length
@@ -614,7 +595,7 @@ void MainWindow::removeWalletEncryptionStartUp() {
 
         {
 
-                 QMessageBox::warning(this, tr("You have still Plaintextdata on your disk!"),
+                 QMessageBox::information(this, tr("You have still Plaintextdata on your disk!"),
                     QString("WARNING: Delete it only if you have a backup of your Wallet Seed."),
                     QMessageBox::Ok
                 );   
