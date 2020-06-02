@@ -618,7 +618,7 @@ void MainWindow::sendChat() {
             }
         );
 
-        rpc->refresh(true);
+      //  rpc->refresh(true);
     }        
 
 QString MainWindow::doSendChatTxValidations(Tx tx) {

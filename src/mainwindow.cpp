@@ -1357,7 +1357,9 @@ void MainWindow::setupchatTab() {
 
             ui->memoTxtChat->setTextColor("Black");
         }
-
+   
+    ui->decryptionMessage->setChecked(true);
+    
     QObject::connect(ui->sendChatButton, &QPushButton::clicked, this, &MainWindow::sendChat);
     QObject::connect(ui->safeContactRequest, &QPushButton::clicked, this, &MainWindow::addContact);
     QObject::connect(ui->pushContact, &QPushButton::clicked, this , &MainWindow::renderContactRequest);

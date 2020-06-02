@@ -963,22 +963,12 @@ void Controller::refreshTransactions() {
                 }else{
                     publickey = "";
                     } 
-
-       
-
-                     int lengthcid = cid.length();
-
-                    char *cidchar = NULL;
-                    cidchar = new char[lengthcid+1];
-                    strncpy(cidchar, cid.toLocal8Bit(), lengthcid +1);
                     
         /////We need to filter out Memos smaller then the ciphertext size, or it will dump
 
          if ((memo.startsWith("{") == false) && (headerbytes > 0))
         {   
                
-          
-            //QString myAddr = p.getMyAddress();
             QString passphrase = main->getPassword();
             QString hashEncryptionKey = passphrase;
             int length = hashEncryptionKey.length();
@@ -1068,11 +1058,11 @@ void Controller::refreshTransactions() {
                if (ui->decryptionMessage->isChecked()){
              memodecrypt = QString::fromUtf8( decryptedMemo.data(), decryptedMemo.size());
               DataStore::getChatDataStore()->clear();
-              this->refresh(true);
+             // this->refresh(true);
                chat->renderChatBox(ui, ui->listChat,ui->memoSizeChat);
               }else{ memodecrypt = memo;
   DataStore::getChatDataStore()->clear();
-              this->refresh(true);
+           //   this->refresh(true);
                chat->renderChatBox(ui, ui->listChat,ui->memoSizeChat);
               }
           
@@ -1097,7 +1087,7 @@ void Controller::refreshTransactions() {
                             );
                         DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
                         
-                        
+                        updateUIBalances();
       
                         }else{
 
@@ -1117,7 +1107,7 @@ void Controller::refreshTransactions() {
                                 false
                             );
                         DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
-                        
+                        updateUIBalances();
                         }
                     } 
 
@@ -1181,7 +1171,7 @@ void Controller::refreshTransactions() {
                           chatModel->addAddressbylabel(address, requestZaddr);
                       } else{}
                
-                     
+                }  
                 if (chatModel->Addressbylabel(address) != QString("0xdeadbeef")){
 
                      isContact = true;
@@ -1359,12 +1349,15 @@ void Controller::refreshTransactions() {
                if (ui->decryptionMessage->isChecked()){
              memodecrypt = QString::fromUtf8( decryptedMemo.data(), decryptedMemo.size());
               DataStore::getChatDataStore()->clear();
-              this->refresh(true);
+            //  this->refresh(true);
                chat->renderChatBox(ui, ui->listChat,ui->memoSizeChat);
-              }else{ memodecrypt = memo;
-  DataStore::getChatDataStore()->clear();
-              this->refresh(true);
-               chat->renderChatBox(ui, ui->listChat,ui->memoSizeChat);
+
+              }else{
+                  
+            memodecrypt = memo;
+            DataStore::getChatDataStore()->clear();
+            //this->refresh(true);
+            chat->renderChatBox(ui, ui->listChat,ui->memoSizeChat);
               }
 
 
@@ -1415,7 +1408,7 @@ void Controller::refreshTransactions() {
                         
                         }
                 
-                 }
+                // }
             }
         }
     }
