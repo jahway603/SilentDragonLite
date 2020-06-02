@@ -211,7 +211,7 @@ public:
     void updateDisplayChat();
 
 private:
-    int             maxlenchat             = 512;
+    int             maxlenchat             = 235;
     QLabel*         lenDisplayLabelchat    = nullptr;
     QPushButton*    sendChatButton     = nullptr;
 };

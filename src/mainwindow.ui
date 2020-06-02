@@ -1697,7 +1697,7 @@
          <enum>QFrame::Sunken</enum>
         </property>
         <property name="text">
-         <string notr="true">0 / 512</string>
+         <string notr="true">0 / 235</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
