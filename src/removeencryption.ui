@@ -91,7 +91,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ef2929;&quot;&gt;WARNING:&lt;/span&gt; If yo remove your encryption, all your Data is Plaintext on your Disk!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; color:#ef2929;&quot;&gt;WARNING:&lt;/span&gt; If you remove your encryption, all your transactions and Contacts are plaintext on disk! Messages are still encrypt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>

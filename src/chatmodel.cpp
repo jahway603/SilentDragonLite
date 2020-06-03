@@ -516,7 +516,7 @@ void MainWindow::sendChat() {
    QString Name = ui->contactNameMemo->text();
    int sizename = Name.size();
         qDebug()<< sizename;
-      if (ui->contactNameMemo->text().trimmed().isEmpty() || ui->memoTxtChat->toPlainText().trimmed().isEmpty()) {
+      if ((sizename < 1) || (ui->memoTxtChat->toPlainText().trimmed().isEmpty())) {
      
         QMessageBox msg(QMessageBox::Critical, tr("You have to select a contact and insert a Memo"),
         tr("You have selected no Contact from Contactlist,\n")  + tr("\nor your Memo is empty"),
