@@ -1055,16 +1055,10 @@ void Controller::refreshTransactions() {
             std::string decryptedMemo(reinterpret_cast<char*>(decrypted),MESSAGE1_LEN);
                 QString memodecrypt;
               /////Now we can convert it to QString
-               if (ui->decryptionMessage->isChecked()){
+            
              memodecrypt = QString::fromUtf8( decryptedMemo.data(), decryptedMemo.size());
-              DataStore::getChatDataStore()->clear();
-             // this->refresh(true);
-               chat->renderChatBox(ui, ui->listChat,ui->memoSizeChat);
-              }else{ memodecrypt = memo;
-  DataStore::getChatDataStore()->clear();
-           //   this->refresh(true);
-               chat->renderChatBox(ui, ui->listChat,ui->memoSizeChat);
-              }
+            
+           
           
 
          //////////////Give us the output of the decrypted message as debug to see if it was successfully
@@ -1240,7 +1234,7 @@ void Controller::refreshTransactions() {
                     publickey = "";
                     } 
 
-                //position = it["position"].get<json::number_integer_t>(); 
+              
 
                   bool isNotarized;
 
@@ -1252,9 +1246,6 @@ void Controller::refreshTransactions() {
                             isNotarized = false;
                         }
 
-
-          qDebug()<<"Kurz vor decryption:";  
-
         if ((memo.startsWith("{") == false) && (headerbytes > 20))
         {   
 
@@ -1262,8 +1253,6 @@ void Controller::refreshTransactions() {
             QString passphrase = main->getPassword();
             QString hashEncryptionKey = passphrase;
             int length = hashEncryptionKey.length();
-
-            qDebug()<<"Encryption passphrase :"<<hashEncryptionKey;
 
                     char *hashEncryptionKeyraw = NULL;
                     hashEncryptionKeyraw = new char[length+1];
@@ -1346,19 +1335,9 @@ void Controller::refreshTransactions() {
 
               /////Now we can convert it to QString
                     QString memodecrypt;
-               if (ui->decryptionMessage->isChecked()){
+      
              memodecrypt = QString::fromUtf8( decryptedMemo.data(), decryptedMemo.size());
-              DataStore::getChatDataStore()->clear();
-            //  this->refresh(true);
-               chat->renderChatBox(ui, ui->listChat,ui->memoSizeChat);
-
-              }else{
-                  
-            memodecrypt = memo;
-            DataStore::getChatDataStore()->clear();
-            //this->refresh(true);
-            chat->renderChatBox(ui, ui->listChat,ui->memoSizeChat);
-              }
+        
 
 
              // }
@@ -1382,12 +1361,10 @@ void Controller::refreshTransactions() {
                             );
                         DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
                         
-                        qDebug()<<"Pushe  decrypte Items:";  
                         
        
                         }else{
 
-                                qDebug()<<"Pushe  plain Items 1:";  
                                 ChatItem item = ChatItem(
                                 datetime,
                                 address,
@@ -1404,14 +1381,11 @@ void Controller::refreshTransactions() {
                             );
                         DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
 
-                         qDebug()<<"Pushe  Plain items 2:";  
                         
-                        }
-                
-                // }
+                    }
+                }
             }
-        }
-    }
+       }
 
         // Calculate the total unspent amount that's pending. This will need to be 
         // shown in the UI so the user can keep track of pending funds
