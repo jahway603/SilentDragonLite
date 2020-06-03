@@ -37,6 +37,7 @@ class ChatModel
         std::map<int, std::tuple<QString, QString, QString>> sendrequestMap;
         std::map<QString, QString> headerMap;
         std::map<QString, QString> AddressbyLabelMap;
+        std::map<QString, QString> OldMemoByTx;
         
 
     public:
@@ -55,6 +56,7 @@ class ChatModel
         void addMessage(QString timestamp, ChatItem item);
         void addCid(QString tx, QString cid);
         void addHeader(QString tx, QString headerbytes);
+        void addMemo(QString tx, QString memo);
         void addrequestZaddr(QString tx, QString requestZaddr);
         void addconfirmations(QString tx, int confirmation);
         void addSendRequest(int i, QString myAddr, QString cid, QString addr );
@@ -62,10 +64,12 @@ class ChatModel
         QString getHeaderByTx(QString tx);
         QString getrequestZaddrByTx(QString tx);
         QString getConfirmationByTx(QString tx);
+        QString getMemoByTx(QString tx);
         QString Addressbylabel(QString addr);
         void killCidCache();
         void killConfirmationCache();
         void killrequestZaddrCache();
+        void killMemoCache();
       
 };
 

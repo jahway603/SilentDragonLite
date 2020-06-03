@@ -302,7 +302,7 @@ QString Settings::getDonationAddr() {
     if (Settings::getInstance()->isTestnet()) 
             return "ztestsaplingXXX";
     else 
-            return "zs1kwp3h4rwz76zfqzmwqqextq696kndtjskg4fzc80l9ygfal4hchcsst83ua8tjwzzy9nja7v5rr";
+            return "zs1fq9f7vg797qaeac9lyx0njyjmjg4w7m60hwq6lhyhvdcqltl5hdkm8vwx9cxy60ehuuz2x49jxt";
 
 }
 

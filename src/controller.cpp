@@ -905,6 +905,7 @@ void Controller::refreshTransactions() {
                      if ((confirmations == 1)  && (chatModel->getConfirmationByTx(txid) != QString("0xdeadbeef"))){  
                              DataStore::getChatDataStore()->clear();
                              chatModel->killConfirmationCache();
+                             chatModel->killMemoCache();
                              this->refresh(true);
                         } 
                    
@@ -1107,11 +1108,7 @@ void Controller::refreshTransactions() {
 
                     items.push_back(TransactionItemDetail{address, amount, memo});
                     total_amount = total_amount + amount;
-            //    }else{
-                    
-                
-              //  }
-               // }
+
                  }
                 
                 {
@@ -1200,8 +1197,7 @@ void Controller::refreshTransactions() {
                 if (publickey.length() > 10){
                     main->addPubkey(requestZaddr, publickey);
                 }
-                     qDebug()<<"Scane HM Incoming:";  
-                     qDebug()<<"Scane HM Incoming:"<<publickey;
+
                 }
                  
             
@@ -1251,9 +1247,23 @@ void Controller::refreshTransactions() {
                             isNotarized = false;
                         }
 
-        if ((memo.startsWith("{") == false) && (headerbytes > 20))
+            int position = it["position"].get<json::number_integer_t>(); 
+
+        if ((memo.startsWith("{") == false) && (headerbytes > 0))
         {   
 
+        if (chatModel->getMemoByTx(txid) == QString("0xdeadbeef")){
+    
+
+           if (position == 1)
+           {
+
+                chatModel->addMemo(txid, headerbytes);
+           }else{}
+
+
+                qDebug()<<"Position message :"<<position;
+                       
                int lengthcid = cid.length();
             QString passphrase = main->getPassword();
             QString hashEncryptionKey = passphrase;
@@ -1369,6 +1379,10 @@ void Controller::refreshTransactions() {
                         
        
                         }else{
+                  
+                    } 
+                    
+                    }else{
 
                                 ChatItem item = ChatItem(
                                 datetime,
