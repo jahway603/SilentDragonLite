@@ -284,9 +284,11 @@ void MainWindow::closeEvent(QCloseEvent* event) {
     
     // Let the RPC know to shut down any running service.
     rpc->shutdownhushd();
+    int passphraselenght = this->getPassword().length();
+    qDebug()<<"LÄNGE PW : "<<passphraselenght;
 
 // Check is encryption is ON for SDl
-    if(fileExists(dirwalletenc)) 
+    if(passphraselenght > 0) 
    
     {
         // delete old file before
@@ -392,13 +394,13 @@ void MainWindow::encryptWallet() {
     if (d.exec() == QDialog::Accepted) 
     {
 
-    QString str = ed.txtPassword->text(); // data comes from user inputs
-    int length = str.length();
-    this->setPassword(str);
+    QString passphrase = ed.txtPassword->text(); // data comes from user inputs
+    int length = passphrase.length();
+    this->setPassword(passphrase);
 
     char *sequence = NULL;
     sequence = new char[length+1];
-    strncpy(sequence, str.toLocal8Bit(), length +1);
+    strncpy(sequence, passphrase.toLocal8Bit(), length +1);
 
     #define MESSAGE ((const unsigned char *) sequence)
     #define MESSAGE_LEN length
@@ -1863,7 +1865,7 @@ void MainWindow::on_givemeZaddr_clicked()
                 QString hushchataddr = QString::fromStdString(reply.get<json::array_t>()[0]);
                 QClipboard *zaddr_Clipboard = QApplication::clipboard();
                 zaddr_Clipboard ->setText(hushchataddr);
-                QMessageBox::information(this, "Your new Hushchataddress was copied in your clipboard",hushchataddr);
+                QMessageBox::information(this, "Your new HushChat address was copied to your clipboard!",hushchataddr);
                 ui->listReceiveAddresses->insertItem(0, hushchataddr);
                 ui->listReceiveAddresses->setCurrentIndex(0);
               
