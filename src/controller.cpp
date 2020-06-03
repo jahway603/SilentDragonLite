@@ -882,12 +882,13 @@ void Controller::refreshTransactions() {
             
             auto txid = QString::fromStdString(it["txid"]);
             auto datetime = it["datetime"].get<json::number_integer_t>();
-            
+         
             // First, check if there's outgoing metadata
             if (!it["outgoing_metadata"].is_null()) {
             
-                for (auto o: it["outgoing_metadata"].get<json::array_t>()) {
-                    
+                for (auto o: it["outgoing_metadata"].get<json::array_t>())
+                 {
+                // if (chatModel->getCidByTx(txid) == QString("0xdeadbeef")){   
                      QString address;
     
                     address = QString::fromStdString(o["address"]);
@@ -966,7 +967,7 @@ void Controller::refreshTransactions() {
                     
         /////We need to filter out Memos smaller then the ciphertext size, or it will dump
 
-         if ((memo.startsWith("{") == false) && (headerbytes > 0))
+         if ((memo.startsWith("{") == false) && (headerbytes.length() > 20))
         {   
                
             QString passphrase = main->getPassword();
@@ -1053,13 +1054,11 @@ void Controller::refreshTransactions() {
                 }
 
             std::string decryptedMemo(reinterpret_cast<char*>(decrypted),MESSAGE1_LEN);
-                QString memodecrypt;
+      
               /////Now we can convert it to QString
             
-             memodecrypt = QString::fromUtf8( decryptedMemo.data(), decryptedMemo.size());
-            
-           
-          
+            QString memodecrypt = QString::fromUtf8( decryptedMemo.data(), decryptedMemo.size());
+             
 
          //////////////Give us the output of the decrypted message as debug to see if it was successfully
                          qDebug()<<"OUT  decrypt:" << memodecrypt;   
@@ -1080,10 +1079,11 @@ void Controller::refreshTransactions() {
                                 false
                             );
                         DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
-                        
+
                         updateUIBalances();
       
-                        }else{
+                        }
+                        /*else{
 
 
                             ChatItem item = ChatItem(
@@ -1102,12 +1102,17 @@ void Controller::refreshTransactions() {
                             );
                         DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
                         updateUIBalances();
-                        }
+                        }*/
                     } 
 
                     items.push_back(TransactionItemDetail{address, amount, memo});
                     total_amount = total_amount + amount;
-                }
+            //    }else{
+                    
+                
+              //  }
+               // }
+                 }
                 
                 {
                      QList<QString> addresses;
