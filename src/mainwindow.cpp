@@ -1861,8 +1861,11 @@ void MainWindow::on_givemeZaddr_clicked()
     bool sapling = true;
     rpc->createNewZaddr(sapling, [=] (json reply) {
                 QString hushchataddr = QString::fromStdString(reply.get<json::array_t>()[0]);
-                QMessageBox::information(this, "Your new Hushchataddress",hushchataddr);
-            //    ui->listReceiveAddresses->insertItem(0, hushchataddr);
-              //  ui->listReceiveAddresses->setCurrentIndex(0);
+                QClipboard *zaddr_Clipboard = QApplication::clipboard();
+                zaddr_Clipboard ->setText(hushchataddr);
+                QMessageBox::information(this, "Your new Hushchataddress was copied in your clipboard",hushchataddr);
+                ui->listReceiveAddresses->insertItem(0, hushchataddr);
+                ui->listReceiveAddresses->setCurrentIndex(0);
+              
                 });
 }
