@@ -59,7 +59,7 @@
     <item row="0" column="0" colspan="2">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>5</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -426,7 +426,7 @@
                 <x>0</x>
                 <y>0</y>
                 <width>1226</width>
-                <height>488</height>
+                <height>493</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="sendToLayout">
@@ -611,33 +611,6 @@
         </item>
         <item>
          <layout class="QHBoxLayout" name="layoutSendRecurring">
-          <item>
-           <widget class="QCheckBox" name="chkRecurring">
-            <property name="text">
-             <string>Recurring payment</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="lblRecurDesc">
-            <property name="text">
-             <string>Every month, starting 12-May-2012, for 6 payments</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="btnRecurSchedule">
-            <property name="text">
-             <string>Edit Schedule</string>
-            </property>
-            <property name="checkable">
-             <bool>false</bool>
-            </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
           <item>
            <spacer name="horizontalSpacer_7">
             <property name="orientation">
