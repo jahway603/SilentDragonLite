@@ -446,6 +446,11 @@ void MainWindow::encryptWallet() {
         QFile address(dir.filePath("addresslabels.dat"));
         wallet.rename(dirwalletbackup);
         address.rename(dir.filePath("addresslabels.datBackup"));
+
+           QMessageBox::information(this, tr("Wallet encryption Success"),
+                    QString("Successfully encrypt your wallet"),
+                    QMessageBox::Ok
+                ); 
     }
 }
 
