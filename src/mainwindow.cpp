@@ -459,6 +459,14 @@ void MainWindow::removeWalletEncryption() {
     Ui_removeencryption ed;
     ed.setupUi(&d);
 
+    if (fileExists(dirwalletenc) == false) {
+        QMessageBox::information(this, tr("Wallet is not encrypted"), 
+                    tr("Your wallet is not encrypted with a passphrase."),
+                    QMessageBox::Ok
+                );
+        return;
+    }
+
      auto fnPasswordEdited = [=](const QString&) {
         QString password = ed.txtPassword->text();
         // Enable the OK button if the passwords match.
