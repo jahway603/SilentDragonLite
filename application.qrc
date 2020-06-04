@@ -18,13 +18,13 @@
         <file>res/silentdragonlite-animated-startup-dark.gif</file>
     </qresource>
     <qresource prefix="/translations">
-    <file>res/silentdragonlite_de.qm</file>
-    <file>res/silentdragonlite_es.qm</file>
-    <file>res/silentdragonlite_fr.qm</file>
-    <file>res/silentdragonlite_pt.qm</file>
-    <file>res/silentdragonlite_it.qm</file>
-    <file>res/silentdragonlite_hr.qm</file>
-    <file>res/silentdragonlite_fa.qm</file>
+        <file>res/silentdragonlite_de.qm</file>
+        <file>res/silentdragonlite_es.qm</file>
+        <file>res/silentdragonlite_fr.qm</file>
+        <file>res/silentdragonlite_pt.qm</file>
+        <file>res/silentdragonlite_it.qm</file>
+        <file>res/silentdragonlite_hr.qm</file>
+        <file>res/silentdragonlite_fa.qm</file>
     </qresource>
     <qresource prefix="/css">
         <file>res/css/blue.css</file>
@@ -32,6 +32,7 @@
         <file>res/css/default.css</file>
         <file>res/css/light.css</file>
         <file>res/css/midnight.css</file>
+        <file>res/css/test.css</file>
     </qresource>
     <qresource prefix="/images/blue">
         <file>res/images/blue/unchecked.png</file>
@@ -42,5 +43,8 @@
         <file>res/images/blue/blue_leftArrow_small.png</file>
         <file>res/images/blue/blue_rightArrow_small.png</file>
         <file>res/images/blue/blue_qtreeview_selected.png</file>
+    </qresource>
+    <qresource prefix="/images">
+        <file>res/images/tile.png</file>
     </qresource>
 </RCC>

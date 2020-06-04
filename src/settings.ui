@@ -120,6 +120,11 @@
          <string>midnight</string>
         </property>
        </item>
+       <item>
+        <property name="text">
+         <string>test</string>
+        </property>
+       </item>
       </widget>
       <widget class="QCheckBox" name="chkFetchPrices">
        <property name="geometry">
