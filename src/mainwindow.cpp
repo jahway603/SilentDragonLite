@@ -1368,6 +1368,7 @@ void MainWindow::setupchatTab() {
     QObject::connect(ui->pushContact, &QPushButton::clicked, this , &MainWindow::renderContactRequest);
 
 ///////// Set selected Zaddr for Chat with Klick
+    ui->contactNameMemo->setText("");   
 
     QObject::connect(ui->listContactWidget, &QTableView::clicked, [=] () {
 
@@ -1401,6 +1402,7 @@ void MainWindow::setupchatTab() {
      ui->listContactWidget->addAction(HushAction);
      ui->listContactWidget->addAction(requestHushAction);
      ui->listContactWidget->addAction(subatomicAction);
+     
       QObject::connect(requestHushAction, &QAction::triggered, [=]() {
           QModelIndex index = ui->listContactWidget->currentIndex();
         QString label_contact = index.data(Qt::DisplayRole).toString();
@@ -1411,8 +1413,8 @@ void MainWindow::setupchatTab() {
         rpc->refresh(true);
 
         }
-   
-     MainWindow::showRequesthush();
+        MainWindow::showRequesthush();
+     
      }); 
 
       QObject::connect(editAction, &QAction::triggered, [=]() {
