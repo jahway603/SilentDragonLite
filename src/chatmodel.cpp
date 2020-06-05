@@ -580,44 +580,51 @@ void MainWindow::sendChat() {
         qDebug() << "Tx aborted";
     }
 
-        // Create a new Dialog to show that we are computing/sending the Tx
-        auto d = new QDialog(this);
-        auto connD = new Ui_ConnectionDialog();
-        connD->setupUi(d);
-        QMovie *movie1 = new QMovie(":/img/res/silentdragonlite-animated.gif");;
-        QMovie *movie2 = new QMovie(":/img/res/silentdragonlite-animated-dark.gif");;
+        auto movie = new QMovie(this);
+        auto movie1 = new QMovie(this);
+        movie->setFileName(":/img/res/loaderblack.gif");
+        movie1->setFileName(":/img/res/loaderwhite.gif");
+     
         auto theme = Settings::getInstance()->get_theme_name();
         if (theme == "dark" || theme == "midnight") {
-            movie2->setScaledSize(QSize(512,512));
-            connD->topIcon->setMovie(movie2);
-            movie2->start();
+
+        connect(movie, &QMovie::frameChanged, [=]{
+        ui->sendChatButton->setIcon(movie->currentPixmap());
+        });      
+        movie->start();
+        ui->sendChatButton->show();
+             
         } else {
-            movie1->setScaledSize(QSize(512,512));
-            connD->topIcon->setMovie(movie1);
-            movie1->start();
+
+        connect(movie1, &QMovie::frameChanged, [=]{
+        ui->sendChatButton->setIcon(movie1->currentPixmap());
+        });      
+        movie1->start();
+        ui->sendChatButton->show();
         }
 
-        connD->status->setText(tr("Please wait..."));
-        connD->statusDetail->setText(tr("Your Message will be sent"));
-
-        d->show();
         ui->memoTxtChat->clear();
         
-
         // And send the Tx
         rpc->executeTransaction(tx, 
             [=] (QString txid) { 
                 ui->statusBar->showMessage(Settings::txidStatusMessage + " " + txid);
-
-                connD->status->setText(tr("Done!"));
-                connD->statusDetail->setText(txid);
                 
 
-                QTimer::singleShot(1000, [=]() {
-                    d->accept();
-                    d->close();
-                    delete connD;
-                    delete d;
+            QTimer::singleShot(1000, [=]() {
+         
+            if (theme == "dark" || theme == "midnight") {
+            QPixmap send(":/icons/res/send-white.png");
+            QIcon sendIcon(send);
+            ui->sendChatButton->setIcon(sendIcon);
+            movie->stop();
+             }else{
+            
+            QPixmap send(":/icons/res/sendBlack.png");
+            QIcon sendIcon(send);
+            ui->sendChatButton->setIcon(sendIcon);
+            movie1->stop();
+             }
                     
                   });
                 
@@ -630,19 +637,31 @@ void MainWindow::sendChat() {
             [=] (QString opid, QString errStr) {
                 ui->statusBar->showMessage(QObject::tr(" Tx ") % opid % QObject::tr(" failed"), 15 * 1000);
                 
-                d->accept();
-                d->close();
-                delete connD;
-                delete d;
-
                 if (!opid.isEmpty())
                     errStr = QObject::tr("The transaction with id ") % opid % QObject::tr(" failed. The error was") + ":\n\n" + errStr;            
 
-                QMessageBox::critical(this, QObject::tr("Transaction Error"), errStr, QMessageBox::Ok);            
+                QMessageBox::critical(this, QObject::tr("Transaction Error"), errStr, QMessageBox::Ok);
+                         movie->stop();
+      
+              
+            if (theme == "dark" || theme == "midnight") {
+            QPixmap send(":/icons/res/send-white.png");
+            QIcon sendIcon(send);
+            ui->sendChatButton->setIcon(sendIcon);
+            movie->stop();
+             }else{
+            
+            QPixmap send(":/icons/res/sendBlack.png");
+            QIcon sendIcon(send);
+            ui->sendChatButton->setIcon(sendIcon);
+            movie1->stop();
+             }
+                    
+                   
+                           
             }
         );
 
-      //  rpc->refresh(true);
     }        
 
 QString MainWindow::doSendChatTxValidations(Tx tx) {
@@ -760,8 +779,6 @@ Tx MainWindow::createTxForSafeContactRequest()
             QString hashEncryptionKey =  passphrase;
             int length = hashEncryptionKey.length();
 
-            qDebug()<<"Encryption String :"<<hashEncryptionKey;
-
  ////////////////Generate the secretkey for our message encryption
       char *hashEncryptionKeyraw = NULL;
                     hashEncryptionKeyraw = new char[length+1];
@@ -784,20 +801,16 @@ Tx MainWindow::createTxForSafeContactRequest()
 
             QString publicKey = QByteArray(reinterpret_cast<const char*>(pk), crypto_kx_PUBLICKEYBYTES).toHex();
 
-            qDebug()<<"Publickey created Request: "<<publicKey;
-
             QString hmemo= createHeaderMemo(type,cid,myAddr,"", publicKey);
 
      
             tx.toAddrs.push_back(ToFields{addr, amt, hmemo});
             tx.toAddrs.push_back(ToFields{addr, amt, memo});
-            qDebug() << "pushback chattx";
             tx.fee = Settings::getMinerFee();
         
 }
         
     return tx;
-    qDebug() << "RequestTx created";
 }
 
 void MainWindow::ContactRequest() {
@@ -843,15 +856,14 @@ void MainWindow::ContactRequest() {
 
         // abort the Tx
         return;
-        qDebug() << "Tx aborted";
     }
 
         // Create a new Dialog to show that we are computing/sending the Tx
         auto d = new QDialog(this);
         auto connD = new Ui_ConnectionDialog();
         connD->setupUi(d);
-        QMovie *movie1 = new QMovie(":/img/res/silentdragonlite-animated.gif");;
-        QMovie *movie2 = new QMovie(":/img/res/silentdragonlite-animated-dark.gif");;
+        QMovie *movie1 = new QMovie(":/img/res/silentdragonlite-animated.gif");
+        QMovie *movie2 = new QMovie(":/img/res/silentdragonlite-animated-dark.gif");
         auto theme = Settings::getInstance()->get_theme_name();
         if (theme == "dark" || theme == "midnight") {
             movie2->setScaledSize(QSize(512,512));
