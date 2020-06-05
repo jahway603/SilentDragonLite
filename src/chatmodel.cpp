@@ -593,6 +593,7 @@ void MainWindow::sendChat() {
         });      
         movie->start();
         ui->sendChatButton->show();
+        ui->sendChatButton->setEnabled(false);
              
         } else {
 
@@ -601,6 +602,7 @@ void MainWindow::sendChat() {
         });      
         movie1->start();
         ui->sendChatButton->show();
+        ui->sendChatButton->setEnabled(false);
         }
 
         ui->memoTxtChat->clear();
@@ -618,12 +620,14 @@ void MainWindow::sendChat() {
             QIcon sendIcon(send);
             ui->sendChatButton->setIcon(sendIcon);
             movie->stop();
+            ui->sendChatButton->setEnabled(true);
              }else{
             
             QPixmap send(":/icons/res/sendBlack.png");
             QIcon sendIcon(send);
             ui->sendChatButton->setIcon(sendIcon);
             movie1->stop();
+            ui->sendChatButton->setEnabled(true);
              }
                     
                   });
@@ -649,12 +653,14 @@ void MainWindow::sendChat() {
             QIcon sendIcon(send);
             ui->sendChatButton->setIcon(sendIcon);
             movie->stop();
+            ui->sendChatButton->setEnabled(true);
              }else{
             
             QPixmap send(":/icons/res/sendBlack.png");
             QIcon sendIcon(send);
             ui->sendChatButton->setIcon(sendIcon);
             movie1->stop();
+            ui->sendChatButton->setEnabled(true);
              }
                     
                    
