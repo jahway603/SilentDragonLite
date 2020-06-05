@@ -179,7 +179,7 @@ QString ChatItem::toChatLine()
     
 
 qDebug()<<_notarize;
-    QString line = QString("<small>") + myDateTime.toString("dd.MM.yyyy hh:mm");
+    QString line = QString("<small>") + myDateTime.toString("yyyy-MM-dd hh:mm");
     line += QString(lock) + QString("</small>");
     line += QString("<p>") + _memo.toHtmlEscaped() + QString("</p>");
     return line;
