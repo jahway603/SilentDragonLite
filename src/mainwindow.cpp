@@ -363,7 +363,7 @@ void MainWindow::closeEvent(QCloseEvent* event) {
 void MainWindow::closeEventpw(QCloseEvent* event) {
 
     // Let the RPC know to shut down any running service.
-    rpc->shutdownhushdStartup();
+    rpc->shutdownhushd();
 
 
 }
