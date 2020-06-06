@@ -30,6 +30,7 @@
 #include "FileSystem/FileSystem.h"
 #include "Crypto/passwd.h"
 #include "Crypto/FileEncryption.h"
+#include "DataStore/DataStore.h"
 
 using json = nlohmann::json;
 
@@ -1361,6 +1362,118 @@ void MainWindow::setupchatTab() {
     QObject::connect(ui->pushContact, &QPushButton::clicked, this , &MainWindow::renderContactRequest);
 
     ui->contactNameMemo->setText("");   
+
+    /////Copy Chatmessages
+
+     QMenu* contextMenuChat;
+     QAction* copymessage;
+     QAction* viewexplorer;
+     QAction* copytxid;
+     contextMenuChat = new QMenu(ui->listChat);
+     copymessage = new QAction("Copy message to clipboard",contextMenuChat);
+     viewexplorer = new QAction("View on block explorerr",contextMenuChat);
+     copytxid = new QAction("Copy txid to clipboard ",contextMenuChat);
+    
+ QObject::connect(ui->listContactWidget, &QTableView::clicked, [=] () {
+
+     ui->listChat->setContextMenuPolicy(Qt::ActionsContextMenu);
+     ui->listChat->addAction(copymessage);
+     ui->listChat->addAction(viewexplorer);
+     ui->listChat->addAction(copytxid);
+
+     QObject::connect(copymessage, &QAction::triggered, [=] {
+
+    
+    QModelIndex index = ui->listChat->currentIndex();
+    QString memo_chat = index.data(Qt::DisplayRole).toString();
+    QClipboard *clipboard = QGuiApplication::clipboard();
+    int startPos = memo_chat.indexOf("<p>") + 3;
+    int endPos = memo_chat.indexOf("</p>");
+    int length = endPos - startPos;
+    QString copymemo = memo_chat.mid(startPos, length);
+   
+    clipboard->setText(copymemo);
+    ui->statusBar->showMessage(tr("Copied message to clipboard"), 3 * 1000);   
+
+});
+    QObject::connect(copytxid, &QAction::triggered, [=] {
+
+    QModelIndex index = ui->listChat->currentIndex();
+    QString memo_chat = index.data(Qt::DisplayRole).toString();
+    QClipboard *clipboard = QGuiApplication::clipboard();
+
+    int startPos = memo_chat.indexOf("<p>") + 3;
+    int endPos = memo_chat.indexOf("</p>");
+    int length = endPos - startPos;
+    QString copymemo = memo_chat.mid(startPos, length);
+    int startPosT = memo_chat.indexOf("<small>") + 7;
+    int endPosT = memo_chat.indexOf("<b>");
+    int lengthT = endPosT - startPosT;
+
+    QString time = memo_chat.mid(startPosT, lengthT);
+
+    for (auto &c : DataStore::getChatDataStore()->getAllRawChatItems()){
+
+    if (c.second.getMemo() == copymemo)
+    {
+    int timestamp =  c.second.getTimestamp();
+    QDateTime myDateTime;
+    QString lock;
+    myDateTime.setTime_t(timestamp);
+    QString timestamphtml = myDateTime.toString("yyyy-MM-dd hh:mm");
+
+    if(timestamphtml == time)
+
+    {
+    clipboard->setText(c.second.getTxid());
+    ui->statusBar->showMessage(tr("Copied Txid to clipboard"), 3 * 1000);  
+    }else{}
+
+    }
+   
+}
+
+});
+
+    QObject::connect(viewexplorer, &QAction::triggered, [=] {
+
+    QModelIndex index = ui->listChat->currentIndex();
+    QString memo_chat = index.data(Qt::DisplayRole).toString();
+
+    int startPos = memo_chat.indexOf("<p>") + 3;
+    int endPos = memo_chat.indexOf("</p>");
+    int length = endPos - startPos;
+    QString copymemo = memo_chat.mid(startPos, length);
+    int startPosT = memo_chat.indexOf("<small>") + 7;
+    int endPosT = memo_chat.indexOf("<b>");
+    int lengthT = endPosT - startPosT;
+
+    QString time = memo_chat.mid(startPosT, lengthT);
+
+    for (auto &c : DataStore::getChatDataStore()->getAllRawChatItems()){
+
+    if (c.second.getMemo() == copymemo)
+    {
+    int timestamp =  c.second.getTimestamp();
+    QDateTime myDateTime;
+    QString lock;
+    myDateTime.setTime_t(timestamp);
+    QString timestamphtml = myDateTime.toString("yyyy-MM-dd hh:mm");
+
+    if(timestamphtml == time)
+
+    {
+
+     Settings::openTxInExplorer(c.second.getTxid());
+    
+    }else{}
+
+    }
+   
+}
+});
+
+});
 
 ///////// Add contextmenu 
      QMenu* contextMenu;

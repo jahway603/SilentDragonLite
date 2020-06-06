@@ -1602,6 +1602,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
             <property name="toolTip">
              <string>The locks shows you the status of the message. Red lock = unconfirmed, green lock = min. 1 confirmations, orange lock = message is notarized</string>
             </property>
@@ -1638,8 +1641,14 @@
             <property name="movement">
              <enum>QListView::Snap</enum>
             </property>
+            <property name="flow">
+             <enum>QListView::TopToBottom</enum>
+            </property>
             <property name="resizeMode">
              <enum>QListView::Adjust</enum>
+            </property>
+            <property name="layoutMode">
+             <enum>QListView::SinglePass</enum>
             </property>
             <property name="modelColumn">
              <number>0</number>

@@ -115,9 +115,11 @@ void MainWindow::renderContactRequest(){
 
        QStandardItemModel* contactRequest = new QStandardItemModel();
 
+        
+
             for (auto &c : DataStore::getChatDataStore()->getAllNewContactRequests())
 
-
+           
 
             {
 
@@ -133,6 +135,7 @@ void MainWindow::renderContactRequest(){
                 requestContact.zaddrnew->setText(c.second.getAddress());
 
             }
+
 
             QStandardItemModel* contactRequestOld = new QStandardItemModel();
 
@@ -157,13 +160,16 @@ void MainWindow::renderContactRequest(){
         QModelIndex index = requestContact.requestContact->currentIndex();
         QString label_contact = index.data(Qt::DisplayRole).toString();
         QStandardItemModel* contactMemo = new QStandardItemModel();
+
+
+    
            
         if  ((c.second.isOutgoing() == false) && (requestContact.zaddrnew->text() == c.second.getAddress()) && (c.second.getType() != "Cont"))
         
         {
 
           QStandardItem* Items = new QStandardItem(c.second.getMemo());
-             contactMemo->appendRow(Items);
+            contactMemo->appendRow(Items);
             requestContact.requestMemo->setModel(contactMemo);   
             requestContact.requestMemo->show();
            
@@ -172,17 +178,18 @@ void MainWindow::renderContactRequest(){
             requestContact.requestZaddr->setText(c.second.getRequestZaddr());
             requestContact.requestMyAddr->setText(c.second.getAddress());
             }else{}
-        }
     
-    
+    }
             
    });
+
+  
 
    QObject::connect(requestContact.requestContactOld, &QTableView::clicked, [&] () {
 
     for (auto &c : DataStore::getChatDataStore()->getAllRawChatItems()){
-       /* QModelIndex index = requestContact.requestContactOld->currentIndex();
-        QString label_contactold = index.data(Qt::DisplayRole).toString();*/
+        QModelIndex index = requestContact.requestContactOld->currentIndex();
+        QString label_contactold = index.data(Qt::DisplayRole).toString();
         QStandardItemModel* contactMemo = new QStandardItemModel();
            
         if  ((c.second.isOutgoing() == false) && (requestContact.zaddrold->text() == c.second.getAddress()) && (c.second.getType() != "Cont"))
