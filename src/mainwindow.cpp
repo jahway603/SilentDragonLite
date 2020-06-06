@@ -363,11 +363,9 @@ void MainWindow::closeEvent(QCloseEvent* event) {
 void MainWindow::closeEventpw(QCloseEvent* event) {
 
     // Let the RPC know to shut down any running service.
-    rpc->shutdownhushd();
+    rpc->shutdownhushdStartup();
 
-    // Bubble up
-    if (event)
-        QMainWindow::closeEvent(event);
+
 }
 
 
@@ -1371,7 +1369,7 @@ void MainWindow::setupchatTab() {
      QAction* copytxid;
      contextMenuChat = new QMenu(ui->listChat);
      copymessage = new QAction("Copy message to clipboard",contextMenuChat);
-     viewexplorer = new QAction("View on block explorerr",contextMenuChat);
+     viewexplorer = new QAction("View on block explorer",contextMenuChat);
      copytxid = new QAction("Copy txid to clipboard ",contextMenuChat);
     
  QObject::connect(ui->listContactWidget, &QTableView::clicked, [=] () {
