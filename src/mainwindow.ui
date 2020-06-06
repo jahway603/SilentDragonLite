@@ -1592,22 +1592,6 @@
               </property>
              </spacer>
             </item>
-            <item alignment="Qt::AlignRight|Qt::AlignVCenter">
-             <widget class="QCheckBox" name="decryptionMessage">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="layoutDirection">
-               <enum>Qt::LeftToRight</enum>
-              </property>
-              <property name="text">
-               <string>Message encryption/decryption ON</string>
-              </property>
-             </widget>
-            </item>
            </layout>
           </item>
           <item>
