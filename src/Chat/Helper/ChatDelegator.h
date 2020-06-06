@@ -56,7 +56,6 @@ inline void ListViewDelegate::paint(QPainter *painter, QStyleOptionViewItem cons
     qreal bodyheight = bodydoc.size().height();
     int outgoing = index.data(Qt::UserRole + 1).toInt();
     int outdate = index.data(Qt::UserRole + 1).toInt();
-    int indate = index.data(Qt::UserRole + 1).toInt();
     painter->save();
     painter->setRenderHint(QPainter::Antialiasing);
 

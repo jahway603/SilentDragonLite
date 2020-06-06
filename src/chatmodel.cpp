@@ -237,7 +237,7 @@ void MainWindow::renderContactRequest(){
             return;
         } 
 
-                qDebug()<<"Beginn kopiert" <<cid << addr << newLabel << myAddr;
+
                 AddressBook::getInstance()->addAddressLabel(newLabel, addr, myAddr, cid, avatar);
                   rpc->refreshContacts(
                   ui->listContactWidget);
@@ -393,7 +393,6 @@ QString MainWindow::createHeaderMemo(QString type, QString cid, QString zaddr, Q
 
     j.setObject(h);
     header = j.toJson();
-    qDebug() << "made header=" << header;
     return header;
    
 }
@@ -449,7 +448,6 @@ Tx MainWindow::createTxFromChatPage() {
             QString hashEncryptionKey = passphrase;
             int length = hashEncryptionKey.length();
 
-            qDebug()<<"Pubkey Erstellung :"<<pubkey;
 
  ////////////////Generate the secretkey for our message encryption
 
@@ -506,7 +504,6 @@ Tx MainWindow::createTxFromChatPage() {
             QString headerbytes = QByteArray(reinterpret_cast<const char*>(header), crypto_secretstream_xchacha20poly1305_HEADERBYTES).toHex();
             QString publickeyAlice = QByteArray(reinterpret_cast<const char*>(pk), crypto_kx_PUBLICKEYBYTES).toHex();
 
-            qDebug()<<"Headerbyte erstellung : "<<headerbytes;
 
             QString hmemo= createHeaderMemo(type,cid,myAddr,headerbytes,publickeyAlice);
 
@@ -517,9 +514,6 @@ Tx MainWindow::createTxFromChatPage() {
              tx.toAddrs.push_back(ToFields{addr, amt, hmemo});
              tx.toAddrs.push_back(ToFields{addr, amt, memo});
 
-     
-
-         qDebug() << "pushback chattx";
    } 
    }
 
@@ -527,7 +521,6 @@ Tx MainWindow::createTxFromChatPage() {
 
      return tx;
 
-     qDebug() << "ChatTx created";
 }
 
 void MainWindow::sendChat() {
@@ -538,8 +531,7 @@ void MainWindow::sendChat() {
     // might not be valid yet.
  
    QString Name = ui->contactNameMemo->text();
-   int sizename = Name.size();
-        qDebug()<< sizename;
+
       if ((ui->contactNameMemo->text().isEmpty()) || (ui->memoTxtChat->toPlainText().trimmed().isEmpty())) {
      
         QMessageBox msg(QMessageBox::Critical, tr("You have to select a contact and insert a Memo"),
@@ -577,7 +569,6 @@ void MainWindow::sendChat() {
 
         // abort the Tx
         return;
-        qDebug() << "Tx aborted";
     }
 
         auto movie = new QMovie(this);
@@ -716,7 +707,6 @@ void::MainWindow::addContact()
         request.myzaddr->setText(myAddr);
         ui->listReceiveAddresses->insertItem(0, myAddr); 
         ui->listReceiveAddresses->setCurrentIndex(0);
-        qDebug() << "new generated myAddr add Contact" << myAddr;
     });
 
     }catch(...)

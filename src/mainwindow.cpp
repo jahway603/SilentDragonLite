@@ -292,7 +292,6 @@ void MainWindow::closeEvent(QCloseEvent* event) {
     // Let the RPC know to shut down any running service.
     rpc->shutdownhushd();
     int passphraselenght = this->getPassword().length();
-    qDebug()<<"LÄNGE PW : "<<passphraselenght;
 
 // Check is encryption is ON for SDl
     if(passphraselenght > 0) 
@@ -542,9 +541,7 @@ void MainWindow::removeWalletEncryption() {
         filencrypted.remove();  
 
         }else{
-            
-             qDebug()<<"verschlüsselung gescheitert ";
-        
+               
          QMessageBox::critical(this, tr("Wallet Encryption Failed"),
                     QString("False password, please try again"),
                     QMessageBox::Ok
@@ -632,8 +629,6 @@ void MainWindow::removeWalletEncryptionStartUp() {
 
              
         }else{
-
-             qDebug()<<"verschlüsselung gescheitert ";
         
          QMessageBox::critical(this, tr("Wallet Encryption Failed"),
                     QString("false password please try again"),
@@ -1365,24 +1360,10 @@ void MainWindow::setupchatTab() {
     QObject::connect(ui->safeContactRequest, &QPushButton::clicked, this, &MainWindow::addContact);
     QObject::connect(ui->pushContact, &QPushButton::clicked, this , &MainWindow::renderContactRequest);
 
-///////// Set selected Zaddr for Chat with Klick
     ui->contactNameMemo->setText("");   
 
-    QObject::connect(ui->listContactWidget, &QTableView::clicked, [=] () {
-
-    
-        QModelIndex index = ui->listContactWidget->currentIndex();
-        QString label_contact = index.data(Qt::DisplayRole).toString();
-        
-        for(auto &p : AddressBook::getInstance()->getAllAddressLabels())
-        if (label_contact == p.getName()) {
-        ui->contactNameMemo->setText(p.getName());    
-        rpc->refresh(true);
-
-        }
-   });
-
-    QMenu* contextMenu;
+///////// Add contextmenu 
+     QMenu* contextMenu;
      QAction* requestAction;
      QAction* editAction;
      QAction* HushAction;
@@ -1394,16 +1375,22 @@ void MainWindow::setupchatTab() {
      HushAction = new QAction("Send a friend some Hush - coming soon",contextMenu);
      requestHushAction = new QAction("Request some Hush - coming soon",contextMenu);
      subatomicAction = new QAction("Make a subatomic swap with a friend- coming soon",contextMenu);
+
+
+///////// Set selected Zaddr for Chat with click
+
+    QObject::connect(ui->listContactWidget, &QTableView::clicked, [=] () {
+
      ui->listContactWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
      ui->listContactWidget->addAction(requestAction);
      ui->listContactWidget->addAction(editAction);
      ui->listContactWidget->addAction(HushAction);
      ui->listContactWidget->addAction(requestHushAction);
      ui->listContactWidget->addAction(subatomicAction);
-     
-      QObject::connect(requestHushAction, &QAction::triggered, [=]() {
+
+     QObject::connect(requestHushAction, &QAction::triggered, [=]() {
           QModelIndex index = ui->listContactWidget->currentIndex();
-        QString label_contact = index.data(Qt::DisplayRole).toString();
+          QString label_contact = index.data(Qt::DisplayRole).toString();
         
         for(auto &p : AddressBook::getInstance()->getAllAddressLabels())
         if (label_contact == p.getName()) {
@@ -1415,7 +1402,7 @@ void MainWindow::setupchatTab() {
      
      }); 
 
-      QObject::connect(editAction, &QAction::triggered, [=]() {
+          QObject::connect(editAction, &QAction::triggered, [=]() {
           QModelIndex index = ui->listContactWidget->currentIndex();
         QString label_contact = index.data(Qt::DisplayRole).toString();
         
@@ -1436,11 +1423,19 @@ void MainWindow::setupchatTab() {
         }    
      });
 
+        QModelIndex index = ui->listContactWidget->currentIndex();
+        QString label_contact = index.data(Qt::DisplayRole).toString();
+        
+        for(auto &p : AddressBook::getInstance()->getAllAddressLabels())
+        if (label_contact == p.getName()) {
+        ui->contactNameMemo->setText(p.getName());    
+        rpc->refresh(true);
     
+        }
+   });
+   
 ui->memoTxtChat->setLenDisplayLabelChat(ui->memoSizeChat);
 }
-
-
 
 void MainWindow::updateChat()
 {

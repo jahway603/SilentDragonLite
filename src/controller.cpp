@@ -1025,7 +1025,6 @@ void Controller::refreshTransactions() {
        
 
         int encryptedMemoSize1 = ba.length();
-        int headersize = ba1.length();
 
         //////unsigned char* as message from QString
          #define MESSAGE2 (const unsigned char *) encryptedMemo 
@@ -1062,8 +1061,6 @@ void Controller::refreshTransactions() {
              
 
          //////////////Give us the output of the decrypted message as debug to see if it was successfully
-                         qDebug()<<"OUT  decrypt:" << memodecrypt;   
-
 
                          ChatItem item = ChatItem(
                                 datetime,
@@ -1084,26 +1081,7 @@ void Controller::refreshTransactions() {
                         updateUIBalances();
       
                         }
-                        /*else{
-
-
-                            ChatItem item = ChatItem(
-                                datetime,
-                                address,
-                                QString(""),
-                                memo,
-                                QString(""),
-                                QString(""),
-                                cid, 
-                                txid,
-                                confirmations,
-                                true,
-                                isNotarized,
-                                false
-                            );
-                        DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
-                        updateUIBalances();
-                        }*/
+               
                     } 
 
                     items.push_back(TransactionItemDetail{address, amount, memo});
@@ -1153,7 +1131,6 @@ void Controller::refreshTransactions() {
                     QString publickey;
                     QString headerbytes;
                     QString cid;
-                    int position;
                     QString requestZaddr;
                     bool isContact;
                     
@@ -1261,10 +1238,6 @@ void Controller::refreshTransactions() {
                 chatModel->addMemo(txid, headerbytes);
            }else{}
 
-
-                qDebug()<<"Position message :"<<position;
-                       
-               int lengthcid = cid.length();
             QString passphrase = main->getPassword();
             QString hashEncryptionKey = passphrase;
             int length = hashEncryptionKey.length();
