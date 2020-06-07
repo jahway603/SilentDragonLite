@@ -708,6 +708,7 @@ void::MainWindow::addContact()
     request.setupUi(&dialog);
     Settings::saveRestore(&dialog);
 
+QObject::connect(request.newZaddr, &QPushButton::clicked, [&] () { 
  try 
     {   
     bool sapling = true;
@@ -725,6 +726,7 @@ void::MainWindow::addContact()
             
             qDebug() << QString("Caught something nasty with myZaddr Contact");
        }
+});
 
         QString cid = QUuid::createUuid().toString(QUuid::WithoutBraces);
 
@@ -823,10 +825,18 @@ void MainWindow::ContactRequest() {
 
     if (contactRequest.getReceiverAddress().isEmpty() || contactRequest.getMemo().isEmpty()) {
      
-  // auto addr = "";
-  //  if (! Settings::isZAddress(AddressBook::addressFromAddressLabel(addr->text()))) {
         QMessageBox msg(QMessageBox::Critical, tr("You have to select a contact and insert a Memo"),
         tr("You have selected no Contact from Contactlist,\n")  + tr("\nor your Memo is empty"),
+        QMessageBox::Ok, this);
+
+        msg.exec();
+        return;
+    }
+
+     if (contactRequest.getSenderAddress().size() > 80) {
+     
+        QMessageBox msg(QMessageBox::Critical, tr("Missing HushChat Address"),
+        tr("You have to create your HushChat address to send a contact request,\n"),
         QMessageBox::Ok, this);
 
         msg.exec();

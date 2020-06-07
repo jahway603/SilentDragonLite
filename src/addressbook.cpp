@@ -147,8 +147,9 @@ void AddressBook::open(MainWindow* parent, QLineEdit* target)
     // Connect the dialog's closing to updating the label address completor
     QObject::connect(&d, &QDialog::finished, [=] (auto) { parent->updateLabels(); });
 
+    Controller* rpc = parent->getRPC();
+    QObject::connect(ab.newZaddr, &QPushButton::clicked, [&] () { 
        
-       Controller* rpc = parent->getRPC();
         bool sapling = true;
         try 
        {
@@ -174,6 +175,7 @@ void AddressBook::open(MainWindow* parent, QLineEdit* target)
             
             qDebug() << QString("Caught something nasty with myZaddr Addressbook");
        }
+    });
    
        // model.updateUi(); //todo fix updating gui after adding 
 
@@ -193,7 +195,6 @@ void AddressBook::open(MainWindow* parent, QLineEdit* target)
         
         
         QString avatar = QString(":/icons/res/") + ab.comboBoxAvatar->currentText() + QString(".png");
-        qDebug()<<"AVATAR NAME : " << avatar;
 
         if (addr.isEmpty() || newLabel.isEmpty()) 
         {
@@ -394,20 +395,15 @@ void AddressBook::readFromStorage()
         QDataStream in(&file);    // read the data serialized from the file
         QString version;
         in >> version;
-       // qDebug() << "Detected old addressbook format";
-            // Convert old addressbook format v1 to v2
-                QList<QList<QString>> stuff;
+        QList<QList<QString>> stuff;
         in >> stuff;
-        //qDebug() << "Stuff: " << stuff;
+
         
         for (int i=0; i < stuff.size(); i++) 
         {
-            //qDebug() << "0:" << stuff[i][0];
-            //qDebug() << "1:" << stuff[i][1];
-            //qDebug() << "2:" << stuff[i][2];
+
             ContactItem contact = ContactItem(stuff[i][0],stuff[i][1], stuff[i][2], stuff[i][3],stuff[i][4]);
-            //qDebug() << "contact=" << contact.toQTString();
-                    //  main->addLabel(stuff[i][2], stuff[i][1]);
+
             allLabels.push_back(contact);
         }
    

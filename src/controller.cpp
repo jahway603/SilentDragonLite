@@ -1202,9 +1202,6 @@ void Controller::refreshTransactions() {
                      contactname = "";
 
                 }
-             
-
-              qDebug()<<"Name :" << contactname;
 
                   bool isNotarized;
 
@@ -1361,11 +1358,7 @@ void Controller::refreshTransactions() {
                                 isNotarized,
                                 isContact
                             );
-                        DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
-                           qDebug()<<"requestZaddrt? :"<<requestZaddr;
-                           qDebug()<<"Ist Kontakt? :"<<isContact;
-                           qDebug()<<"Memo :"<<memo;
-                        
+                        DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);                    
                     }
                 }
             }
