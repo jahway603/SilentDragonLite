@@ -41,7 +41,7 @@ void AddressBookModel::loadData()
             "addresstablegeometry"
         ).toByteArray()      
     );
-    
+     
 }
 
 void AddressBookModel::addNewLabel(QString label, QString addr, QString myAddr, QString cid, QString avatar) 
@@ -108,7 +108,9 @@ QVariant AddressBookModel::data(const QModelIndex &index, int role) const
             case 2: return labels.at(index.row()).getPartnerAddress();
             case 3: return labels.at(index.row()).getMyAddress();
             case 4: return labels.at(index.row()).getCid();
+
         }
+        
     }
 
     return QVariant();
@@ -405,8 +407,10 @@ void AddressBook::readFromStorage()
             //qDebug() << "2:" << stuff[i][2];
             ContactItem contact = ContactItem(stuff[i][0],stuff[i][1], stuff[i][2], stuff[i][3],stuff[i][4]);
             //qDebug() << "contact=" << contact.toQTString();
+                    //  main->addLabel(stuff[i][2], stuff[i][1]);
             allLabels.push_back(contact);
         }
+   
  
       //  qDebug() << "Read " << version << " Hush contacts from disk...";
         file.close();

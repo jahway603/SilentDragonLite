@@ -119,44 +119,41 @@ void MainWindow::renderContactRequest(){
 
             for (auto &c : DataStore::getChatDataStore()->getAllNewContactRequests())
 
-           
-
             {
 
-                QStandardItem* Items = new QStandardItem(QString("Unknown Sender"));
+                QStandardItem* Items = new QStandardItem(QString(c.second.getRequestZaddr()));
                 contactRequest->appendRow(Items);
-                requestContact.requestContact->setModel(contactRequest);
-                
+                requestContact.requestContact->setModel(contactRequest);  
                 Items->setData(QIcon(addnewAddrIcon),Qt::DecorationRole);
                 requestContact.requestContact->setIconSize(QSize(40,50));
                 requestContact.requestContact->setUniformItemSizes(true);
                 requestContact.requestContact->show();
                 requestContact.zaddrnew->setVisible(false);
-                requestContact.zaddrnew->setText(c.second.getAddress());
+                requestContact.zaddrnew->setText(c.second.getRequestZaddr());
+              
 
+           
             }
 
 
             QStandardItemModel* contactRequestOld = new QStandardItemModel();
 
-             for (auto &p : AddressBook::getInstance()->getAllAddressLabels())
               for (auto &c : DataStore::getChatDataStore()->getAllOldContactRequests())
             {
-               if (p.getPartnerAddress() == c.second.getRequestZaddr())
-               {
-                QStandardItem* Items = new QStandardItem(p.getName());
+                QStandardItem* Items = new QStandardItem(c.second.getContact());
                 contactRequestOld->appendRow(Items);
                 requestContact.requestContactOld->setModel(contactRequestOld);
                 requestContact.zaddrold->setVisible(false);
-                requestContact.zaddrold->setText(c.second.getAddress());
-                requestContact.requestContactOld->show();
-               }else{}
+                requestContact.zaddrold->setText(c.second.getRequestZaddr());
+                
+      
             }
+
        
 
         QObject::connect(requestContact.requestContact, &QTableView::clicked, [&] () {
 
-    for (auto &c : DataStore::getChatDataStore()->getAllRawChatItems()){
+            for (auto &c : DataStore::getChatDataStore()->getAllRawChatItems()){
         QModelIndex index = requestContact.requestContact->currentIndex();
         QString label_contact = index.data(Qt::DisplayRole).toString();
         QStandardItemModel* contactMemo = new QStandardItemModel();
@@ -164,7 +161,7 @@ void MainWindow::renderContactRequest(){
 
     
            
-        if  ((c.second.isOutgoing() == false) && (requestContact.zaddrnew->text() == c.second.getAddress()) && (c.second.getType() != "Cont"))
+        if  ((c.second.isOutgoing() == false) && (label_contact == c.second.getContact()))
         
         {
 
@@ -177,7 +174,10 @@ void MainWindow::renderContactRequest(){
             requestContact.requestCID->setVisible(false);
             requestContact.requestZaddr->setText(c.second.getRequestZaddr());
             requestContact.requestMyAddr->setText(c.second.getAddress());
-            }else{}
+
+            }else{
+
+            }
     
     }
             
@@ -192,7 +192,7 @@ void MainWindow::renderContactRequest(){
         QString label_contactold = index.data(Qt::DisplayRole).toString();
         QStandardItemModel* contactMemo = new QStandardItemModel();
            
-        if  ((c.second.isOutgoing() == false) && (requestContact.zaddrold->text() == c.second.getAddress()) && (c.second.getType() != "Cont"))
+          if  ((c.second.isOutgoing() == false) && (label_contactold == c.second.getContact()))
         
         {
 
@@ -205,7 +205,10 @@ void MainWindow::renderContactRequest(){
             requestContact.requestCID->setVisible(false);
             requestContact.requestZaddr->setText(c.second.getRequestZaddr());
             requestContact.requestMyAddr->setText(c.second.getAddress());
-            }else{}
+
+            }else{
+
+            }
         }
     
     

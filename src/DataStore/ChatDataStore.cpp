@@ -60,7 +60,9 @@ std::map<QString, ChatItem> ChatDataStore::getAllNewContactRequests()
         if (
             (c.second.isOutgoing() == false) &&
             (c.second.getType() == "Cont")  &&
-            (c.second.isContact() == false)      
+            (c.second.isContact() == false) &&
+            (c.second.getMemo().startsWith("{"))  
+              
         ) 
         
         {
@@ -73,13 +75,14 @@ std::map<QString, ChatItem> ChatDataStore::getAllNewContactRequests()
 std::map<QString, ChatItem> ChatDataStore::getAllOldContactRequests()
 {
     std::map<QString, ChatItem> filteredItems;
-    for(auto &p : AddressBook::getInstance()->getAllAddressLabels())
+ 
     for(auto &c: this->data)
     {
         if (
             (c.second.isOutgoing() == false) &&
             (c.second.getType() == "Cont") &&  
-            (p.getPartnerAddress() == c.second.getRequestZaddr())
+            (c.second.isContact() == true) &&
+            (c.second.getMemo().startsWith("{")) 
         ) 
         {
             filteredItems[c.first] = c.second;

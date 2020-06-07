@@ -1079,6 +1079,7 @@ QString MainWindow::getPubkeyByAddress(QString requestZaddr)
     return QString("0xdeadbeef");
 }
 
+
 void MainWindow::exportAllKeys() {
     exportKeys("");
 }
@@ -1385,8 +1386,8 @@ void MainWindow::setupchatTab() {
     QModelIndex index = ui->listChat->currentIndex();
     QString memo_chat = index.data(Qt::DisplayRole).toString();
     QClipboard *clipboard = QGuiApplication::clipboard();
-    int startPos = memo_chat.indexOf("<p>") + 3;
-    int endPos = memo_chat.indexOf("</p>");
+    int startPos = memo_chat.indexOf("<pre>") + 3;
+    int endPos = memo_chat.indexOf("</pre>");
     int length = endPos - startPos;
     QString copymemo = memo_chat.mid(startPos, length);
    
@@ -1400,8 +1401,8 @@ void MainWindow::setupchatTab() {
     QString memo_chat = index.data(Qt::DisplayRole).toString();
     QClipboard *clipboard = QGuiApplication::clipboard();
 
-    int startPos = memo_chat.indexOf("<p>") + 3;
-    int endPos = memo_chat.indexOf("</p>");
+    int startPos = memo_chat.indexOf("<pre>") + 3;
+    int endPos = memo_chat.indexOf("</pre>");
     int length = endPos - startPos;
     QString copymemo = memo_chat.mid(startPos, length);
     int startPosT = memo_chat.indexOf("<small>") + 7;
@@ -1438,8 +1439,8 @@ void MainWindow::setupchatTab() {
     QModelIndex index = ui->listChat->currentIndex();
     QString memo_chat = index.data(Qt::DisplayRole).toString();
 
-    int startPos = memo_chat.indexOf("<p>") + 3;
-    int endPos = memo_chat.indexOf("</p>");
+    int startPos = memo_chat.indexOf("<pre>") + 3;
+    int endPos = memo_chat.indexOf("</pre>");
     int length = endPos - startPos;
     QString copymemo = memo_chat.mid(startPos, length);
     int startPosT = memo_chat.indexOf("<small>") + 7;

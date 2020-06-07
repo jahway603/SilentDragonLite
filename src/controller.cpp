@@ -1132,28 +1132,8 @@ void Controller::refreshTransactions() {
                     QString headerbytes;
                     QString cid;
                     QString requestZaddr;
+                    QString contactname;
                     bool isContact;
-                    
-
-                for (auto &p : AddressBook::getInstance()->getAllAddressLabels())
-                {
-
-                      if (p.getPartnerAddress() == requestZaddr) 
-                      {
-
-                          chatModel->addAddressbylabel(address, requestZaddr);
-                      } else{}
-               
-                }  
-                if (chatModel->Addressbylabel(address) != QString("0xdeadbeef")){
-
-                     isContact = true;
-
-                }else{
-
-                     isContact = false;
-
-                }
 
                 if (!it["memo"].is_null()) {
 
@@ -1176,8 +1156,7 @@ void Controller::refreshTransactions() {
                 }
 
                 }
-                 
-            
+  
                 if (chatModel->getCidByTx(txid) != QString("0xdeadbeef")){
 
                         cid = chatModel->getCidByTx(txid);
@@ -1212,7 +1191,20 @@ void Controller::refreshTransactions() {
                     publickey = "";
                     } 
 
-              
+                if (contactModel->getContactbyAddress(requestZaddr) != QString("0xdeadbeef")){
+
+                     isContact = true;
+                     contactname = contactModel->getContactbyAddress(requestZaddr);
+
+                }else{
+
+                     isContact = false;
+                     contactname = "";
+
+                }
+             
+
+              qDebug()<<"Name :" << contactname;
 
                   bool isNotarized;
 
@@ -1336,7 +1328,7 @@ void Controller::refreshTransactions() {
                          ChatItem item = ChatItem(
                                 datetime,
                                 address,
-                                QString(""),
+                                contactname,
                                 memodecrypt,
                                 requestZaddr,
                                 type,
@@ -1347,9 +1339,7 @@ void Controller::refreshTransactions() {
                                 isNotarized,
                                 isContact
                             );
-                        DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
-                        
-                        
+                        DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);                 
        
                         }else{
                   
@@ -1360,7 +1350,7 @@ void Controller::refreshTransactions() {
                                 ChatItem item = ChatItem(
                                 datetime,
                                 address,
-                                QString(""),
+                                contactname,
                                 memo,
                                 requestZaddr,
                                 type,
@@ -1372,7 +1362,9 @@ void Controller::refreshTransactions() {
                                 isContact
                             );
                         DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
-
+                           qDebug()<<"requestZaddrt? :"<<requestZaddr;
+                           qDebug()<<"Ist Kontakt? :"<<isContact;
+                           qDebug()<<"Memo :"<<memo;
                         
                     }
                 }

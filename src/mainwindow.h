@@ -58,6 +58,7 @@ public:
     void setPassword(QString Password);
     void addPubkey(QString requestZaddr, QString pubkey);
     
+    
 
     void replaceWormholeClient(WormholeClient* newClient);
     bool isWebsocketListening();
