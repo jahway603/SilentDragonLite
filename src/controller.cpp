@@ -11,10 +11,6 @@
 #include "Model/ChatItem.h"
 #include "DataStore/DataStore.h"
 
-/*template<>
-DataStore<QString>* DataStore<QString>::instance = nullptr;
-template<>
-bool DataStore<QString>::instanced = false;*/
 ChatModel *chatModel = new ChatModel();
 Chat *chat = new Chat();
 ContactModel *contactModel = new ContactModel();
@@ -971,7 +967,7 @@ void Controller::refreshTransactions() {
          if ((memo.startsWith("{") == false) && (headerbytes.length() > 20))
         {   
                
-            QString passphrase = main->getPassword();
+            QString passphrase = DataStore::getChatDataStore()->getPassword();
             QString hashEncryptionKey = passphrase;
             int length = hashEncryptionKey.length();
 
@@ -1227,7 +1223,7 @@ void Controller::refreshTransactions() {
                 chatModel->addMemo(txid, headerbytes);
            }else{}
 
-            QString passphrase = main->getPassword();
+            QString passphrase = DataStore::getChatDataStore()->getPassword();
             QString hashEncryptionKey = passphrase;
             int length = hashEncryptionKey.length();
 

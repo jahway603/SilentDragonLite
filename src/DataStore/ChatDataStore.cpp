@@ -33,6 +33,18 @@ ChatItem ChatDataStore::getData(QString key)
     return this->data[key];
 }
 
+QString ChatDataStore::getPassword()
+{
+
+    return _password;
+}
+
+void ChatDataStore::setPassword(QString password)
+{
+
+    _password = password;
+}
+
 QString ChatDataStore::dump()
 {
 	json chats;

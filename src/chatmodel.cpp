@@ -454,7 +454,7 @@ Tx MainWindow::createTxFromChatPage() {
   
 
             QString pubkey = this->getPubkeyByAddress(addr);
-            QString passphrase = this->getPassword();
+            QString passphrase = DataStore::getChatDataStore()->getPassword();
             QString hashEncryptionKey = passphrase;
             int length = hashEncryptionKey.length();
 
@@ -783,7 +783,7 @@ Tx MainWindow::createTxForSafeContactRequest()
             
             QString memo = contactRequest.getMemo();
           //  QString privkey = rpc->fetchPrivKey(myAddr);
-            QString passphrase = this->getPassword();
+            QString passphrase = DataStore::getChatDataStore()->getPassword();
             QString hashEncryptionKey =  passphrase;
             int length = hashEncryptionKey.length();
 

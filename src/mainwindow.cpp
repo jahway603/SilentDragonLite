@@ -31,6 +31,7 @@
 #include "Crypto/passwd.h"
 #include "Crypto/FileEncryption.h"
 #include "DataStore/DataStore.h"
+#include "firsttimewizard.h"
 
 using json = nlohmann::json;
 
@@ -51,8 +52,6 @@ auto dirwallet = QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocat
 auto dirwalletenc = QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat");
 auto dirwalletbackup = QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath(".silentdragonlite/silentdragonlite-wallet.datBackup");
 #endif
-
-
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -289,10 +288,10 @@ void MainWindow::closeEvent(QCloseEvent* event) {
 
     s.sync();
 
-    
+
     // Let the RPC know to shut down any running service.
     rpc->shutdownhushd();
-    int passphraselenght = this->getPassword().length();
+    int passphraselenght = DataStore::getChatDataStore()->getPassword().length();
 
 // Check is encryption is ON for SDl
     if(passphraselenght > 0) 
@@ -305,7 +304,7 @@ void MainWindow::closeEvent(QCloseEvent* event) {
         fileoldencryption.remove();
 
          // Encrypt our wallet.dat 
-         QString str = this->getPassword();
+         QString str = DataStore::getChatDataStore()->getPassword();
          //   QString str = ed.txtPassword->text(); // data comes from user inputs
          int length = str.length();
 
@@ -401,7 +400,7 @@ void MainWindow::encryptWallet() {
 
     QString passphrase = ed.txtPassword->text(); // data comes from user inputs
     int length = passphrase.length();
-    this->setPassword(passphrase);
+    DataStore::getChatDataStore()->setPassword(passphrase);
 
     char *sequence = NULL;
     sequence = new char[length+1];
@@ -561,7 +560,7 @@ void MainWindow::removeWalletEncryptionStartUp() {
     {
         QString password = ed.txtPassword->text(); // data comes from user inputs
         int length = password.length();
-        this->setPassword(password);
+        DataStore::getChatDataStore()->setPassword(password);
         char *sequence = NULL;
         sequence = new char[length+1];
         strncpy(sequence, password.toLocal8Bit(), length +1);
@@ -663,6 +662,7 @@ void MainWindow::setupStatusBar() {
     loadingMovie->start();
     loadingLabel->setAttribute(Qt::WA_NoSystemBackground);
     loadingLabel->setMovie(loadingMovie);
+    
 
     ui->statusBar->addPermanentWidget(loadingLabel);
     loadingLabel->setVisible(false);
@@ -1159,7 +1159,6 @@ void MainWindow::setupBalancesTab() {
     ui->lblSyncWarning->setVisible(false);
     ui->lblSyncWarningReceive->setVisible(false);
 
-
     // Setup context menu on balances tab
     ui->balancesTable->setContextMenuPolicy(Qt::CustomContextMenu);
     QObject::connect(ui->balancesTable, &QTableView::customContextMenuRequested, [=] (QPoint pos) {
@@ -1191,6 +1190,8 @@ void MainWindow::setupBalancesTab() {
 
         menu.exec(ui->balancesTable->viewport()->mapToGlobal(pos));            
     });
+
+   qDebug()<<"PW :"<<DataStore::getChatDataStore()->getPassword();
 }
 
 void MainWindow::setuphushdTab() {    

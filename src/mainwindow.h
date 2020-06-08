@@ -5,7 +5,7 @@
 
 #include "logger.h"
 #include "recurring.h"
-
+#include "firsttimewizard.h"
 
 // Forward declare to break circular dependency.
 class Controller;
@@ -59,6 +59,7 @@ public:
     void addPubkey(QString requestZaddr, QString pubkey);
     
     
+    
 
     void replaceWormholeClient(WormholeClient* newClient);
     bool isWebsocketListening();
@@ -67,10 +68,7 @@ public:
     void saveContact();
     void saveandsendContact();
     void showRequesthush();
-   // void setmaxlenChat(int len);
-   // void updateDisplay();
-    
-
+  
     void balancesReady();
     void payhushURI(QString uri = "", QString myAddr = "");
 
@@ -113,6 +111,7 @@ private:
     bool fileExists(QString path);
     void closeEvent(QCloseEvent* event);
     void closeEventpw(QCloseEvent* event);
+    QString _password;
 
 
     void setupSendTab();
@@ -122,7 +121,6 @@ private:
     void setuphushdTab();
     void setupchatTab();
     void renderContactRequest();
-  //  void setLenDisplayLabel(QLabel* label);
     
     void updateContacts();
     void updateChat();
@@ -131,7 +129,7 @@ private:
     void setupStatusBar();
     
     void clearSendForm();
-    QString _password;
+    
 
     Tx   createTxFromSendPage();
     bool confirmTx(Tx tx, RecurringPaymentInfo* rpi);
