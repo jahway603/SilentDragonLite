@@ -91,7 +91,7 @@ void Controller::setConnection(Connection* c)
 
     // Create Sietch zdust addr at startup.
     // Using DataStore singelton, to store the data outside of lambda, bing bada boom :D
-    for(uint8_t i = 0; i < 10; i++)
+    for(uint8_t i = 0; i < 6; i++)
     {
         zrpc->createNewSietchZaddr( [=] (json reply) {
             QString zdust = QString::fromStdString(reply.get<json::array_t>()[0]);
@@ -104,6 +104,21 @@ void Controller::setConnection(Connection* c)
         );
 }
 
+std::string Controller::encryptDecrypt(std::string toEncrypt) 
+{ 
+
+    int radomInteger = rand() % 1000000000 +100000;
+     
+    char key = radomInteger;
+    std::string output = toEncrypt;
+    
+    for (int i = 0; i < toEncrypt.size(); i++)
+        output[i] = toEncrypt[i] ^ key;
+    
+    return output;
+
+}
+
 // Build the RPC JSON Parameters for this tx
 void Controller::fillTxJsonParams(json& allRecepients, Tx tx) 
 {   
@@ -113,12 +128,12 @@ void Controller::fillTxJsonParams(json& allRecepients, Tx tx)
     json rec = json::object();
 
     //creating the JSON dust parameters in a std::vector to iterate over there during tx
-    std::vector<json> dust(10);
-    dust.resize(10, json::object());
+    std::vector<json> dust(6);
+    dust.resize(6, json::object());
 
     // Create Sietch zdust addr again to not use it twice.
     // Using DataStore singelton, to store the data outside of lambda, bing bada boom :D
-    for(uint8_t i = 0; i < 10; i++)
+    for(uint8_t i = 0; i < 6; i++)
     {
         zrpc->createNewSietchZaddr( [=] (json reply) {
             QString zdust = QString::fromStdString(reply.get<json::array_t>()[0]);
@@ -128,20 +143,74 @@ void Controller::fillTxJsonParams(json& allRecepients, Tx tx)
 
     // Set sietch zdust addr to json.
     // Using DataStore singelton, to store the data into the dusts, bing bada boom :D
-    for(uint8_t i = 0; i < 10; i++)
+    for(uint8_t i = 0; i < 6; i++)
     {
         dust.at(i)["address"] = DataStore::getSietchDataStore()->getData(QString("Sietch" + QString(i))).toStdString();
     }
 
     DataStore::getSietchDataStore()->clear(); // clears the datastore
 
-    // Dust amt/memo, construct the JSON 
-    for(uint8_t i = 0; i < 8; i++)
+  const QString possibleCharacters("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
+
+  int sizerandomString = rand() % 250 +125;
+   const int randomStringLength = sizerandomString; // assuming you want random strings of 12 characters
+
+   QString randomString;
+   for(int i=0; i<randomStringLength; ++i)
+   {
+       int index = qrand() % possibleCharacters.length();
+       QChar nextChar = possibleCharacters.at(index);
+       randomString.append(nextChar);
+   }
+
+    QString random = QString::number(rand() % 10000000000000000 +10000000000000);   
+    int length = randomString.length(); 
+
+        char *randomHash = NULL;
+        randomHash = new char[length+1];
+        strncpy(randomHash, randomString.toLocal8Bit(), length +1);  
+
+        #define MESSAGE ((const unsigned char *) randomHash)
+        #define MESSAGE_LEN length
+        #define MESSAGE_LEN1 length 
+
+unsigned char hash[crypto_secretstream_xchacha20poly1305_ABYTES];
+
+crypto_generichash(hash, sizeof hash,
+                   MESSAGE, MESSAGE_LEN1,
+                   NULL, 0);
+
+std::string decryptedMemo(reinterpret_cast<char*>(hash),MESSAGE_LEN1);
+      
+  ///encrypt zdust memo
+ std::string encrypt = this->encryptDecrypt(decryptedMemo);
+ QString randomHashafter1  = QString::fromUtf8( encrypt.data(), encrypt.size() + crypto_secretstream_xchacha20poly1305_ABYTES);
+ std::string encrypt2 = this->encryptDecrypt(decryptedMemo);
+ QString randomHashafter2 = QString::fromUtf8( encrypt2.data(), encrypt2.size() + crypto_secretstream_xchacha20poly1305_ABYTES);
+ std::string encrypt3 = this->encryptDecrypt(decryptedMemo);
+ QString randomHashafter3 = QString::fromUtf8( encrypt3.data(), encrypt3.size() + crypto_secretstream_xchacha20poly1305_ABYTES);
+ std::string encrypt4 = this->encryptDecrypt(decryptedMemo);
+ QString randomHashafter4 = QString::fromUtf8( encrypt4.data(), encrypt4.size() + crypto_secretstream_xchacha20poly1305_ABYTES);
+ std::string encrypt5 = this->encryptDecrypt(decryptedMemo);
+ QString randomHashafter5 = QString::fromUtf8( encrypt5.data(), encrypt5.size() + crypto_secretstream_xchacha20poly1305_ABYTES);
+ std::string encrypt6 = this->encryptDecrypt(decryptedMemo);
+ QString randomHashafter6 = QString::fromUtf8( encrypt6.data(), encrypt6.size() + crypto_secretstream_xchacha20poly1305_ABYTES);
+  std::string encrypt7 = this->encryptDecrypt(decryptedMemo);
+ QString randomHashafter7 = QString::fromUtf8( encrypt7.data(), encrypt7.size() + crypto_secretstream_xchacha20poly1305_ABYTES);
+ 
+
+   for(uint8_t i = 0; i < 6; i++)
     {
-        dust.at(i)["amount"] = 0;
-        dust.at(i)["memo"] = "";
-        
+        dust.at(i)["amount"] = 0; 
     }
+
+    dust.at(0)["memo"] = randomHashafter1.toStdString();
+    dust.at(1)["memo"] = randomHashafter2.toStdString();
+    dust.at(2)["memo"] = randomHashafter3.toStdString();
+    dust.at(3)["memo"] = randomHashafter4.toStdString();
+    dust.at(4)["memo"] = randomHashafter5.toStdString();
+    dust.at(5)["memo"] = randomHashafter6.toStdString();
+
         
     // For each addr/amt/memo, construct the JSON and also build the confirm dialog box   
     for (int i=0; i < tx.toAddrs.size(); i++) 
@@ -161,8 +230,7 @@ void Controller::fillTxJsonParams(json& allRecepients, Tx tx)
             dust.at(2),
             dust.at(3),
             dust.at(4),
-            dust.at(5),
-            dust.at(6)
+            dust.at(5)
            
         }) ;
 }
@@ -971,14 +1039,11 @@ void Controller::refreshTransactions() {
             QString hashEncryptionKey = passphrase;
             int length = hashEncryptionKey.length();
 
-       
-
  ////////////////Generate the secretkey for our message encryption
 
              char *hashEncryptionKeyraw = NULL;
                     hashEncryptionKeyraw = new char[length+1];
                     strncpy(hashEncryptionKeyraw, hashEncryptionKey.toLocal8Bit(), length +1);
-
         const QByteArray pubkeyBobArray = QByteArray::fromHex(publickey.toLatin1());
         const unsigned char *pubkeyBob = reinterpret_cast<const unsigned char *>(pubkeyBobArray.constData()); 
          
@@ -1019,9 +1084,12 @@ void Controller::refreshTransactions() {
         const QByteArray ba1 = QByteArray::fromHex(headerbytes.toLatin1());
         const unsigned char *header = reinterpret_cast<const unsigned char *>(ba1.constData());
        
-
         int encryptedMemoSize1 = ba.length();
 
+        QString memodecrypt;
+
+        if (encryptedMemoSize1 > 15)
+        {
         //////unsigned char* as message from QString
          #define MESSAGE2 (const unsigned char *) encryptedMemo 
 
@@ -1050,10 +1118,15 @@ void Controller::refreshTransactions() {
                 }
 
             std::string decryptedMemo(reinterpret_cast<char*>(decrypted),MESSAGE1_LEN);
-      
+            
+             memodecrypt = QString::fromUtf8( decryptedMemo.data(), decryptedMemo.size());
+
+        }else{
+                 memodecrypt = "";
+
+        }
               /////Now we can convert it to QString
             
-            QString memodecrypt = QString::fromUtf8( decryptedMemo.data(), decryptedMemo.size());
              
 
          //////////////Give us the output of the decrypted message as debug to see if it was successfully

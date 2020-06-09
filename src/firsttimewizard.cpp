@@ -60,7 +60,6 @@ NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent
             form.radioRestoreWallet->setEnabled(true);
             form.radioNewWallet->setEnabled(true);
             form.radioNewWallet->setChecked(true);
-            qDebug()<<"PW :"<<Password;
 
             
 DataStore::getChatDataStore()->setPassword(Password);

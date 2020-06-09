@@ -1191,7 +1191,6 @@ void MainWindow::setupBalancesTab() {
         menu.exec(ui->balancesTable->viewport()->mapToGlobal(pos));            
     });
 
-   qDebug()<<"PW :"<<DataStore::getChatDataStore()->getPassword();
 }
 
 void MainWindow::setuphushdTab() {    
