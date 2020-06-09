@@ -447,7 +447,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>0/235</string>
+      <string>0/512</string>
      </property>
     </widget>
    </item>
