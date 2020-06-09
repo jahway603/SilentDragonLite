@@ -432,9 +432,22 @@
     </layout>
    </item>
    <item row="9" column="0" colspan="6">
-    <widget class="QTextEdit" name="textEdit">
+    <widget class="QTextEdit" name="memorequest">
      <property name="placeholderText">
       <string>Add a memo to your request</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="0">
+    <widget class="QLabel" name="memoSizeChat">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>0/235</string>
      </property>
     </widget>
    </item>
