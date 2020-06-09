@@ -734,7 +734,7 @@ QObject::connect(request.newZaddr, &QPushButton::clicked, [&] () {
         
         QString addr = request.zaddr->text();
         QString myAddr = request.myzaddr->text().trimmed();
-        QString memo = request.memorequest->text().trimmed();
+        QString memo = request.memorequest->toPlainText().trimmed();
         QString avatar = QString(":/icons/res/") + request.comboBoxAvatar->currentText() + QString(".png");
         QString label = request.labelRequest->text().trimmed();
 
