@@ -1379,6 +1379,8 @@ void Controller::refreshTransactions() {
          // Update model data, which updates the table view
         transactionsTableModel->replaceData(txdata);    
         chat->renderChatBox(ui, ui->listChat,ui->memoSizeChat);   
+        ui->listChat->verticalScrollBar()->setValue(
+        ui->listChat->verticalScrollBar()->maximum());
 
          });
 }
@@ -1386,6 +1388,8 @@ void Controller::refreshTransactions() {
 void Controller::refreshChat(QListView *listWidget, QLabel *label)
 {
     chat->renderChatBox(ui, listWidget, label);
+    ui->listChat->verticalScrollBar()->setValue(
+    ui->listChat->verticalScrollBar()->maximum());
   
 }
 
