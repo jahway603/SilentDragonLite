@@ -398,13 +398,23 @@ void AddressBook::readFromStorage()
         QList<QList<QString>> stuff;
         in >> stuff;
 
-        
+            //////////////found old addrbook, and rename it to .bak
+        if (version != "v2")
+        {
+            auto filename = QStringLiteral("addresslabels.dat");
+            auto dir = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+            QFile address(dir.filePath(filename));
+
+            address.rename(dir.filePath("addresslabels.bak"));
+            
+        }else{
         for (int i=0; i < stuff.size(); i++) 
         {
 
             ContactItem contact = ContactItem(stuff[i][0],stuff[i][1], stuff[i][2], stuff[i][3],stuff[i][4]);
 
             allLabels.push_back(contact);
+        }
         }
    
  
@@ -448,7 +458,7 @@ void AddressBook::writeToStorage()
         c.push_back(item.getAvatar());
         contacts.push_back(c);
     }
-    out << QString("v1") << contacts;
+    out << QString("v2") << contacts;
     file.close();
 }
 
