@@ -965,7 +965,8 @@ void Controller::refreshTransactions() {
                      memo = QString::fromStdString(o["memo"].get<json::string_t>());
                     
                        if (memo.startsWith("{")) {
-
+ try 
+       {
                   QJsonDocument headermemo = QJsonDocument::fromJson(memo.toUtf8());
 
                   cid = headermemo["cid"].toString();
@@ -974,7 +975,12 @@ void Controller::refreshTransactions() {
                     chatModel->addCid(txid, cid);   
                     chatModel->addHeader(txid, headerbytes);
 
-                }  
+                } catch(...) 
+
+                {
+
+                }
+                       }
                           
                         bool isNotarized;
 
@@ -1191,7 +1197,8 @@ void Controller::refreshTransactions() {
                 if (!it["memo"].is_null()) {
 
                 if (memo.startsWith("{")) {
-
+    try 
+       {
                   QJsonDocument headermemo = QJsonDocument::fromJson(memo.toUtf8());
 
                   cid = headermemo["cid"].toString();
@@ -1208,6 +1215,10 @@ void Controller::refreshTransactions() {
                     main->addPubkey(requestZaddr, publickey);
                 }
 
+                } catch(...)
+                {
+
+                }
                 }
   
                 if (chatModel->getCidByTx(txid) != QString("0xdeadbeef")){
