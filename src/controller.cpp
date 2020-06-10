@@ -108,6 +108,7 @@ std::string Controller::encryptDecrypt(std::string toEncrypt)
 { 
 
     int radomInteger = rand() % 1000000000 +100000;
+    
      
     char key = radomInteger;
     std::string output = toEncrypt;
@@ -150,21 +151,23 @@ void Controller::fillTxJsonParams(json& allRecepients, Tx tx)
 
     DataStore::getSietchDataStore()->clear(); // clears the datastore
 
-  const QString possibleCharacters("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
+    const QString possibleCharacters("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
 
-  int sizerandomString = rand() % 250 +125;
-   const int randomStringLength = sizerandomString; // assuming you want random strings of 12 characters
+    int sizerandomString = rand() % 120 +10;
+    const int randomStringLength = sizerandomString;
 
-   QString randomString;
-   for(int i=0; i<randomStringLength; ++i)
-   {
+    QString randomString;
+    for(int i=0; i<randomStringLength; ++i)
+    {
        int index = qrand() % possibleCharacters.length();
        QChar nextChar = possibleCharacters.at(index);
        randomString.append(nextChar);
-   }
+    }
 
-    QString random = QString::number(rand() % 10000000000000000 +10000000000000);   
-    int length = randomString.length(); 
+    for(uint8_t i = 0; i < 6; i++)
+    {
+        int length = randomString.length(); 
+        int randomSize = rand() % 120 +10;
 
         char *randomHash = NULL;
         randomHash = new char[length+1];
@@ -172,7 +175,7 @@ void Controller::fillTxJsonParams(json& allRecepients, Tx tx)
 
         #define MESSAGE ((const unsigned char *) randomHash)
         #define MESSAGE_LEN length
-        #define MESSAGE_LEN1 length 
+        #define MESSAGE_LEN1 length + randomSize
 
 unsigned char hash[crypto_secretstream_xchacha20poly1305_ABYTES];
 
@@ -181,35 +184,16 @@ crypto_generichash(hash, sizeof hash,
                    NULL, 0);
 
 std::string decryptedMemo(reinterpret_cast<char*>(hash),MESSAGE_LEN1);
-      
-  ///encrypt zdust memo
- std::string encrypt = this->encryptDecrypt(decryptedMemo);
- QString randomHashafter1  = QString::fromUtf8( encrypt.data(), encrypt.size() + crypto_secretstream_xchacha20poly1305_ABYTES);
- std::string encrypt2 = this->encryptDecrypt(decryptedMemo);
- QString randomHashafter2 = QString::fromUtf8( encrypt2.data(), encrypt2.size() + crypto_secretstream_xchacha20poly1305_ABYTES);
- std::string encrypt3 = this->encryptDecrypt(decryptedMemo);
- QString randomHashafter3 = QString::fromUtf8( encrypt3.data(), encrypt3.size() + crypto_secretstream_xchacha20poly1305_ABYTES);
- std::string encrypt4 = this->encryptDecrypt(decryptedMemo);
- QString randomHashafter4 = QString::fromUtf8( encrypt4.data(), encrypt4.size() + crypto_secretstream_xchacha20poly1305_ABYTES);
- std::string encrypt5 = this->encryptDecrypt(decryptedMemo);
- QString randomHashafter5 = QString::fromUtf8( encrypt5.data(), encrypt5.size() + crypto_secretstream_xchacha20poly1305_ABYTES);
- std::string encrypt6 = this->encryptDecrypt(decryptedMemo);
- QString randomHashafter6 = QString::fromUtf8( encrypt6.data(), encrypt6.size() + crypto_secretstream_xchacha20poly1305_ABYTES);
-  std::string encrypt7 = this->encryptDecrypt(decryptedMemo);
- QString randomHashafter7 = QString::fromUtf8( encrypt7.data(), encrypt7.size() + crypto_secretstream_xchacha20poly1305_ABYTES);
- 
+std::string encrypt = this->encryptDecrypt(decryptedMemo);
+QString randomHashafter1 = QByteArray(reinterpret_cast<const char*>(encrypt.c_str()),encrypt.size()).toHex();
+dust.at(i)["memo"] = randomHashafter1.toStdString();
+
+    }    
 
    for(uint8_t i = 0; i < 6; i++)
     {
         dust.at(i)["amount"] = 0; 
     }
-
-    dust.at(0)["memo"] = randomHashafter1.toStdString();
-    dust.at(1)["memo"] = randomHashafter2.toStdString();
-    dust.at(2)["memo"] = randomHashafter3.toStdString();
-    dust.at(3)["memo"] = randomHashafter4.toStdString();
-    dust.at(4)["memo"] = randomHashafter5.toStdString();
-    dust.at(5)["memo"] = randomHashafter6.toStdString();
 
         
     // For each addr/amt/memo, construct the JSON and also build the confirm dialog box   
