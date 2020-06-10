@@ -612,7 +612,7 @@ void MainWindow::removeWalletEncryptionStartUp() {
 
         {
 
-                 QMessageBox::information(this, tr("You have still Plaintextdata on your disk!"),
+                 QMessageBox::information(this, tr("You still have plaintext data on your disk!"),
                     QString("WARNING: Delete it only if you have a backup of your Wallet Seed."),
                     QMessageBox::Ok
                 );   
