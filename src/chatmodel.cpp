@@ -101,7 +101,7 @@ void MainWindow::renderContactRequest(){
 
         QString icon;
         auto theme = Settings::getInstance()->get_theme_name();
-        if (theme == "dark" || theme == "midnight") {
+        if (theme == "Dark" || theme == "Midnight") {
            icon = ":/icons/res/unknownWhite.png";
         }else{
             icon = ":/icons/res/unknownBlack.png";
@@ -587,7 +587,7 @@ void MainWindow::sendChat() {
         movie1->setFileName(":/img/res/loaderwhite.gif");
      
         auto theme = Settings::getInstance()->get_theme_name();
-        if (theme == "dark" || theme == "midnight") {
+        if (theme == "Dark" || theme == "Midnight") {
 
         connect(movie, &QMovie::frameChanged, [=]{
         ui->sendChatButton->setIcon(movie->currentPixmap());
@@ -616,7 +616,7 @@ void MainWindow::sendChat() {
 
             QTimer::singleShot(1000, [=]() {
          
-            if (theme == "dark" || theme == "midnight") {
+            if (theme == "Dark" || theme == "Midnight") {
             QPixmap send(":/icons/res/send-white.png");
             QIcon sendIcon(send);
             ui->sendChatButton->setIcon(sendIcon);
@@ -649,7 +649,7 @@ void MainWindow::sendChat() {
                          movie->stop();
       
               
-            if (theme == "dark" || theme == "midnight") {
+            if (theme == "Dark" || theme == "Midnight") {
             QPixmap send(":/icons/res/send-white.png");
             QIcon sendIcon(send);
             ui->sendChatButton->setIcon(sendIcon);
@@ -881,7 +881,7 @@ void MainWindow::ContactRequest() {
         QMovie *movie1 = new QMovie(":/img/res/silentdragonlite-animated.gif");
         QMovie *movie2 = new QMovie(":/img/res/silentdragonlite-animated-dark.gif");
         auto theme = Settings::getInstance()->get_theme_name();
-        if (theme == "dark" || theme == "midnight") {
+        if (theme == "Dark" || theme == "Midnight") {
             movie2->setScaledSize(QSize(512,512));
             connD->topIcon->setMovie(movie2);
             movie2->start();
