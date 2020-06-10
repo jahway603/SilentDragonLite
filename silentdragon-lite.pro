@@ -121,6 +121,7 @@ HEADERS += \
 
 FORMS += \
     src/contactrequest.ui \
+    src/deposithush.ui \
     src/encryption.ui \
     src/hushrequest.ui \
     src/mainwindow.ui \
@@ -147,6 +148,7 @@ FORMS += \
     src/removeencryption.ui \
     src/recurringmultiple.ui \ 
     src/chatbubbleme.ui \
+    src/deposithush.ui \
     src/chatbubblepartner.ui
 
 

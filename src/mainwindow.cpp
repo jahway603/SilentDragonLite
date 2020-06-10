@@ -18,6 +18,7 @@
 #include "version.h"
 #include "connection.h"
 #include "ui_contactrequest.h"
+#include "ui_deposithush.h"
 #include "ui_requestContactDialog.h"
 #include "chatmodel.h"
 #include "requestdialog.h"
@@ -1158,6 +1159,36 @@ void MainWindow::setupBalancesTab() {
     ui->unconfirmedWarning->setVisible(false);
     ui->lblSyncWarning->setVisible(false);
     ui->lblSyncWarningReceive->setVisible(false);
+    QObject::connect(ui->depositHushButton, &QPushButton::clicked, [=](){
+
+    Ui_deposithush deposithush;
+    QDialog dialog(this);
+    deposithush.setupUi(&dialog);
+    Settings::saveRestore(&dialog);
+
+     QList<QString> allAddresses;
+
+     allAddresses = getRPC()->getModel()->getAllZAddresses();
+    QString depositzaddr = allAddresses[1];
+     deposithush.qrcodeDisplayDeposit->setQrcodeString(depositzaddr);
+     deposithush.zaddr->setText(depositzaddr);
+
+      QObject::connect(deposithush.CopyAddress, &QPushButton::clicked, [=](){
+
+        QGuiApplication::clipboard()->setText(depositzaddr);
+        ui->statusBar->showMessage(tr("Copied to clipboard"), 3 * 1000);
+
+      });
+
+
+
+    dialog.exec();
+
+
+
+
+    });
+
 
     // Setup context menu on balances tab
     ui->balancesTable->setContextMenuPolicy(Qt::CustomContextMenu);
