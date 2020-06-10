@@ -846,7 +846,7 @@ void MainWindow::sendButton() {
         QMovie *movie1 = new QMovie(":/img/res/silentdragonlite-animated.gif");;
         QMovie *movie2 = new QMovie(":/img/res/silentdragonlite-animated-dark.gif");;
         auto theme = Settings::getInstance()->get_theme_name();
-        if (theme == "dark" || theme == "midnight") {
+        if (theme == "Dark" || theme == "Midnight") {
             movie2->setScaledSize(QSize(512,512));
             connD->topIcon->setMovie(movie2);
             movie2->start();

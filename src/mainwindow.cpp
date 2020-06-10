@@ -66,7 +66,7 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     catch (...)
     {
-        theme_name = "dark";
+        theme_name = "Dark";
     }
 
     this->slot_change_theme(theme_name);
@@ -386,7 +386,7 @@ void MainWindow::encryptWallet() {
             ed.lblPasswordMatch->setText("");
             ed.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
         } else {
-            ed.lblPasswordMatch->setText(tr("Passphrase don't match or You have entered too few letters (16 minimum)"));
+            //ed.lblPasswordMatch->setText(tr("Passphrase don't match or You have entered too few letters (16 minimum)"));
             ed.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
         }
 
@@ -445,7 +445,7 @@ void MainWindow::encryptWallet() {
         address.rename(dir.filePath("addresslabels.datBackup"));
 
            QMessageBox::information(this, tr("Wallet Encryption Success"),
-                    QString("Successfully encrypt your wallet"),
+                    QString("Successfully encrypted your wallet"),
                     QMessageBox::Ok
                 ); 
     }
@@ -612,7 +612,7 @@ void MainWindow::removeWalletEncryptionStartUp() {
 
         {
 
-                 QMessageBox::information(this, tr("You have still Plaintextdata on your disk!"),
+                 QMessageBox::information(this, tr("You still have plaintext data on your disk!"),
                     QString("WARNING: Delete it only if you have a backup of your Wallet Seed."),
                     QMessageBox::Ok
                 );   
@@ -1213,10 +1213,10 @@ void MainWindow::setupTransactionsTab() {
 
     // Set up context menu on transactions tab
     auto theme = Settings::getInstance()->get_theme_name();
-    if (theme == "dark" || theme == "midnight") {
+    if (theme == "Dark" || theme == "Midnight") {
     ui->listChat->setStyleSheet("background-image: url(:/icons/res/sdlogo.png) ;background-attachment: fixed ;background-position: center center ;background-repeat: no-repeat;background-size: cover");
      }
-    if (theme == "default") {ui->listChat->setStyleSheet("background-image: url(:/icons/res/sdlogo2.png) ;background-attachment: fixed ;background-position: center center ;background-repeat: no-repeat;background-size: cover");}
+    if (theme == "Default") {ui->listChat->setStyleSheet("background-image: url(:/icons/res/sdlogo2.png) ;background-attachment: fixed ;background-position: center center ;background-repeat: no-repeat;background-size: cover");}
    
     ui->listChat->setResizeMode(QListView::Adjust);
     ui->listChat->setWordWrap(true);
@@ -1316,7 +1316,7 @@ void MainWindow::setupchatTab() {
           /////////////Setting Icons for Chattab and different themes
        
   auto theme = Settings::getInstance()->get_theme_name();
-        if (theme == "dark" || theme == "midnight") {
+        if (theme == "Dark" || theme == "Midnight") {
             QPixmap send(":/icons/res/send-white.png");
             QIcon sendIcon(send);
             ui->sendChatButton->setIcon(sendIcon);
@@ -1955,7 +1955,7 @@ void MainWindow::slot_change_theme(const QString& theme_name)
     }
     catch (...)
     {
-        saved_theme_name = "dark";
+        saved_theme_name = "Dark";
     }
 
     QFile qFile(":/css/res/css/" + saved_theme_name +".css");

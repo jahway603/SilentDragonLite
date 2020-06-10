@@ -2019,7 +2019,7 @@ void Controller::shutdownhushd()
         auto theme = Settings::getInstance()->get_theme_name();
         auto size  = QSize(512,512);
 
-    if (theme == "dark" || theme == "midnight") {
+    if (theme == "Dark" || theme == "Midnight") {
         QMovie *movie2 = new QMovie(":/img/res/silentdragonlite-animated-startup-dark.gif");;
         movie2->setScaledSize(size);
         qDebug() << "Animation dark loaded";
