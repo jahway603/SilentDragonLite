@@ -386,7 +386,7 @@ void MainWindow::encryptWallet() {
             ed.lblPasswordMatch->setText("");
             ed.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
         } else {
-            ed.lblPasswordMatch->setText(tr("Passphrase don't match or You have entered too few letters (16 minimum)"));
+            //ed.lblPasswordMatch->setText(tr("Passphrase don't match or You have entered too few letters (16 minimum)"));
             ed.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
         }
 
@@ -445,7 +445,7 @@ void MainWindow::encryptWallet() {
         address.rename(dir.filePath("addresslabels.datBackup"));
 
            QMessageBox::information(this, tr("Wallet Encryption Success"),
-                    QString("Successfully encrypt your wallet"),
+                    QString("Successfully encrypted your wallet"),
                     QMessageBox::Ok
                 ); 
     }
