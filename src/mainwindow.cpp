@@ -1531,7 +1531,7 @@ void MainWindow::setupchatTab() {
      ui->listContactWidget->addAction(requestHushAction);
      ui->listContactWidget->addAction(subatomicAction);
 
-     QObject::connect(requestHushAction, &QAction::triggered, [=]() {
+     /*QObject::connect(requestHushAction, &QAction::triggered, [=]() {
           QModelIndex index = ui->listContactWidget->currentIndex();
           QString label_contact = index.data(Qt::DisplayRole).toString();
         
@@ -1543,7 +1543,7 @@ void MainWindow::setupchatTab() {
         }
         MainWindow::showRequesthush();
      
-     }); 
+     }); */
 
           QObject::connect(editAction, &QAction::triggered, [=]() {
           QModelIndex index = ui->listContactWidget->currentIndex();
