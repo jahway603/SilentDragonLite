@@ -158,10 +158,12 @@ void MainWindow::renderContactRequest(){
         QString label_contact = index.data(Qt::DisplayRole).toString();
         QStandardItemModel* contactMemo = new QStandardItemModel();
 
+        qDebug()<<label_contact;
+
 
     
            
-        if  ((c.second.isOutgoing() == false) && (label_contact == c.second.getContact()))
+        if  ((c.second.isOutgoing() == false) && (label_contact == c.second.getRequestZaddr()))
         
         {
 
