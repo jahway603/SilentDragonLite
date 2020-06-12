@@ -386,13 +386,53 @@ AddressBook::AddressBook()
 
 void AddressBook::readFromStorage() 
 {
-    QFile file(AddressBook::writeableFile());
+    auto dir =  QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    QString target_decaddr_file = dir.filePath("addresslabels.dat");
+    QString target_encaddr_file = dir.filePath("addresslabels.dat.enc");
+    QFile file(target_encaddr_file);
+    QFile file1(target_decaddr_file);
 
     if (file.exists()) 
     {
+
+        qDebug() << "Existiert";
+         QString password = DataStore::getChatDataStore()->getPassword();
+        int length = password.length();       
+        char *sequence = NULL;
+        sequence = new char[length+1];
+        strncpy(sequence, password.toLocal8Bit(), length +1);
+
+        #define MESSAGE ((const unsigned char *) sequence)
+        #define MESSAGE_LEN length
+
+        unsigned char hash[crypto_secretstream_xchacha20poly1305_KEYBYTES];
+
+        crypto_hash_sha256(hash,MESSAGE, MESSAGE_LEN);
+
+        #define PASSWORD sequence
+         #define KEY_LEN crypto_box_SEEDBYTES
+
+   
+
+ /////////we use the Hash of the Password as Salt, not perfect but still a good solution.
+
+        unsigned char key[KEY_LEN];
+
+      if (crypto_pwhash  
+      (key, sizeof key, PASSWORD, strlen(PASSWORD), hash,
+      crypto_pwhash_OPSLIMIT_SENSITIVE, crypto_pwhash_MEMLIMIT_SENSITIVE,
+      crypto_pwhash_ALG_DEFAULT) != 0) {
+    /* out of memory */
+        }
+
+        
+
+        FileEncryption::decrypt(target_decaddr_file, target_encaddr_file, key);
+        qDebug() << "entschlüsselt";
+
         allLabels.clear();
-        file.open(QIODevice::ReadOnly);
-        QDataStream in(&file);    // read the data serialized from the file
+        file1.open(QIODevice::ReadOnly);
+        QDataStream in(&file1);    // read the data serialized from the file
         QString version;
         in >> version;
         QList<QList<QString>> stuff;
@@ -404,6 +444,8 @@ void AddressBook::readFromStorage()
             auto filename = QStringLiteral("addresslabels.dat");
             auto dir = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
             QFile address(dir.filePath(filename));
+
+            qDebug() << "is v1";
 
             address.rename(dir.filePath("addresslabels.bak"));
             
@@ -419,21 +461,16 @@ void AddressBook::readFromStorage()
    
  
       //  qDebug() << "Read " << version << " Hush contacts from disk...";
-        file.close();
+        file1.close();
+
+        FileEncryption::encrypt(target_encaddr_file, target_decaddr_file, key);
+        file1.remove();
     }
     else 
     {
         qDebug() << "No Hush contacts found on disk!";
     }
 
-    // Special. 
-    // Add the default silentdragon donation address if it isn't already present
-    // QList<QString> allAddresses;
-    // std::transform(allLabels.begin(), allLabels.end(), 
-    //     std::back_inserter(allAddresses), [=] (auto i) { return i.getPartnerAddress(); });
-    // if (!allAddresses.contains(Settings::getDonationAddr(true))) {
-    //     allLabels.append(QPair<QString, QString>("silentdragon donation", Settings::getDonationAddr(true)));
-    // }
 }
 
 
@@ -442,12 +479,49 @@ void AddressBook::writeToStorage()
     //FileSystem::getInstance()->writeContacts(AddressBook::writeableFile(), DataStore::getContactDataStore()->dump());
     
    // FileSystem::getInstance()->writeContactsOldFormat(AddressBook::writeableFile(), allLabels);
+
+        QString password = DataStore::getChatDataStore()->getPassword();
+        int length = password.length();       
+        char *sequence = NULL;
+        sequence = new char[length+1];
+        strncpy(sequence, password.toLocal8Bit(), length +1);
+
+        #define MESSAGE ((const unsigned char *) sequence)
+        #define MESSAGE_LEN length
+
+        unsigned char hash[crypto_secretstream_xchacha20poly1305_KEYBYTES];
+
+        crypto_hash_sha256(hash,MESSAGE, MESSAGE_LEN);
+
+        #define PASSWORD sequence
+         #define KEY_LEN crypto_box_SEEDBYTES
+
+   
+
+ /////////we use the Hash of the Password as Salt, not perfect but still a good solution.
+
+        unsigned char key[KEY_LEN];
+
+      if (crypto_pwhash  
+      (key, sizeof key, PASSWORD, strlen(PASSWORD), hash,
+      crypto_pwhash_OPSLIMIT_SENSITIVE, crypto_pwhash_MEMLIMIT_SENSITIVE,
+      crypto_pwhash_ALG_DEFAULT) != 0) {
+    /* out of memory */
+        }
+
+  
     
-    
-    QFile file(AddressBook::writeableFile());
+        auto dir =  QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+        QString target_encaddr_file = dir.filePath("addresslabels.dat.enc");
+        QString target_decaddr_file = dir.filePath("addresslabels.dat");
+
+        FileEncryption::decrypt(target_decaddr_file, target_encaddr_file, key);
+
+    QFile file(target_decaddr_file);
     file.open(QIODevice::ReadWrite | QIODevice::Truncate);
     QDataStream out(&file);   // we will serialize the data into the file
     QList<QList<QString>> contacts;
+
     for(auto &item: allLabels)
     {
         QList<QString> c;
@@ -456,10 +530,20 @@ void AddressBook::writeToStorage()
         c.push_back(item.getMyAddress());
         c.push_back(item.getCid());
         c.push_back(item.getAvatar());
-        contacts.push_back(c);
+        contacts.push_back(c);   
+        
     }
     out << QString("v2") << contacts;
+    qDebug()<<"schreibe in Datei: ";
     file.close();
+
+
+        FileEncryption::encrypt(target_encaddr_file, target_decaddr_file , key);
+        QFile file1(target_decaddr_file);
+        file1.remove();
+    
+        qDebug()<<"encrypt Addrbook writeToStorage";
+    
 }
 
 QString AddressBook::writeableFile() 

@@ -163,7 +163,7 @@ void MainWindow::renderContactRequest(){
 
     
            
-        if  ((c.second.isOutgoing() == false) && (label_contact == c.second.getRequestZaddr()))
+        if  ((c.second.isOutgoing() == false) && (label_contact == c.second.getRequestZaddr() && (c.second.getMemo().startsWith("{") == false)))
         
         {
 
@@ -194,12 +194,12 @@ void MainWindow::renderContactRequest(){
         QString label_contactold = index.data(Qt::DisplayRole).toString();
         QStandardItemModel* contactMemo = new QStandardItemModel();
            
-          if  ((c.second.isOutgoing() == false) && (label_contactold == c.second.getContact()))
+          if  ((c.second.isOutgoing() == false) && (label_contactold == c.second.getContact()) && (c.second.getMemo().startsWith("{") == false))
         
         {
 
           QStandardItem* Items = new QStandardItem(c.second.getMemo());
-             contactMemo->appendRow(Items);
+            contactMemo->appendRow(Items);
             requestContact.requestMemo->setModel(contactMemo);   
             requestContact.requestMemo->show();
            
