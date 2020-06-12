@@ -3,7 +3,7 @@
 SilentDragonLite is a lightwallet for HUSH ($HUSH) runs on Linux and Windows which does not require you to download the full blockchain. This is experimental software under active development!
 
 
-[![INFO.png](https://i.postimg.cc/mDC63BsR/INFO.png)](https://postimg.cc/Q9NbhLCn)
+[hushchat-screenshot.png]
 
 ## PRIVACY NOTICE
 
