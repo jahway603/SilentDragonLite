@@ -1169,7 +1169,7 @@ void MainWindow::setupBalancesTab() {
      QList<QString> allAddresses;
 
      allAddresses = getRPC()->getModel()->getAllZAddresses();
-    QString depositzaddr = allAddresses[1];
+    QString depositzaddr = allAddresses[0];
      deposithush.qrcodeDisplayDeposit->setQrcodeString(depositzaddr);
      deposithush.zaddr->setText(depositzaddr);
 
