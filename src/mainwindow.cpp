@@ -1344,6 +1344,8 @@ void MainWindow::setupTransactionsTab() {
 
 void MainWindow::setupchatTab() {
 
+    ui->memoTxtChat->setEnabled(false);
+
           /////////////Setting Icons for Chattab and different themes
        
   auto theme = Settings::getInstance()->get_theme_name();
@@ -1530,6 +1532,7 @@ void MainWindow::setupchatTab() {
      ui->listContactWidget->addAction(HushAction);
      ui->listContactWidget->addAction(requestHushAction);
      ui->listContactWidget->addAction(subatomicAction);
+     ui->memoTxtChat->setEnabled(true);
 
      /*QObject::connect(requestHushAction, &QAction::triggered, [=]() {
           QModelIndex index = ui->listContactWidget->currentIndex();
