@@ -439,7 +439,7 @@ void AddressBook::readFromStorage()
         in >> stuff;
 
             //////////////found old addrbook, and rename it to .bak
-        if (version != "v2")
+        if (version == "v1")
         {
             auto filename = QStringLiteral("addresslabels.dat");
             auto dir = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
