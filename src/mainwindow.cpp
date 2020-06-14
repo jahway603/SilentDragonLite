@@ -338,20 +338,20 @@ void MainWindow::closeEvent(QCloseEvent* event) {
    
         auto dir =  QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
        // auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
-        QString source_file = dir.filePath("addresslabels.dat");
-        QString target_enc_file = dir.filePath("addresslabels.dat.enc");
+       // QString source_file = dir.filePath("addresslabels.dat");
+       // QString target_enc_file = dir.filePath("addresslabels.dat.enc");
         QString sourceWallet_file = dirwallet;
         QString target_encWallet_file = dirwalletenc;
      
-        FileEncryption::encrypt(target_enc_file, source_file, key);
+       // FileEncryption::encrypt(target_enc_file, source_file, key);
         FileEncryption::encrypt(target_encWallet_file, sourceWallet_file, key);      
 
         ///////////////// we rename the plaintext wallet.dat to Backup, for testing. 
 
         QFile wallet(dirwallet);
-        QFile address(dir.filePath("addresslabels.dat"));
+      //  QFile address(dir.filePath("addresslabels.dat"));
         wallet.remove();
-        address.remove();
+        //address.remove();
     }
     
 
@@ -432,18 +432,18 @@ void MainWindow::encryptWallet() {
 
         auto dir =  QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
         auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
-        QString source_file = dir.filePath("addresslabels.dat");
-        QString target_enc_file = dir.filePath("addresslabels.dat.enc");
+      //  QString source_file = dir.filePath("addresslabels.dat");
+     //   QString target_enc_file = dir.filePath("addresslabels.dat.enc");
         QString sourceWallet_file = dirwallet;
         QString target_encWallet_file = dirwalletenc;
      
-        FileEncryption::encrypt(target_enc_file, source_file, key);
+     //   FileEncryption::encrypt(target_enc_file, source_file, key);
         FileEncryption::encrypt(target_encWallet_file, sourceWallet_file, key);
 
         QFile wallet(dirwallet);
-        QFile address(dir.filePath("addresslabels.dat"));
+    //    QFile address(dir.filePath("addresslabels.dat"));
         wallet.rename(dirwalletbackup);
-        address.rename(dir.filePath("addresslabels.datBackup"));
+   //     address.rename(dir.filePath("addresslabels.datBackup"));
 
            QMessageBox::information(this, tr("Wallet Encryption Success"),
                     QString("Successfully encrypted your wallet"),
@@ -520,11 +520,11 @@ void MainWindow::removeWalletEncryption() {
         auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
         QString target_encwallet_file = dirwalletenc;
         QString target_decwallet_file = dirwallet;
-        QString target_encaddr_file = dir.filePath("addresslabels.dat.enc");
-        QString target_decaddr_file = dir.filePath("addresslabels.dat");
+       // QString target_encaddr_file = dir.filePath("addresslabels.dat.enc");
+     //   QString target_decaddr_file = dir.filePath("addresslabels.dat");
 
         FileEncryption::decrypt(target_decwallet_file, target_encwallet_file, key);
-        FileEncryption::decrypt(target_decaddr_file, target_encaddr_file, key);
+      //  FileEncryption::decrypt(target_decaddr_file, target_encaddr_file, key);
     
      QFile filencrypted(dirwalletenc);
      QFile wallet(dirwallet);
@@ -595,11 +595,11 @@ void MainWindow::removeWalletEncryptionStartUp() {
         auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
         QString target_encwallet_file = dirwalletenc;
         QString target_decwallet_file = dirwallet;
-        QString target_encaddr_file = dir.filePath("addresslabels.dat.enc");
-        QString target_decaddr_file = dir.filePath("addresslabels.dat");
+       // QString target_encaddr_file = dir.filePath("addresslabels.dat.enc");
+      //  QString target_decaddr_file = dir.filePath("addresslabels.dat");
 
         FileEncryption::decrypt(target_decwallet_file, target_encwallet_file, key);
-        FileEncryption::decrypt(target_decaddr_file, target_encaddr_file, key);
+     //   FileEncryption::decrypt(target_decaddr_file, target_encaddr_file, key);
 
     } 
 
@@ -1169,7 +1169,7 @@ void MainWindow::setupBalancesTab() {
      QList<QString> allAddresses;
 
      allAddresses = getRPC()->getModel()->getAllZAddresses();
-    QString depositzaddr = allAddresses[1];
+    QString depositzaddr = allAddresses[0];
      deposithush.qrcodeDisplayDeposit->setQrcodeString(depositzaddr);
      deposithush.zaddr->setText(depositzaddr);
 
@@ -1343,6 +1343,8 @@ void MainWindow::setupTransactionsTab() {
 }
 
 void MainWindow::setupchatTab() {
+
+    ui->memoTxtChat->setEnabled(false);
 
           /////////////Setting Icons for Chattab and different themes
        
@@ -1530,6 +1532,7 @@ void MainWindow::setupchatTab() {
      ui->listContactWidget->addAction(HushAction);
      ui->listContactWidget->addAction(requestHushAction);
      ui->listContactWidget->addAction(subatomicAction);
+     ui->memoTxtChat->setEnabled(true);
 
      /*QObject::connect(requestHushAction, &QAction::triggered, [=]() {
           QModelIndex index = ui->listContactWidget->currentIndex();

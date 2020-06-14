@@ -16,6 +16,18 @@ FirstTimeWizard::FirstTimeWizard(bool dangerous, QString server)
     this->dangerous = dangerous;
     this->server = server;
 
+    ////backup addresslabels.dat if there is one, to restore it later
+
+    auto dir =  QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    QString addressbook = dir.filePath("addresslabels.dat.enc");
+    QFile file(addressbook);
+
+    if (file.exists())
+    {
+    file.rename(dir.filePath("addresslabels.dat.enc-backup"));
+
+    }
+
     // Create the pages
     setPage(Page_NewOrRestore, new NewOrRestorePage(this));
     setPage(Page_New, new NewSeedPage(this));

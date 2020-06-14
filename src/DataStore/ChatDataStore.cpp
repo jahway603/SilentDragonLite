@@ -39,6 +39,18 @@ QString ChatDataStore::getPassword()
     return _password;
 }
 
+QString ChatDataStore::getSendZaddr()
+{
+
+    return _zaddr;
+}
+
+void ChatDataStore::setSendZaddr(QString zaddr)
+{
+
+    _zaddr = zaddr;
+}
+
 void ChatDataStore::setPassword(QString password)
 {
 
