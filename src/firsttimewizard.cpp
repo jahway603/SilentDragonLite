@@ -16,6 +16,18 @@ FirstTimeWizard::FirstTimeWizard(bool dangerous, QString server)
     this->dangerous = dangerous;
     this->server = server;
 
+    ////backup addresslabels.dat if there is one, to restore it later
+
+    auto dir =  QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    QString addressbook = dir.filePath("addresslabels.dat.enc");
+    QFile file(addressbook);
+
+    if (file.exists())
+    {
+    file.rename(dir.filePath("addresslabels.dat.enc-backup"));
+
+    }
+
     // Create the pages
     setPage(Page_NewOrRestore, new NewOrRestorePage(this));
     setPage(Page_New, new NewSeedPage(this));
@@ -60,9 +72,18 @@ NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent
             form.radioRestoreWallet->setEnabled(true);
             form.radioNewWallet->setEnabled(true);
             form.radioNewWallet->setChecked(true);
+        int length = Password.length();
+        char *sequence = NULL;
+        sequence = new char[length+1];
+        strncpy(sequence, Password.toUtf8(), length +1);
 
-            
-DataStore::getChatDataStore()->setPassword(Password);
+        QString str = blake3_PW(sequence);
+        qDebug() << str;
+        DataStore::getChatDataStore()->setPassword(str);
+
+        char *sequence1 = NULL;
+        sequence1 = new char[length];
+        strncpy(sequence1, str.toUtf8(), length);
          //main->setPassword(Password);
 
          //qDebug()<<"Objekt gesetzt";
