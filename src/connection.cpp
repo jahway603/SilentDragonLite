@@ -23,7 +23,7 @@ ConnectionLoader::ConnectionLoader(MainWindow* main, Controller* rpc)
     qDebug() << theme << "theme has loaded";
     auto size  = QSize(512,512);
 
-    if (theme == "dark" || theme == "midnight") {
+    if (theme == "Dark" || theme == "Midnight") {
         QMovie *movie2 = new QMovie(":/img/res/silentdragonlite-animated-startup-dark.gif");;
         movie2->setScaledSize(size);
         qDebug() << "Animation dark loaded";
@@ -59,7 +59,7 @@ void ConnectionLoader::doAutoConnect()
 {
     qDebug() << "Doing autoconnect";
     auto config = std::shared_ptr<ConnectionConfig>(new ConnectionConfig());
-    config->dangerous = true;
+    config->dangerous = false;
     config->server = Settings::getInstance()->getSettings().server;
 
     // Initialize the library

@@ -13,6 +13,7 @@ extern char * litelib_initialize_new_from_phrase
 extern char * litelib_initialize_existing (bool dangerous, const char* server);
 extern char * litelib_execute             (const char* s, const char* args);
 extern void   litelib_rust_free_string    (char* s);
+extern char * blake3_PW                   (char* pw);
 
 #ifdef __cplusplus
 }
