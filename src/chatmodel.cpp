@@ -443,7 +443,7 @@ Tx MainWindow::createTxFromChatPage() {
         int lengthmemo = memoplain.length();
 
         char *memoplainchar = NULL;
-        memoplainchar = new char[lengthmemo+1];
+        memoplainchar = new char[lengthmemo+2];
         strncpy(memoplainchar, memoplain.toUtf8(), lengthmemo +1);
 
         QString pubkey = this->getPubkeyByAddress(addr);

@@ -1061,7 +1061,7 @@ void Controller::refreshTransactions() {
              }
     
 
-        const QByteArray ba = QByteArray::fromHex(memo.toLatin1());
+        const QByteArray ba = QByteArray::fromHex(memo.toUtf8());
         const unsigned char *encryptedMemo = reinterpret_cast<const unsigned char *>(ba.constData());
 
         const QByteArray ba1 = QByteArray::fromHex(headerbytes.toLatin1());
@@ -1321,7 +1321,7 @@ void Controller::refreshTransactions() {
     
     
 
-        const QByteArray ba = QByteArray::fromHex(memo.toLatin1());
+        const QByteArray ba = QByteArray::fromHex(memo.toUtf8());
         const unsigned char *encryptedMemo = reinterpret_cast<const unsigned char *>(ba.constData());
 
         const QByteArray ba1 = QByteArray::fromHex(headerbytes.toLatin1());
@@ -1341,7 +1341,7 @@ void Controller::refreshTransactions() {
 
             //////Set the length of the decrypted message
 
-         unsigned char decrypted[MESSAGE1_LEN];
+         unsigned char decrypted[MESSAGE1_LEN+1];
          unsigned char tag[crypto_secretstream_xchacha20poly1305_TAG_FINAL];
          crypto_secretstream_xchacha20poly1305_state state;
 

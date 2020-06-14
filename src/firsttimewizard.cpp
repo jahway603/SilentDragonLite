@@ -61,10 +61,13 @@ NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent
 
          auto fnPasswordEdited = [=](const QString&) {
         // Enable the Finish button if the passwords match.
-        QString Password = form.txtPassword->text();
+        QString passphraseBlank = form.txtPassword->text();
+
+        QString passphrase = QString("HUSH3") + passphraseBlank + QString("SDL");
+
         
         if (!form.txtPassword->text().isEmpty() && 
-                form.txtPassword->text() == form.txtConfirmPassword->text() && Password.size() >= 16) {
+                form.txtPassword->text() == form.txtConfirmPassword->text() && passphraseBlank.size() >= 16) {
 
             form.lblPasswordMatch->setText("");
             parent->button(QWizard::CommitButton)->setEnabled(true);
@@ -72,18 +75,37 @@ NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent
             form.radioRestoreWallet->setEnabled(true);
             form.radioNewWallet->setEnabled(true);
             form.radioNewWallet->setChecked(true);
-        int length = Password.length();
-        char *sequence = NULL;
-        sequence = new char[length+1];
-        strncpy(sequence, Password.toUtf8(), length +1);
 
-        QString str = blake3_PW(sequence);
-        qDebug() << str;
-        DataStore::getChatDataStore()->setPassword(str);
+            int length = passphrase.length();
+
+    char *sequence = NULL;
+        sequence = new char[length+1];
+        strncpy(sequence, passphrase.toUtf8(), length +1);
+        
+        QString passphraseHash = blake3_PW(sequence);
+        
 
         char *sequence1 = NULL;
-        sequence1 = new char[length];
-        strncpy(sequence1, str.toUtf8(), length);
+        sequence1 = new char[length+1];
+        strncpy(sequence1, passphraseHash.toUtf8(), length+1);
+
+        #define MESSAGE ((const unsigned char *) sequence)
+        #define MESSAGE_LEN length
+        #define hash ((const unsigned char *) sequence1)
+
+        #define PASSWORD sequence
+        #define KEY_LEN crypto_box_SEEDBYTES
+
+    unsigned char key[KEY_LEN];
+
+    if (crypto_pwhash
+    (key, sizeof key, PASSWORD, strlen(PASSWORD), hash,
+     crypto_pwhash_OPSLIMIT_SENSITIVE, crypto_pwhash_MEMLIMIT_SENSITIVE,
+     crypto_pwhash_ALG_DEFAULT) != 0) {
+    /* out of memory */
+}
+        QString passphraseHash1 = QByteArray(reinterpret_cast<const char*>(key), KEY_LEN).toHex();
+        DataStore::getChatDataStore()->setPassword(passphraseHash1);
          //main->setPassword(Password);
 
          //qDebug()<<"Objekt gesetzt";
