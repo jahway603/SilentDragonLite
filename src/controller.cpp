@@ -1026,32 +1026,25 @@ void Controller::refreshTransactions() {
         {   
                
             QString passphrase = DataStore::getChatDataStore()->getPassword();
-            QString hashEncryptionKey = passphrase;
-            int length = hashEncryptionKey.length();
+            int length = passphrase.length();
 
  ////////////////Generate the secretkey for our message encryption
 
              char *hashEncryptionKeyraw = NULL;
                     hashEncryptionKeyraw = new char[length+1];
-                    strncpy(hashEncryptionKeyraw, hashEncryptionKey.toLocal8Bit(), length +1);
+                    strncpy(hashEncryptionKeyraw, passphrase.toUtf8(), length +1);
+
         const QByteArray pubkeyBobArray = QByteArray::fromHex(publickey.toLatin1());
         const unsigned char *pubkeyBob = reinterpret_cast<const unsigned char *>(pubkeyBobArray.constData()); 
          
-
-
-
             #define MESSAGEAS1 ((const unsigned char *) hashEncryptionKeyraw)///////////
-              #define MESSAGEAS1_LEN length
+            #define MESSAGEAS1_LEN length
 
-   
-                 unsigned char hash1[crypto_kx_SEEDBYTES];
-
-                 crypto_hash_sha256(hash1,MESSAGEAS1, MESSAGEAS1_LEN);
                  unsigned char sk[crypto_kx_SECRETKEYBYTES];
                  unsigned char pk[crypto_kx_PUBLICKEYBYTES];
       
         if (crypto_kx_seed_keypair(pk,sk,
-                           hash1) !=0) {
+                           MESSAGEAS1) !=0) {
                            }
 
         unsigned char server_rx[crypto_kx_SESSIONKEYBYTES], server_tx[crypto_kx_SESSIONKEYBYTES];
@@ -1068,7 +1061,7 @@ void Controller::refreshTransactions() {
              }
     
 
-        const QByteArray ba = QByteArray::fromHex(memo.toLatin1());
+        const QByteArray ba = QByteArray::fromHex(memo.toUtf8());
         const unsigned char *encryptedMemo = reinterpret_cast<const unsigned char *>(ba.constData());
 
         const QByteArray ba1 = QByteArray::fromHex(headerbytes.toLatin1());
@@ -1292,32 +1285,24 @@ void Controller::refreshTransactions() {
            }else{}
 
             QString passphrase = DataStore::getChatDataStore()->getPassword();
-            QString hashEncryptionKey = passphrase;
-            int length = hashEncryptionKey.length();
+            int length = passphrase.length();
 
                     char *hashEncryptionKeyraw = NULL;
                     hashEncryptionKeyraw = new char[length+1];
-                    strncpy(hashEncryptionKeyraw, hashEncryptionKey.toLocal8Bit(), length +1);
-
-        //const QByteArray ba2 = QByteArray::fromHex(hashEncryptionKey.toLatin1());
-       // const unsigned char *hashEncryptionKeyraw = reinterpret_cast<const unsigned char *>(ba2.constData());
+                    strncpy(hashEncryptionKeyraw, passphrase.toUtf8(), length +1);
   
         const QByteArray pubkeyBobArray = QByteArray::fromHex(publickey.toLatin1());
         const unsigned char *pubkeyBob = reinterpret_cast<const unsigned char *>(pubkeyBobArray.constData());  
 
 
-    #define MESSAGEAS1 ((const unsigned char *) hashEncryptionKeyraw)///////////
-    #define MESSAGEAS1_LEN length
+        #define MESSAGEAS1 ((const unsigned char *) hashEncryptionKeyraw)///////////
+        #define MESSAGEAS1_LEN length
 
-   
-    unsigned char hash1[crypto_kx_SEEDBYTES];
-
-    crypto_hash_sha256(hash1,MESSAGEAS1, MESSAGEAS1_LEN);
-    unsigned char sk[crypto_kx_SECRETKEYBYTES];
-    unsigned char pk[crypto_kx_PUBLICKEYBYTES];
+        unsigned char sk[crypto_kx_SECRETKEYBYTES];
+        unsigned char pk[crypto_kx_PUBLICKEYBYTES];
       
         if (crypto_kx_seed_keypair(pk,sk,
-                           hash1) !=0) {
+                           MESSAGEAS1) !=0) {
 
 
                            }
@@ -1336,7 +1321,7 @@ void Controller::refreshTransactions() {
     
     
 
-        const QByteArray ba = QByteArray::fromHex(memo.toLatin1());
+        const QByteArray ba = QByteArray::fromHex(memo.toUtf8());
         const unsigned char *encryptedMemo = reinterpret_cast<const unsigned char *>(ba.constData());
 
         const QByteArray ba1 = QByteArray::fromHex(headerbytes.toLatin1());
@@ -1356,7 +1341,7 @@ void Controller::refreshTransactions() {
 
             //////Set the length of the decrypted message
 
-         unsigned char decrypted[MESSAGE1_LEN];
+         unsigned char decrypted[MESSAGE1_LEN+1];
          unsigned char tag[crypto_secretstream_xchacha20poly1305_TAG_FINAL];
          crypto_secretstream_xchacha20poly1305_state state;
 

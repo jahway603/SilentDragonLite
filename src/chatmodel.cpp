@@ -443,43 +443,29 @@ Tx MainWindow::createTxFromChatPage() {
         int lengthmemo = memoplain.length();
 
         char *memoplainchar = NULL;
-         memoplainchar = new char[lengthmemo+1];
-         strncpy(memoplainchar, memoplain.toLocal8Bit(), lengthmemo +1);
+        memoplainchar = new char[lengthmemo+2];
+        strncpy(memoplainchar, memoplain.toUtf8(), lengthmemo +1);
 
-           /////////We convert the CID from QString to unsigned char*, so we can encrypt it later
-        int lengthcid = cid.length();
-
-          char *cidchar = NULL;
-         cidchar = new char[lengthcid+1];
-         strncpy(cidchar, cid.toLocal8Bit(), lengthcid +1);
-
-  
-
-            QString pubkey = this->getPubkeyByAddress(addr);
-            QString passphrase = DataStore::getChatDataStore()->getPassword();
-            QString hashEncryptionKey = passphrase;
-            int length = hashEncryptionKey.length();
-
+        QString pubkey = this->getPubkeyByAddress(addr);
+        QString passphraseHash = DataStore::getChatDataStore()->getPassword();
+        int length = passphraseHash.length();
 
  ////////////////Generate the secretkey for our message encryption
 
-              char *hashEncryptionKeyraw = NULL;
-                    hashEncryptionKeyraw = new char[length+1];
-                    strncpy(hashEncryptionKeyraw, hashEncryptionKey.toLocal8Bit(), length +1);
+        char *hashEncryptionKeyraw = NULL;
+        hashEncryptionKeyraw = new char[length+1];
+        strncpy(hashEncryptionKeyraw, passphraseHash.toUtf8(), length+1);
 
         #define MESSAGEAS1 ((const unsigned char *) hashEncryptionKeyraw)
         #define MESSAGEAS1_LEN length
-        unsigned char hash[crypto_kx_SEEDBYTES];
-
-            crypto_hash_sha256(hash,MESSAGEAS1, MESSAGEAS1_LEN);
-
+    
 
         unsigned char sk[crypto_kx_SECRETKEYBYTES];
         unsigned char pk[crypto_kx_PUBLICKEYBYTES];
         unsigned char server_rx[crypto_kx_SESSIONKEYBYTES], server_tx[crypto_kx_SESSIONKEYBYTES];
       
                 if (crypto_kx_seed_keypair(pk,sk,
-                           hash) !=0) {
+                           MESSAGEAS1) !=0) {
                            }
          ////////////////Get the pubkey from Bob, so we can create the share key
 
@@ -772,29 +758,22 @@ Tx MainWindow::createTxForSafeContactRequest()
 
             
             QString memo = contactRequest.getMemo();
-          //  QString privkey = rpc->fetchPrivKey(myAddr);
             QString passphrase = DataStore::getChatDataStore()->getPassword();
-            QString hashEncryptionKey =  passphrase;
-            int length = hashEncryptionKey.length();
+            int length = passphrase.length();
 
  ////////////////Generate the secretkey for our message encryption
-      char *hashEncryptionKeyraw = NULL;
-                    hashEncryptionKeyraw = new char[length+1];
-                    strncpy(hashEncryptionKeyraw, hashEncryptionKey.toLocal8Bit(), length +1);
+            char *hashEncryptionKeyraw = NULL;
+            hashEncryptionKeyraw = new char[length+1];
+            strncpy(hashEncryptionKeyraw, passphrase.toUtf8(), length +1);
+
         #define MESSAGEAS1 ((const unsigned char *) hashEncryptionKeyraw)
         #define MESSAGEAS1_LEN length
-
-   
-             unsigned char hash[crypto_kx_SEEDBYTES];
-
-            crypto_hash_sha256(hash,MESSAGEAS1, MESSAGEAS1_LEN);
-
 
              unsigned char sk[crypto_kx_SECRETKEYBYTES];
              unsigned char pk[crypto_kx_PUBLICKEYBYTES];
       
                 if (crypto_kx_seed_keypair(pk,sk,
-                           hash) !=0) {
+                           MESSAGEAS1) !=0) {
                            }
 
             QString publicKey = QByteArray(reinterpret_cast<const char*>(pk), crypto_kx_PUBLICKEYBYTES).toHex();
