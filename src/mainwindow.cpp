@@ -703,8 +703,6 @@ void MainWindow::setupSettingsModal() {
 
         QObject::connect(settings.comboBoxTheme, &QComboBox::currentTextChanged, [=] (QString theme_name) {
             this->slot_change_theme(theme_name);
-            // Tell the user to restart
-            QMessageBox::information(this, tr("Restart"), tr("Please restart Silentdragonlite to have the theme apply"), QMessageBox::Ok);
         });
 
         // Get Currency Data
@@ -1968,7 +1966,7 @@ void MainWindow::slot_change_theme(const QString& theme_name)
     if (qFile.open(QFile::ReadOnly))
     {
       QString styleSheet = QLatin1String(qFile.readAll());
-      this->setStyleSheet(""); // reset styles    
+      this->setStyleSheet(""); // resets styles, makes app restart unnecessary
       this->setStyleSheet(styleSheet);
     }
 

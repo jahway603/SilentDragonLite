@@ -74,6 +74,7 @@
         <file>res/css/Default.css</file>
         <file>res/css/Light.css</file>
         <file>res/css/Midnight.css</file>
+        <file>res/css/test.css</file>
     </qresource>
     <qresource prefix="/images/blue">
         <file>res/images/blue/unchecked.png</file>
@@ -84,5 +85,8 @@
         <file>res/images/blue/blue_leftArrow_small.png</file>
         <file>res/images/blue/blue_rightArrow_small.png</file>
         <file>res/images/blue/blue_qtreeview_selected.png</file>
+    </qresource>
+    <qresource prefix="/images">
+        <file>res/images/tile.png</file>
     </qresource>
 </RCC>
