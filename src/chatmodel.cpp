@@ -163,7 +163,7 @@ void MainWindow::renderContactRequest(){
 
     
            
-        if  ((c.second.isOutgoing() == false) && (label_contact == c.second.getRequestZaddr()))
+        if  ((c.second.isOutgoing() == false) && (label_contact == c.second.getRequestZaddr() && (c.second.getMemo().startsWith("{") == false)))
         
         {
 
@@ -194,12 +194,12 @@ void MainWindow::renderContactRequest(){
         QString label_contactold = index.data(Qt::DisplayRole).toString();
         QStandardItemModel* contactMemo = new QStandardItemModel();
            
-          if  ((c.second.isOutgoing() == false) && (label_contactold == c.second.getContact()))
+          if  ((c.second.isOutgoing() == false) && (label_contactold == c.second.getContact()) && (c.second.getMemo().startsWith("{") == false))
         
         {
 
           QStandardItem* Items = new QStandardItem(c.second.getMemo());
-             contactMemo->appendRow(Items);
+            contactMemo->appendRow(Items);
             requestContact.requestMemo->setModel(contactMemo);   
             requestContact.requestMemo->show();
            
@@ -696,8 +696,8 @@ void::MainWindow::addContact()
     request.setupUi(&dialog);
     Settings::saveRestore(&dialog);
 
-QObject::connect(request.newZaddr, &QPushButton::clicked, [&] () { 
- try 
+
+       try 
     {   
     bool sapling = true;
     rpc->createNewZaddr(sapling, [=] (json reply) {
@@ -706,6 +706,9 @@ QObject::connect(request.newZaddr, &QPushButton::clicked, [&] () {
         request.myzaddr->setText(myAddr);
         ui->listReceiveAddresses->insertItem(0, myAddr); 
         ui->listReceiveAddresses->setCurrentIndex(0);
+        DataStore::getChatDataStore()->setSendZaddr(myAddr);
+
+        qDebug()<<"Zaddr: "<<myAddr;
     });
 
     }catch(...)
@@ -714,29 +717,14 @@ QObject::connect(request.newZaddr, &QPushButton::clicked, [&] () {
             
             qDebug() << QString("Caught something nasty with myZaddr Contact");
        }
-});
+
 
         QString cid = QUuid::createUuid().toString(QUuid::WithoutBraces);
-
-    QObject::connect(request.sendRequestButton, &QPushButton::clicked, [&] () {
-        
-        QString addr = request.zaddr->text();
-        QString myAddr = request.myzaddr->text().trimmed();
-        QString memo = request.memorequest->toPlainText().trimmed();
-        QString avatar = QString(":/icons/res/") + request.comboBoxAvatar->currentText() + QString(".png");
-        QString label = request.labelRequest->text().trimmed();
-
-
-        contactRequest.setSenderAddress(myAddr);
-        contactRequest.setReceiverAddress(addr);
-        contactRequest.setMemo(memo);
-        contactRequest.setCid(cid);
-        contactRequest.setAvatar(avatar);
-        contactRequest.setLabel(label);
-
-    });
-        
+      
    QObject::connect(request.sendRequestButton, &QPushButton::clicked, this, &MainWindow::saveandsendContact);
+
+
+
   // QObject::connect(request.onlyAdd, &QPushButton::clicked, this, &MainWindow::saveContact);
         
     dialog.exec();
@@ -764,7 +752,7 @@ Tx MainWindow::createTxForSafeContactRequest()
     totalAmt = totalAmt + amt;
    
             QString cid = contactRequest.getCid();
-            QString myAddr = contactRequest.getSenderAddress();
+            QString myAddr = DataStore::getChatDataStore()->getSendZaddr();
             QString type = "Cont";
             QString addr = contactRequest.getReceiverAddress();
 
@@ -808,16 +796,6 @@ void MainWindow::ContactRequest() {
      
         QMessageBox msg(QMessageBox::Critical, tr("You have to select a contact and insert a Memo"),
         tr("You have selected no Contact from Contactlist,\n")  + tr("\nor your Memo is empty"),
-        QMessageBox::Ok, this);
-
-        msg.exec();
-        return;
-    }
-
-     if (contactRequest.getSenderAddress().size() > 80) {
-     
-        QMessageBox msg(QMessageBox::Critical, tr("Missing HushChat Address"),
-        tr("You have to create your HushChat address to send a contact request,\n"),
         QMessageBox::Ok, this);
 
         msg.exec();
