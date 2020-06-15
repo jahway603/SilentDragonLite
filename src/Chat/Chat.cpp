@@ -59,7 +59,8 @@ void Chat::renderChatBox(Ui::MainWindow *ui, QListView *view, QLabel *label)
             if (
                 (p.getName() == ui->contactNameMemo->text().trimmed()) &&
                 (p.getPartnerAddress() == c.second.getAddress()) &&
-                (c.second.isOutgoing() == true)) 
+                (c.second.isOutgoing() == true))
+               
             {
 
                 QStandardItem *Items = new QStandardItem(c.second.toChatLine());
