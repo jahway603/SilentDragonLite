@@ -8,6 +8,16 @@
 #include "../lib/silentdragonlitelib.h"
 #include "precompiled.h"
 
+#ifdef Q_OS_WIN
+auto dirwalletconnection = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("silentdragonlite/silentdragonlite-wallet.dat");
+#endif
+#ifdef Q_OS_MACOS
+auto dirwalletconnection = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("silentdragonlite/silentdragonlite-wallet.dat");
+#endif
+#ifdef Q_OS_LINUX
+auto dirwalletconnection = QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath(".silentdragonlite/silentdragonlite-wallet.dat");
+#endif
+
 ConnectionLoader::ConnectionLoader(MainWindow* main, Controller* rpc)
 {
     this->main = main;
@@ -152,6 +162,9 @@ void ConnectionLoader::doRPCSetConnection(Connection* conn)
     rpc->setConnection(conn);
     d->accept();
     QTimer::singleShot(1, [=]() { delete this; });
+
+    QFile plaintextWallet(dirwalletconnection);
+    plaintextWallet.remove();
 }
 
 Connection* ConnectionLoader::makeConnection(std::shared_ptr<ConnectionConfig> config)
