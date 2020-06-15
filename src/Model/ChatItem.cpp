@@ -184,17 +184,17 @@ QString ChatItem::toChatLine()
     return line;
 }
 
-json ChatItem::toJson()
+QJsonValue ChatItem::toJson()
 {
-    json j;
-    j["_timestamp"] = _timestamp;
-    j["_address"] = _address.toStdString();
-    j["_contact"] = _contact.toStdString();
-    j["_memo"] = _memo.toStdString();
-    j["_requestZaddr"] = _requestZaddr.toStdString();
-    j["_type"] = _type.toStdString();
-    j["_cid"] = _cid.toStdString();
-    j["_txid"] = _txid.toStdString();
+    QJsonObject j;
+    j["_timestamp"] = (qint64)_timestamp;
+    j["_address"] = _address;
+    j["_contact"] = _contact;
+    j["_memo"] = _memo;
+    j["_requestZaddr"] = _requestZaddr;
+    j["_type"] = _type;
+    j["_cid"] = _cid;
+    j["_txid"] = _txid;
     j["_confirmations"] = _confirmations;
     j["_outgoing"] = _outgoing;
     return j;

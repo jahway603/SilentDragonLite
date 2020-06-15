@@ -6,8 +6,6 @@
 #include "precompiled.h"
 
 
-using json = nlohmann::json;
-
 class Controller;
 
 struct ConnectionConfig {
@@ -57,15 +55,15 @@ private:
 class Callback: public QObject {
     Q_OBJECT
 public:
-    Callback(const std::function<void(json)> cb, const std::function<void(QString)> errCb) { this->cb = cb; this->errCb = errCb;}
+    Callback(const std::function<void(QJsonValue)> cb, const std::function<void(QString)> errCb) { this->cb = cb; this->errCb = errCb;}
     ~Callback() = default;
 
 public slots:
-    void processRPCCallback(json resp);
+    void processRPCCallback(QJsonValue resp);
     void processError(QString error);
 
-private: 
-    std::function<void(json)> cb;
+private:
+    std::function<void(QJsonValue)> cb;
     std::function<void(QString)> errCb;
 
 };
@@ -73,14 +71,14 @@ private:
 /**
  * A runnable that runs some lightclient Command in a non-UI thread.
  * It emits the "responseReady" signal, which should be processed in a GUI thread.
- * 
+ *
  * Since the autoDelete flag is ON, the runnable should be destroyed automatically
- * by the threadpool. 
+ * by the threadpool.
  */
 class Executor : public QObject, public QRunnable {
     Q_OBJECT
 
-public: 
+public:
     Executor(QString cmd, QString args) {
         this->cmd = cmd;
         this->args = args;
@@ -92,12 +90,12 @@ public:
     virtual void run();
 
 signals:
-    void responseReady(json);
+    void responseReady(QJsonValue);
     void handleError(QString);
 
 private:
     QString cmd;
-    QString args;    
+    QString args;
 };
 
 /**
@@ -116,20 +114,20 @@ public:
 
     void shutdown();
 
-    
-    void doRPC(const QString cmd, const QString args, const std::function<void(json)>& cb, 
+
+    void doRPC(const QString cmd, const QString args, const std::function<void(QJsonValue)>& cb,
                const std::function<void(QString)>& errCb);
-    void doRPCWithDefaultErrorHandling(const QString cmd, const QString args, const std::function<void(json)>& cb);
-    void doRPCIgnoreError(const QString cmd, const QString args, const std::function<void(json)>& cb) ;
+    void doRPCWithDefaultErrorHandling(const QString cmd, const QString args, const std::function<void(QJsonValue)>& cb);
+    void doRPCIgnoreError(const QString cmd, const QString args, const std::function<void(QJsonValue)>& cb) ;
 
     void showTxError(const QString& error);
 
-    json    getInfo() { return serverInfo; }
-    void    setInfo(const json& info) { serverInfo = info; }
+    QJsonValue getInfo() { return serverInfo; }
+    void        setInfo(const QJsonValue& info) { serverInfo = info; }
 
 private:
     bool shutdownInProgress = false;
-    json serverInfo;
+    QJsonValue serverInfo;
 };
 
 #endif

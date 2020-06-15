@@ -1,7 +1,6 @@
 #ifndef CHATDATASTORE_H
 #define CHATDATASTORE_H
 #include "../chatmodel.h"
-using json = nlohmann::json;
 
 class ChatDataStore
 {

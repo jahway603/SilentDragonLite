@@ -9,8 +9,6 @@
 #include "recurring.h"
 
 
-using json = nlohmann::json;
-
 void MainWindow::setupSendTab() {
     // Create the validator for send to/amount fields
     amtValidator = new QRegExpValidator(QRegExp("[0-9]{0,8}\\.?[0-9]{0,8}"));
