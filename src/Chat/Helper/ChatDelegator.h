@@ -50,7 +50,7 @@ inline void ListViewDelegate::paint(QPainter *painter, QStyleOptionViewItem cons
     bodydoc.setDefaultTextOption(textOption);
     bodydoc.setDefaultFont(QFont("Roboto", 12));
     QString bodytext(index.data(Qt::DisplayRole).toString());
-    bodydoc.setHtml(bodytext);
+    bodydoc.setHtml(bodytext.replace("\n", "<br>"));
     qreal contentswidth = option.rect.width() * d_widthfraction - d_horizontalmargin - d_pointerwidth - d_leftpadding - d_rightpadding;
     bodydoc.setTextWidth(contentswidth);
     qreal bodyheight = bodydoc.size().height();

@@ -479,10 +479,17 @@ Tx MainWindow::createTxFromChatPage() {
              }
 
     
+            // Let's try to preserve Unicode characters
+            QByteArray ba_memo = memoplain.toUtf8();
+            int ba_memo_length = ba_memo.size();
+
+            #define MESSAGE (const unsigned char *) ba_memo.data()
+            #define MESSAGE_LEN ba_memo_length
+
 
     ////////////Now lets encrypt the message Alice send to Bob//////////////////////////////
-             #define MESSAGE (const unsigned char *) memoplainchar
-             #define MESSAGE_LEN lengthmemo
+             //#define MESSAGE (const unsigned char *) memoplainchar
+             //#define MESSAGE_LEN lengthmemo
              #define CIPHERTEXT_LEN (crypto_secretstream_xchacha20poly1305_ABYTES + MESSAGE_LEN)
              unsigned char ciphertext[CIPHERTEXT_LEN];
              unsigned char header[crypto_secretstream_xchacha20poly1305_HEADERBYTES];
