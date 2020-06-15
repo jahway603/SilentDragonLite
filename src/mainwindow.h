@@ -14,7 +14,6 @@ class WSServer;
 class WormholeClient;
 class ChatModel;
 
-using json = nlohmann::json;
 
 // Struct used to hold destination info when sending a Tx. 
 struct ToFields {

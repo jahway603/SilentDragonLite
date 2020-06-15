@@ -59,15 +59,16 @@ void ChatDataStore::setPassword(QString password)
 
 QString ChatDataStore::dump()
 {
-	json chats;
-    chats["count"] = this->data.size();
-    json j = {};
+    QJsonObject chats;
+    chats["count"] = (qint64)this->data.size();
+    QJsonArray j;
     for (auto &c: this->data)
     {
         j.push_back(c.second.toJson());
     }
     chats["chatitems"] = j;
-	return QString::fromStdString(chats.dump());
+    QJsonDocument jd_chats = QJsonDocument(chats);
+    return QLatin1String(jd_chats.toJson(QJsonDocument::Compact));
 }
 
 std::map<QString, ChatItem> ChatDataStore::getAllRawChatItems()

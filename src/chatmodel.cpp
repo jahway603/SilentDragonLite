@@ -479,10 +479,17 @@ Tx MainWindow::createTxFromChatPage() {
              }
 
     
+            // Let's try to preserve Unicode characters
+            QByteArray ba_memo = memoplain.toUtf8();
+            int ba_memo_length = ba_memo.size();
+
+            #define MESSAGE (const unsigned char *) ba_memo.data()
+            #define MESSAGE_LEN ba_memo_length
+
 
     ////////////Now lets encrypt the message Alice send to Bob//////////////////////////////
-             #define MESSAGE (const unsigned char *) memoplainchar
-             #define MESSAGE_LEN lengthmemo
+             //#define MESSAGE (const unsigned char *) memoplainchar
+             //#define MESSAGE_LEN lengthmemo
              #define CIPHERTEXT_LEN (crypto_secretstream_xchacha20poly1305_ABYTES + MESSAGE_LEN)
              unsigned char ciphertext[CIPHERTEXT_LEN];
              unsigned char header[crypto_secretstream_xchacha20poly1305_HEADERBYTES];
@@ -696,12 +703,12 @@ void::MainWindow::addContact()
     request.setupUi(&dialog);
     Settings::saveRestore(&dialog);
 
-
-       try 
+    try
     {   
+
     bool sapling = true;
-    rpc->createNewZaddr(sapling, [=] (json reply) {
-        QString myAddr = QString::fromStdString(reply.get<json::array_t>()[0]);
+    rpc->createNewZaddr(sapling, [=] (QJsonValue reply) {
+        QString myAddr = reply.toArray()[0].toString();
         rpc->refreshAddresses();
         request.myzaddr->setText(myAddr);
         ui->listReceiveAddresses->insertItem(0, myAddr); 
@@ -738,73 +745,66 @@ void::MainWindow::addContact()
         contactRequest.setLabel(label);
 
          });
-      
-   QObject::connect(request.sendRequestButton, &QPushButton::clicked, this, &MainWindow::saveandsendContact);
 
 
+    QObject::connect(request.sendRequestButton, &QPushButton::clicked, this, &MainWindow::saveandsendContact);
 
-  // QObject::connect(request.onlyAdd, &QPushButton::clicked, this, &MainWindow::saveContact);
+    // QObject::connect(request.onlyAdd, &QPushButton::clicked, this, &MainWindow::saveContact);
         
     dialog.exec();
-       
     rpc->refreshContacts(ui->listContactWidget);
-
 }
 
 void MainWindow::saveandsendContact()
 {
-        this->ContactRequest();
-        
+    this->ContactRequest();
 }
 
 // Create a Tx for a contact Request 
 Tx MainWindow::createTxForSafeContactRequest() 
 {
     Tx tx; 
-{
-    CAmount totalAmt;
-    QString amtStr = "0";
-    CAmount amt;  
-    QString headerbytes = "";
-    amt = CAmount::fromDecimalString("0");
-    totalAmt = totalAmt + amt;
+    {
+        CAmount totalAmt;
+        QString amtStr = "0";
+        CAmount amt;
+        QString headerbytes = "";
+        amt = CAmount::fromDecimalString("0");
+        totalAmt = totalAmt + amt;
    
-            QString cid = contactRequest.getCid();
-            QString myAddr = DataStore::getChatDataStore()->getSendZaddr();
-            QString type = "Cont";
-            QString addr = contactRequest.getReceiverAddress();
+        QString cid = contactRequest.getCid();
+        QString myAddr = DataStore::getChatDataStore()->getSendZaddr();
+        QString type = "Cont";
+        QString addr = contactRequest.getReceiverAddress();
 
-            
-            QString memo = contactRequest.getMemo();
-            QString passphrase = DataStore::getChatDataStore()->getPassword();
-            int length = passphrase.length();
 
- ////////////////Generate the secretkey for our message encryption
-            char *hashEncryptionKeyraw = NULL;
-            hashEncryptionKeyraw = new char[length+1];
-            strncpy(hashEncryptionKeyraw, passphrase.toUtf8(), length +1);
+        QString memo = contactRequest.getMemo();
+        QString passphrase = DataStore::getChatDataStore()->getPassword();
+        int length = passphrase.length();
+
+////////////////Generate the secretkey for our message encryption
+        char *hashEncryptionKeyraw = NULL;
+        hashEncryptionKeyraw = new char[length+1];
+        strncpy(hashEncryptionKeyraw, passphrase.toUtf8(), length +1);
 
         #define MESSAGEAS1 ((const unsigned char *) hashEncryptionKeyraw)
         #define MESSAGEAS1_LEN length
 
-             unsigned char sk[crypto_kx_SECRETKEYBYTES];
-             unsigned char pk[crypto_kx_PUBLICKEYBYTES];
-      
-                if (crypto_kx_seed_keypair(pk,sk,
-                           MESSAGEAS1) !=0) {
-                           }
+         unsigned char sk[crypto_kx_SECRETKEYBYTES];
+         unsigned char pk[crypto_kx_PUBLICKEYBYTES];
 
-            QString publicKey = QByteArray(reinterpret_cast<const char*>(pk), crypto_kx_PUBLICKEYBYTES).toHex();
+         if (crypto_kx_seed_keypair(pk, sk, MESSAGEAS1) !=0) {
+            //
+         }
 
-            QString hmemo= createHeaderMemo(type,cid,myAddr,"", publicKey);
+         QString publicKey = QByteArray(reinterpret_cast<const char*>(pk), crypto_kx_PUBLICKEYBYTES).toHex();
+         QString hmemo= createHeaderMemo(type,cid,myAddr,"", publicKey);
 
-     
-            tx.toAddrs.push_back(ToFields{addr, amt, hmemo});
-            tx.toAddrs.push_back(ToFields{addr, amt, memo});
-            tx.fee = Settings::getMinerFee();
-        
-}
-        
+        tx.toAddrs.push_back(ToFields{addr, amt, hmemo});
+        tx.toAddrs.push_back(ToFields{addr, amt, memo});
+        tx.fee = Settings::getMinerFee();
+    }
+
     return tx;
 }
 
