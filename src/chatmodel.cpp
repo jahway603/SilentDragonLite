@@ -707,6 +707,7 @@ void::MainWindow::addContact()
         ui->listReceiveAddresses->insertItem(0, myAddr); 
         ui->listReceiveAddresses->setCurrentIndex(0);
         DataStore::getChatDataStore()->setSendZaddr(myAddr);
+    
 
         qDebug()<<"Zaddr: "<<myAddr;
     });
@@ -718,8 +719,25 @@ void::MainWindow::addContact()
             qDebug() << QString("Caught something nasty with myZaddr Contact");
        }
 
-
         QString cid = QUuid::createUuid().toString(QUuid::WithoutBraces);
+        
+    QObject::connect(request.sendRequestButton, &QPushButton::clicked, [&] () {
+        
+        QString addr = request.zaddr->text();
+        QString myAddr = request.myzaddr->text().trimmed();
+        QString memo = request.memorequest->toPlainText().trimmed();
+        QString avatar = QString(":/icons/res/") + request.comboBoxAvatar->currentText() + QString(".png");
+        QString label = request.labelRequest->text().trimmed();
+
+
+        contactRequest.setSenderAddress(myAddr);
+        contactRequest.setReceiverAddress(addr);
+        contactRequest.setMemo(memo);
+        contactRequest.setCid(cid);
+        contactRequest.setAvatar(avatar);
+        contactRequest.setLabel(label);
+
+         });
       
    QObject::connect(request.sendRequestButton, &QPushButton::clicked, this, &MainWindow::saveandsendContact);
 
