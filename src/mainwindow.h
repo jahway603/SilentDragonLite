@@ -214,5 +214,21 @@ private:
     QPushButton*    sendChatButton     = nullptr;
 };
 
+class ChatMemoEditRequest : public QTextEdit
+{
+public:
+    ChatMemoEditRequest(QWidget* parent);
+
+    void setMaxLenChatRequest(int len);
+    void setLenDisplayLabelChatRequest(QLabel* label);
+    void SetSendRequestButton(QPushButton* button);
+    void updateDisplayChatRequest();
+
+private:
+    int             maxlenchatrequest             = 512;
+    QLabel*         lenDisplayLabelchatRequest   = nullptr;
+    QPushButton*    sendRequestButton     = nullptr;
+};
+
 
 #endif // MAINWINDOW_H
