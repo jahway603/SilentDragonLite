@@ -255,7 +255,7 @@ void MainWindow::renderContactRequest(){
                   ui->listContactWidget);
 
                   QMessageBox::information(this, "Added Contact","successfully added your new contact. You can now Chat with this contact");  
-            
+            dialog.close();
     });
 
  dialog.exec();
