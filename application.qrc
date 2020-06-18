@@ -47,6 +47,7 @@
         <file>res/addContactBlack.png</file>
         <file>res/unknownBlack.png</file>
         <file>res/unknownWhite.png</file>
+        <file>res/hush-passion.png</file>
     </qresource>
     <qresource prefix="/img">
         <file>res/hushdlogo.gif</file>

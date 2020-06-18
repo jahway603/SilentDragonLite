@@ -51,12 +51,13 @@ int FirstTimeWizard::nextId() const {
 NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent) {
     setTitle("Create or Restore wallet.");
 
-    
-
     QWidget* pageWidget = new QWidget();
     Ui_CreateWalletForm form;
     form.setupUi(pageWidget);
-    
+
+    parent->button(QWizard::CommitButton)->setEnabled(false);
+    setButtonText(QWizard::CommitButton, "Next");
+
 
          auto fnPasswordEdited = [=](const QString&) {
         // Enable the Finish button if the passwords match.
@@ -66,11 +67,11 @@ NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent
 
         
         if (!form.txtPassword->text().isEmpty() && 
-                form.txtPassword->text() == form.txtConfirmPassword->text() && passphraseBlank.size() >= 16) {
+                form.txtPassword->text() == form.txtConfirmPassword->text() && passphraseBlank.size() >= 16 ){
 
             form.lblPasswordMatch->setText("");
-            parent->button(QWizard::CommitButton)->setEnabled(true);
-            setButtonText(QWizard::CommitButton, "Next");
+            
+            
             form.radioRestoreWallet->setEnabled(true);
             form.radioNewWallet->setEnabled(true);
             form.radioNewWallet->setChecked(true);
@@ -109,7 +110,7 @@ NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent
 
          //qDebug()<<"Objekt gesetzt";
             
-
+ 
                 // Exclusive buttons
     QObject::connect(form.radioNewWallet,  &QRadioButton::clicked, [=](bool checked) {
         if (checked) {
@@ -122,6 +123,13 @@ NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent
         if (checked) {
             form.radioNewWallet->setChecked(false);
           
+        }
+    });
+
+    QObject::connect(form.TOS,  &QRadioButton::clicked, [=](bool checked) {
+        if (checked) {
+            parent->button(QWizard::CommitButton)->setEnabled(true);
+            
         }
     });
            
