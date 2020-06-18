@@ -48,6 +48,7 @@
         <file>res/unknownBlack.png</file>
         <file>res/unknownWhite.png</file>
         <file>res/hush-passion.png</file>
+        <file>res/dark-01.png</file>
     </qresource>
     <qresource prefix="/img">
         <file>res/hushdlogo.gif</file>
