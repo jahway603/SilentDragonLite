@@ -242,10 +242,14 @@ bool RestoreSeedPage::validatePage() {
         return false;
     }
 
+///Number
+
+QString number_str =  form.number->text();
+qint64 number = number_str.toUInt();
     // 3. Attempt to restore wallet with the seed phrase
     {
         char* resp = litelib_initialize_new_from_phrase(parent->dangerous, parent->server.toStdString().c_str(),
-                seed.toStdString().c_str(), birthday);
+                seed.toStdString().c_str(), birthday, number);
         QString reply = litelib_process_response(resp);
 
         if (reply.toUpper().trimmed() != "OK") {
