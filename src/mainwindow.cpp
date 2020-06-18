@@ -576,34 +576,15 @@ void MainWindow::removeWalletEncryptionStartUp() {
      auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
      QFile wallet(dirwallet);
     
-    if (wallet.size() > 0)
+    if (wallet.size() == 0)
     {
-        if  (fileExists(dirwalletbackup))
-
-        {
-
-                 QMessageBox::information(this, tr("You still have plaintext data on your disk!"),
-                    QString("WARNING: Delete it only if you have a backup of your Wallet Seed."),
-                    QMessageBox::Ok
-                );   
-                          // backup.remove(); 
-
-        }
-      
-         QMessageBox::information(this, tr("Wallet Encryption Success"),
-                    QString("SDL is ready to Rock"),
-                    QMessageBox::Ok
-                );    
-
-             
-        }else{
-        
+         
          QMessageBox::critical(this, tr("Wallet Encryption Failed"),
                     QString("false password please try again"),
                     QMessageBox::Ok
                 );
                  this->removeWalletEncryptionStartUp();
-        }    
+        }else{}   
 
     }else{
 

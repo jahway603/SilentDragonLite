@@ -57,11 +57,9 @@ NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent
 
     QGraphicsScene* scene = new QGraphicsScene();
     QGraphicsView* view = new QGraphicsView(scene);
-   // QPixmap pixmap(":/icons/res/hush-passion.png");
     form.Logo->setScene(scene);
     QPixmap pixmap(":/icons/res/dark-01.png");
-   // QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pixmap));
-   scene->addPixmap(pixmap);
+    scene->addPixmap(pixmap);
     form.Logo->show();
 
 
