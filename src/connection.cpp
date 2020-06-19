@@ -147,6 +147,7 @@ void ConnectionLoader::doAutoConnect()
 
         syncTimer->setInterval(1* 1000);
         syncTimer->start();
+        main->logger->write("Start sync timer");
 
     }, [=](QString err) {
         showError(err);
@@ -159,6 +160,7 @@ void ConnectionLoader::createOrRestore(bool dangerous, QString server)
     d->hide();
     // Create a wizard
     FirstTimeWizard wizard(dangerous, server);
+    main->logger->write("Start new Wallet with FirstimeWizard");
     wizard.exec();
 }
 
