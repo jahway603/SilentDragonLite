@@ -159,12 +159,25 @@ void ConnectionLoader::createOrRestore(bool dangerous, QString server)
 void ConnectionLoader::doRPCSetConnection(Connection* conn)
 {
     qDebug() << "Connectionloader finished, setting connection";
+    main->logger->write("Connectionloader finished, setting connection");
     rpc->setConnection(conn);
     d->accept();
     QTimer::singleShot(1, [=]() { delete this; });
 
+try
+{
+
     QFile plaintextWallet(dirwalletconnection);
+    main->logger->write("Path to Wallet.dat : " );
     plaintextWallet.remove();
+
+}catch (...)
+
+{
+
+    main->logger->write("no Plaintext wallet.dat");
+}
+    
 }
 
 Connection* ConnectionLoader::makeConnection(std::shared_ptr<ConnectionConfig> config)
