@@ -105,11 +105,14 @@ void ConnectionLoader::doAutoConnect()
         // If success, set the connection
         main->logger->write("Connection is online.");
         connection->setInfo(reply);
+        main->logger->write("getting Connection reply");
         isSyncing = new QAtomicInteger<bool>();
         isSyncing->storeRelaxed(true);
+        main->logger->write("isSyncing");
 
         // Do a sync at startup
         syncTimer = new QTimer(main);
+        main->logger->write("Beginning sync");
         connection->doRPCWithDefaultErrorHandling("sync", "", [=](QJsonValue) {
             isSyncing->storeRelaxed(false);
             // Cancel the timer
@@ -124,10 +127,13 @@ void ConnectionLoader::doAutoConnect()
             if (isSyncing != nullptr && isSyncing->loadRelaxed()) {
                 // Get the sync status
                 connection->doRPC("syncstatus", "", [=](QJsonValue reply) {
+                   
                     if (isSyncing != nullptr && !reply.toObject()["synced_blocks"].isUndefined())
                     {
                         qint64 synced = reply["synced_blocks"].toInt();
+                         main->logger->write("synced_blocks" + synced) ;
                         qint64 total = reply["total_blocks"].toInt();
+                        main->logger->write("total_blocks" + total) ;
                         me->showInformation(
                             "Synced " + QString::number(synced) + " / " + QString::number(total)
                         );
