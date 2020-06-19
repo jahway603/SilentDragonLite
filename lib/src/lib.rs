@@ -31,6 +31,30 @@ pub extern fn litelib_wallet_exists(chain_name: *const c_char) -> bool {
     config.wallet_exists()
 }
 
+//////hash blake3
+
+#[no_mangle]
+pub extern fn blake3_PW(pw: *const c_char) -> *mut c_char{
+
+    let passwd = unsafe {
+        assert!(!pw.is_null());
+
+        CStr::from_ptr(pw).to_string_lossy().into_owned()
+    };
+
+    let data = passwd.as_bytes();
+// Hash an input all at once.
+let hash1 = blake3::hash(data).to_hex();
+println!("\nBlake3 Hash: {}", hash1);
+
+//let sttring = CString::new(hash1).unwrap();
+let e_str = CString::new(format!("{}", hash1)).unwrap();
+return e_str.into_raw();
+
+
+
+}
+
 /// Create a new wallet and return the seed for the newly created wallet.
 #[no_mangle]
 pub extern fn litelib_initialize_new(dangerous: bool, server: *const c_char) -> *mut c_char {
@@ -78,7 +102,7 @@ pub extern fn litelib_initialize_new(dangerous: bool, server: *const c_char) -> 
 /// Restore a wallet from the seed phrase
 #[no_mangle]
 pub extern fn litelib_initialize_new_from_phrase(dangerous: bool, server: *const c_char, 
-            seed: *const c_char, birthday: u64) -> *mut c_char {
+            seed: *const c_char, birthday: u64, number: u64) -> *mut c_char {
     let server_str = unsafe {
         assert!(!server.is_null());
 
@@ -100,7 +124,7 @@ pub extern fn litelib_initialize_new_from_phrase(dangerous: bool, server: *const
         }
     };
 
-    let lightclient = match LightClient::new_from_phrase(seed_str, &config, birthday) {
+    let lightclient = match LightClient::new_from_phrase(seed_str, &config, birthday, number, false) {
         Ok(l) => l,
         Err(e) => {
             let e_str = CString::new(format!("Error: {}", e)).unwrap();

@@ -47,6 +47,8 @@
         <file>res/addContactBlack.png</file>
         <file>res/unknownBlack.png</file>
         <file>res/unknownWhite.png</file>
+        <file>res/hush-passion.png</file>
+        <file>res/dark-01.png</file>
     </qresource>
     <qresource prefix="/img">
         <file>res/hushdlogo.gif</file>
@@ -67,6 +69,7 @@
         <file>res/silentdragonlite_fa.qm</file>
         <file>res/silentdragonlite_id.qm</file>
         <file>res/silentdragonlite_ar.qm</file>
+        <file>res/silentdragonlite_ro.qm</file>
     </qresource>
     <qresource prefix="/css">
         <file>res/css/Blue.css</file>
@@ -74,6 +77,7 @@
         <file>res/css/Default.css</file>
         <file>res/css/Light.css</file>
         <file>res/css/Midnight.css</file>
+        <file>res/css/test.css</file>
     </qresource>
     <qresource prefix="/images/blue">
         <file>res/images/blue/unchecked.png</file>
@@ -84,5 +88,8 @@
         <file>res/images/blue/blue_leftArrow_small.png</file>
         <file>res/images/blue/blue_rightArrow_small.png</file>
         <file>res/images/blue/blue_qtreeview_selected.png</file>
+    </qresource>
+    <qresource prefix="/images">
+        <file>res/images/tile.png</file>
     </qresource>
 </RCC>

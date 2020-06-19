@@ -5,6 +5,7 @@
 
 #include "ui_newseed.h"
 #include "ui_restoreseed.h"
+#include "ui_newwallet.h"
 #include "mainwindow.h"
 
 

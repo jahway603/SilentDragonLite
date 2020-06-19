@@ -14,7 +14,6 @@ class WSServer;
 class WormholeClient;
 class ChatModel;
 
-using json = nlohmann::json;
 
 // Struct used to hold destination info when sending a Tx. 
 struct ToFields {
@@ -213,6 +212,22 @@ private:
     int             maxlenchat             = 235;
     QLabel*         lenDisplayLabelchat    = nullptr;
     QPushButton*    sendChatButton     = nullptr;
+};
+
+class ChatMemoEditRequest : public QTextEdit
+{
+public:
+    ChatMemoEditRequest(QWidget* parent);
+
+    void setMaxLenChatRequest(int len);
+    void setLenDisplayLabelChatRequest(QLabel* label);
+    void SetSendRequestButton(QPushButton* button);
+    void updateDisplayChatRequest();
+
+private:
+    int             maxlenchatrequest             = 512;
+    QLabel*         lenDisplayLabelchatRequest   = nullptr;
+    QPushButton*    sendRequestButton     = nullptr;
 };
 
 

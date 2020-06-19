@@ -37,7 +37,7 @@ class ListViewDelegate : public QAbstractItemDelegate
         inline QSize sizeHint(QStyleOptionViewItem const &option, QModelIndex const &index) const;
 };
 
-inline ListViewDelegate::ListViewDelegate(QObject *parent): QAbstractItemDelegate(parent), d_radius(5), d_toppadding(5), d_bottompadding(3), d_leftpadding(5), d_rightpadding(5), d_verticalmargin(5), d_horizontalmargin(10), d_pointerwidth(4), d_pointerheight(17), d_widthfraction(.6)
+inline ListViewDelegate::ListViewDelegate(QObject *parent): QAbstractItemDelegate(parent), d_radius(15), d_toppadding(15), d_bottompadding(3), d_leftpadding(5), d_rightpadding(5), d_verticalmargin(5), d_horizontalmargin(10), d_pointerwidth(4), d_pointerheight(25), d_widthfraction(.6)
 {
 
 }
@@ -50,7 +50,7 @@ inline void ListViewDelegate::paint(QPainter *painter, QStyleOptionViewItem cons
     bodydoc.setDefaultTextOption(textOption);
     bodydoc.setDefaultFont(QFont("Roboto", 12));
     QString bodytext(index.data(Qt::DisplayRole).toString());
-    bodydoc.setHtml(bodytext);
+    bodydoc.setHtml(bodytext.replace("\n",  "<br>")); 
     qreal contentswidth = option.rect.width() * d_widthfraction - d_horizontalmargin - d_pointerwidth - d_leftpadding - d_rightpadding;
     bodydoc.setTextWidth(contentswidth);
     qreal bodyheight = bodydoc.size().height();
@@ -173,7 +173,8 @@ inline QSize ListViewDelegate::sizeHint(QStyleOptionViewItem const &option, QMod
     bodydoc.setDefaultTextOption(textOption);
     bodydoc.setDefaultFont(QFont("Roboto", 12));
     QString bodytext(index.data(Qt::DisplayRole).toString());
-    bodydoc.setHtml(bodytext);
+    bodydoc.setHtml(bodytext.replace("\n",  "<br>"));
+
 
     // the width of the contents are the (a fraction of the window width) minus (margins + padding + width of the bubble's tail)
     qreal contentswidth = option.rect.width() * d_widthfraction - d_horizontalmargin - d_pointerwidth - d_leftpadding - d_rightpadding;

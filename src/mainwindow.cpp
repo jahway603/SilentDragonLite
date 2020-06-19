@@ -33,9 +33,7 @@
 #include "Crypto/FileEncryption.h"
 #include "DataStore/DataStore.h"
 #include "firsttimewizard.h"
-
-using json = nlohmann::json;
-
+#include "../lib/silentdragonlitelib.h"
 
 
 #ifdef Q_OS_WIN
@@ -305,53 +303,31 @@ void MainWindow::closeEvent(QCloseEvent* event) {
         fileoldencryption.remove();
 
          // Encrypt our wallet.dat 
-         QString str = DataStore::getChatDataStore()->getPassword();
-         //   QString str = ed.txtPassword->text(); // data comes from user inputs
-         int length = str.length();
+         QString passphraseHash = DataStore::getChatDataStore()->getPassword();
+         int length = passphraseHash.length();
 
-    char *sequence = NULL;
-    sequence = new char[length+1];
-    strncpy(sequence, str.toLocal8Bit(), length +1);
+        char *sequence1 = NULL;
+        sequence1 = new char[length+1];
+        strncpy(sequence1, passphraseHash.toUtf8(), length+1);
 
-    #define MESSAGE ((const unsigned char *) sequence)
-    #define MESSAGE_LEN length
+        #define PassphraseHashEnd ((const unsigned char *) sequence1)
+        #define MESSAGE_LEN length
 
-    unsigned char hash[crypto_secretstream_xchacha20poly1305_KEYBYTES];
+        #define PASSWORD sequence
+        #define KEY_LEN crypto_box_SEEDBYTES
 
-    crypto_hash_sha256(hash,MESSAGE, MESSAGE_LEN);
-
-    #define PASSWORD sequence
-    #define KEY_LEN crypto_box_SEEDBYTES
-
-   
-
- /////////we use the Hash of the Password as Salt, not perfect but still a good solution.
-
-    unsigned char key[KEY_LEN];
-
-    if (crypto_pwhash
-    (key, sizeof key, PASSWORD, strlen(PASSWORD), hash,
-     crypto_pwhash_OPSLIMIT_SENSITIVE, crypto_pwhash_MEMLIMIT_SENSITIVE,
-     crypto_pwhash_ALG_DEFAULT) != 0) {
-    /* out of memory */
-}
-   
+        const QByteArray ba = QByteArray::fromHex(passphraseHash.toLatin1());
+        const unsigned char *encryptedMemo1 = reinterpret_cast<const unsigned char *>(ba.constData());
+ 
         auto dir =  QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
-       // auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
-        QString source_file = dir.filePath("addresslabels.dat");
-        QString target_enc_file = dir.filePath("addresslabels.dat.enc");
         QString sourceWallet_file = dirwallet;
         QString target_encWallet_file = dirwalletenc;
      
-        FileEncryption::encrypt(target_enc_file, source_file, key);
-        FileEncryption::encrypt(target_encWallet_file, sourceWallet_file, key);      
-
-        ///////////////// we rename the plaintext wallet.dat to Backup, for testing. 
+       // FileEncryption::encrypt(target_enc_file, source_file, key);
+        FileEncryption::encrypt(target_encWallet_file, sourceWallet_file, encryptedMemo1);      
 
         QFile wallet(dirwallet);
-        QFile address(dir.filePath("addresslabels.dat"));
         wallet.remove();
-        address.remove();
     }
     
 
@@ -399,51 +375,49 @@ void MainWindow::encryptWallet() {
     if (d.exec() == QDialog::Accepted) 
     {
 
-    QString passphrase = ed.txtPassword->text(); // data comes from user inputs
+    QString passphraseBlank = ed.txtPassword->text(); // data comes from user inputs
+    QString passphrase = QString("HUSH3") + passphraseBlank + QString("SDL");
     int length = passphrase.length();
-    DataStore::getChatDataStore()->setPassword(passphrase);
+    
 
-    char *sequence = NULL;
-    sequence = new char[length+1];
-    strncpy(sequence, passphrase.toLocal8Bit(), length +1);
+        char *sequence = NULL;
+        sequence = new char[length+1];
+        strncpy(sequence, passphrase.toUtf8(), length +1);
+        
+        QString passphraseHash = blake3_PW(sequence);
+        DataStore::getChatDataStore()->setPassword(passphraseHash);
 
-    #define MESSAGE ((const unsigned char *) sequence)
-    #define MESSAGE_LEN length
+        char *sequence1 = NULL;
+        sequence1 = new char[length+1];
+        strncpy(sequence1, passphraseHash.toUtf8(), length+1);
 
-    unsigned char hash[crypto_secretstream_xchacha20poly1305_KEYBYTES];
+        #define MESSAGE ((const unsigned char *) sequence)
+        #define MESSAGE_LEN length
+        #define hash ((const unsigned char *) sequence1)
 
-    crypto_hash_sha256(hash,MESSAGE, MESSAGE_LEN);
+        #define PASSWORD sequence
+        #define KEY_LEN crypto_box_SEEDBYTES
 
-    #define PASSWORD sequence
-    #define KEY_LEN crypto_box_SEEDBYTES
+        unsigned char key[KEY_LEN];
 
-   
-
- /////////we use the Hash of the Password as Salt, not perfect but still a good solution.
-
-    unsigned char key[KEY_LEN];
-
-    if (crypto_pwhash
-    (key, sizeof key, PASSWORD, strlen(PASSWORD), hash,
-     crypto_pwhash_OPSLIMIT_SENSITIVE, crypto_pwhash_MEMLIMIT_SENSITIVE,
-     crypto_pwhash_ALG_DEFAULT) != 0) {
-    /* out of memory */
+         if (crypto_pwhash
+         (key, sizeof key, PASSWORD, strlen(PASSWORD), hash,
+         crypto_pwhash_OPSLIMIT_SENSITIVE, crypto_pwhash_MEMLIMIT_SENSITIVE,
+         crypto_pwhash_ALG_DEFAULT) != 0) {
+         /* out of memory */
 }
+        QString passphraseHash1 = QByteArray(reinterpret_cast<const char*>(key), KEY_LEN).toHex();
+        DataStore::getChatDataStore()->setPassword(passphraseHash1);
 
         auto dir =  QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
         auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
-        QString source_file = dir.filePath("addresslabels.dat");
-        QString target_enc_file = dir.filePath("addresslabels.dat.enc");
         QString sourceWallet_file = dirwallet;
         QString target_encWallet_file = dirwalletenc;
-     
-        FileEncryption::encrypt(target_enc_file, source_file, key);
+    
         FileEncryption::encrypt(target_encWallet_file, sourceWallet_file, key);
 
         QFile wallet(dirwallet);
-        QFile address(dir.filePath("addresslabels.dat"));
         wallet.rename(dirwalletbackup);
-        address.rename(dir.filePath("addresslabels.datBackup"));
 
            QMessageBox::information(this, tr("Wallet Encryption Success"),
                     QString("Successfully encrypted your wallet"),
@@ -484,26 +458,27 @@ void MainWindow::removeWalletEncryption() {
 
     if (d.exec() == QDialog::Accepted) 
     {
-    QString str = ed.txtPassword->text(); // data comes from user inputs
-    int length = str.length();
+    QString passphraseBlank = ed.txtPassword->text(); // data comes from user inputs
+
+    QString passphrase = QString("HUSH3") + passphraseBlank + QString("SDL");
+
+    int length = passphrase.length();
 
     char *sequence = NULL;
     sequence = new char[length+1];
-    strncpy(sequence, str.toLocal8Bit(), length +1);
+    strncpy(sequence, passphrase.toUtf8(), length +1);
 
-    #define MESSAGE ((const unsigned char *) sequence)
-    #define MESSAGE_LEN length
+    QString passphraseHash = blake3_PW(sequence);
 
-    unsigned char hash[crypto_secretstream_xchacha20poly1305_KEYBYTES];
+    char *sequence1 = NULL;
+    sequence1 = new char[length+1];
+    strncpy(sequence1, passphraseHash.toUtf8(), length+1);
 
-    crypto_hash_sha256(hash,MESSAGE, MESSAGE_LEN);
+
+    #define hash ((const unsigned char *) sequence1)
 
     #define PASSWORD sequence
     #define KEY_LEN crypto_box_SEEDBYTES
-
-   
-
- /////////we use the Hash of the Password as Salt, not perfect but still a good solution.
 
     unsigned char key[KEY_LEN];
 
@@ -513,18 +488,14 @@ void MainWindow::removeWalletEncryption() {
      crypto_pwhash_ALG_DEFAULT) != 0) {
     /* out of memory */
 }
-        
-
   
         auto dir =  QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
         auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
         QString target_encwallet_file = dirwalletenc;
         QString target_decwallet_file = dirwallet;
-        QString target_encaddr_file = dir.filePath("addresslabels.dat.enc");
-        QString target_decaddr_file = dir.filePath("addresslabels.dat");
 
         FileEncryption::decrypt(target_decwallet_file, target_encwallet_file, key);
-        FileEncryption::decrypt(target_decaddr_file, target_encaddr_file, key);
+
     
      QFile filencrypted(dirwalletenc);
      QFile wallet(dirwallet);
@@ -556,85 +527,64 @@ void MainWindow::removeWalletEncryptionStartUp() {
    QDialog d(this);
     Ui_startup ed;
     ed.setupUi(&d);
-    
+  
     if (d.exec() == QDialog::Accepted) 
     {
-        QString password = ed.txtPassword->text(); // data comes from user inputs
-        int length = password.length();
-        DataStore::getChatDataStore()->setPassword(password);
+        QString passphraseBlank = ed.txtPassword->text(); // data comes from user inputs
+
+        QString passphrase = QString("HUSH3") + passphraseBlank + QString("SDL");
+        int length = passphrase.length();
+        
         char *sequence = NULL;
         sequence = new char[length+1];
-        strncpy(sequence, password.toLocal8Bit(), length +1);
+        strncpy(sequence, passphrase.toUtf8(), length +1);
+        
+        QString passphraseHash = blake3_PW(sequence);
+        
+
+        char *sequence1 = NULL;
+        sequence1 = new char[length+1];
+        strncpy(sequence1, passphraseHash.toUtf8(), length+1);
 
         #define MESSAGE ((const unsigned char *) sequence)
         #define MESSAGE_LEN length
-
-        unsigned char hash[crypto_secretstream_xchacha20poly1305_KEYBYTES];
-
-        crypto_hash_sha256(hash,MESSAGE, MESSAGE_LEN);
+        #define hash ((const unsigned char *) sequence1)
 
         #define PASSWORD sequence
-         #define KEY_LEN crypto_box_SEEDBYTES
+        #define KEY_LEN crypto_box_SEEDBYTES
 
-   
+    unsigned char key[KEY_LEN];
 
- /////////we use the Hash of the Password as Salt, not perfect but still a good solution.
-
-        unsigned char key[KEY_LEN];
-
-      if (crypto_pwhash  
-      (key, sizeof key, PASSWORD, strlen(PASSWORD), hash,
-      crypto_pwhash_OPSLIMIT_SENSITIVE, crypto_pwhash_MEMLIMIT_SENSITIVE,
-      crypto_pwhash_ALG_DEFAULT) != 0) {
+    if (crypto_pwhash
+    (key, sizeof key, PASSWORD, strlen(PASSWORD), hash,
+     crypto_pwhash_OPSLIMIT_SENSITIVE, crypto_pwhash_MEMLIMIT_SENSITIVE,
+     crypto_pwhash_ALG_DEFAULT) != 0) {
     /* out of memory */
-        }
+}
+        QString passphraseHash1 = QByteArray(reinterpret_cast<const char*>(key), KEY_LEN).toHex();
+        DataStore::getChatDataStore()->setPassword(passphraseHash1);
 
-  
-    {
         auto dir =  QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
-        auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+
         QString target_encwallet_file = dirwalletenc;
         QString target_decwallet_file = dirwallet;
-        QString target_encaddr_file = dir.filePath("addresslabels.dat.enc");
-        QString target_decaddr_file = dir.filePath("addresslabels.dat");
 
         FileEncryption::decrypt(target_decwallet_file, target_encwallet_file, key);
-        FileEncryption::decrypt(target_decaddr_file, target_encaddr_file, key);
 
-    } 
+    
 
      auto dirHome =  QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
      QFile wallet(dirwallet);
-     //QFile backup(dirHome.filePath(".silentdragonlite/silentdragonlite-wallet.datBACKUP"));*/
     
-    if (wallet.size() > 0)
+    if (wallet.size() == 0)
     {
-        if  (fileExists(dirwalletbackup))
-
-        {
-
-                 QMessageBox::information(this, tr("You still have plaintext data on your disk!"),
-                    QString("WARNING: Delete it only if you have a backup of your Wallet Seed."),
-                    QMessageBox::Ok
-                );   
-                          // backup.remove(); 
-
-        }
-      
-         QMessageBox::information(this, tr("Wallet Encryption Success"),
-                    QString("SDL is ready to Rock"),
-                    QMessageBox::Ok
-                );    
-
-             
-        }else{
-        
+         
          QMessageBox::critical(this, tr("Wallet Encryption Failed"),
                     QString("false password please try again"),
                     QMessageBox::Ok
                 );
                  this->removeWalletEncryptionStartUp();
-        }    
+        }else{}   
 
     }else{
 
@@ -731,8 +681,6 @@ void MainWindow::setupSettingsModal() {
 
         QObject::connect(settings.comboBoxTheme, &QComboBox::currentTextChanged, [=] (QString theme_name) {
             this->slot_change_theme(theme_name);
-            // Tell the user to restart
-            QMessageBox::information(this, tr("Restart"), tr("Please restart Silentdragonlite to have the theme apply"), QMessageBox::Ok);
         });
 
         // Get Currency Data
@@ -1019,7 +967,7 @@ void MainWindow::exportSeed() {
 
     
 
-    rpc->fetchSeed([=](json reply) {
+    rpc->fetchSeed([=](QJsonValue reply) {
         if (isJsonError(reply)) {
             return;
         }
@@ -1037,7 +985,7 @@ void MainWindow::exportSeed() {
 
         pui.privKeyTxt->setReadOnly(true);
         pui.privKeyTxt->setLineWrapMode(QPlainTextEdit::LineWrapMode::NoWrap);
-        pui.privKeyTxt->setPlainText(QString::fromStdString(reply.dump()));
+        pui.privKeyTxt->setPlainText(QLatin1String(QJsonDocument(reply.toObject()).toJson(QJsonDocument::Compact)));
         
         pui.helpLbl->setText(tr("This is your wallet seed. Please back it up carefully and safely."));
 
@@ -1091,14 +1039,14 @@ void MainWindow::exportKeys(QString addr) {
 
     bool allKeys = addr.isEmpty() ? true : false;
 
-    auto fnUpdateUIWithKeys = [=](json reply) {
+    auto fnUpdateUIWithKeys = [=](QJsonValue reply) {
         if (isJsonError(reply)) {
             return;                
         }
 
-        if (reply.is_discarded() || !reply.is_array()) {
+        if (reply.isNull() || !reply.isArray()) {
             QMessageBox::critical(this, tr("Error getting private keys"),
-                tr("Error loading private keys: ") + QString::fromStdString(reply.dump()),
+                tr("Error loading private keys: ") + QLatin1String(QJsonDocument(reply.toObject()).toJson(QJsonDocument::Compact)),
                 QMessageBox::Ok);
             return;
         }
@@ -1137,8 +1085,8 @@ void MainWindow::exportKeys(QString addr) {
         });
 
         QString allKeysTxt;
-        for (auto i : reply.get<json::array_t>()) {
-            allKeysTxt = allKeysTxt % QString::fromStdString(i["private_key"]) % " # addr=" % QString::fromStdString(i["address"]) % "\n";
+        for (auto i : reply.toArray()) {
+            allKeysTxt = allKeysTxt % i.toObject()["private_key"].toString() % " # addr=" % i.toObject()["address"].toString() % "\n";
         }
 
         pui.privKeyTxt->setPlainText(allKeysTxt);
@@ -1169,7 +1117,7 @@ void MainWindow::setupBalancesTab() {
      QList<QString> allAddresses;
 
      allAddresses = getRPC()->getModel()->getAllZAddresses();
-    QString depositzaddr = allAddresses[1];
+    QString depositzaddr = allAddresses[0];
      deposithush.qrcodeDisplayDeposit->setQrcodeString(depositzaddr);
      deposithush.zaddr->setText(depositzaddr);
 
@@ -1343,6 +1291,8 @@ void MainWindow::setupTransactionsTab() {
 }
 
 void MainWindow::setupchatTab() {
+
+    ui->memoTxtChat->setEnabled(false);
 
           /////////////Setting Icons for Chattab and different themes
        
@@ -1530,6 +1480,7 @@ void MainWindow::setupchatTab() {
      ui->listContactWidget->addAction(HushAction);
      ui->listContactWidget->addAction(requestHushAction);
      ui->listContactWidget->addAction(subatomicAction);
+     ui->memoTxtChat->setEnabled(true);
 
      /*QObject::connect(requestHushAction, &QAction::triggered, [=]() {
           QModelIndex index = ui->listContactWidget->currentIndex();
@@ -1578,6 +1529,7 @@ void MainWindow::setupchatTab() {
    });
    
 ui->memoTxtChat->setLenDisplayLabelChat(ui->memoSizeChat);
+
 }
 
 void MainWindow::updateChat()
@@ -1592,8 +1544,8 @@ void MainWindow::updateContacts()
 }
 
 void MainWindow::addNewZaddr(bool sapling) {
-    rpc->createNewZaddr(sapling, [=] (json reply) {
-        QString addr = QString::fromStdString(reply.get<json::array_t>()[0]);
+    rpc->createNewZaddr(sapling, [=] (QJsonValue reply) {
+        QString addr = reply.toArray()[0].toString();
         // Make sure the RPC class reloads the z-addrs for future use
         rpc->refreshAddresses();
 
@@ -1643,8 +1595,8 @@ std::function<void(bool)> MainWindow::addZAddrsToComboList(bool sapling) {
 
 void MainWindow::setupReceiveTab() {
     auto addNewTAddr = [=] () {
-        rpc->createNewTaddr([=] (json reply) {
-            QString addr = QString::fromStdString(reply.get<json::array_t>()[0]);
+        rpc->createNewTaddr([=] (QJsonValue reply) {
+            QString addr = reply.toArray()[0].toString();
             // Make sure the RPC class reloads the t-addrs for future use
             rpc->refreshAddresses();
 
@@ -1993,7 +1945,7 @@ void MainWindow::slot_change_theme(const QString& theme_name)
     if (qFile.open(QFile::ReadOnly))
     {
       QString styleSheet = QLatin1String(qFile.readAll());
-      this->setStyleSheet(""); // reset styles    
+      this->setStyleSheet(""); // resets styles, makes app restart unnecessary
       this->setStyleSheet(styleSheet);
     }
 
@@ -2019,8 +1971,8 @@ void MainWindow::on_givemeZaddr_clicked()
 {
 
     bool sapling = true;
-    rpc->createNewZaddr(sapling, [=] (json reply) {
-                QString hushchataddr = QString::fromStdString(reply.get<json::array_t>()[0]);
+    rpc->createNewZaddr(sapling, [=] (QJsonValue reply) {
+                QString hushchataddr = reply.toArray()[0].toString();
                 QClipboard *zaddr_Clipboard = QApplication::clipboard();
                 zaddr_Clipboard ->setText(hushchataddr);
                 QMessageBox::information(this, "Your new HushChat address was copied to your clipboard!",hushchataddr);
