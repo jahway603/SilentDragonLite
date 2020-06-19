@@ -466,6 +466,8 @@ Tx MainWindow::createTxFromChatPage() {
       
                 if (crypto_kx_seed_keypair(pk,sk,
                            MESSAGEAS1) !=0) {
+
+                               this->logger->write("Suspicious keypair, bail out ");
                            }
          ////////////////Get the pubkey from Bob, so we can create the share key
 
@@ -475,7 +477,7 @@ Tx MainWindow::createTxFromChatPage() {
 
             if (crypto_kx_server_session_keys(server_rx, server_tx,
                                   pk, sk, pubkeyBob) != 0) {
-            /* Suspicious client public key, bail out */
+            this->logger->write("Suspicious client public send key, bail out ");
              }
 
     
@@ -796,7 +798,7 @@ Tx MainWindow::createTxForSafeContactRequest()
          unsigned char pk[crypto_kx_PUBLICKEYBYTES];
 
          if (crypto_kx_seed_keypair(pk, sk, MESSAGEAS1) !=0) {
-            //
+            this->logger->write("Suspicious client public contact request key, bail out ");
          }
 
          QString publicKey = QByteArray(reinterpret_cast<const char*>(pk), crypto_kx_PUBLICKEYBYTES).toHex();
@@ -828,8 +830,6 @@ void MainWindow::ContactRequest() {
 
     if (size > max){
      
-  // auto addr = "";
-  //  if (! Settings::isZAddress(AddressBook::addressFromAddressLabel(addr->text()))) {
         QMessageBox msg(QMessageBox::Critical, tr("Your Message is too long"),
         tr("You can only write messages with 512 character maximum \n")  + tr("\n Please reduce your message to 235 character."),
         QMessageBox::Ok, this);
