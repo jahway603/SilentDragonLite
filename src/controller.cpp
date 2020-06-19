@@ -1083,7 +1083,7 @@ void Controller::refreshTransactions() {
       
                             if (crypto_kx_seed_keypair(pk, sk, MESSAGEAS1) !=0)
                             {
-                                // ?
+                                main->logger->write("Keypair outgoing error");
                             }
                 
                             unsigned char server_rx[crypto_kx_SESSIONKEYBYTES], server_tx[crypto_kx_SESSIONKEYBYTES];
@@ -1095,7 +1095,7 @@ void Controller::refreshTransactions() {
 
                             if (crypto_kx_server_session_keys(server_rx, server_tx, pk, sk, pubkeyBob) != 0)
                             {
-                                /* Suspicious client public key, bail out */
+                                 main->logger->write("Suspicious client public outgoing key, bail out ");
                             }
                 
                             const QByteArray ba = QByteArray::fromHex(memo.toUtf8());
@@ -1108,7 +1108,7 @@ void Controller::refreshTransactions() {
 
                             QString memodecrypt;
 
-                            if (encryptedMemoSize1 > 15)
+                            if ((encryptedMemoSize1 - crypto_secretstream_xchacha20poly1305_ABYTES) > 0)
                             {
                                 //////unsigned char* as message from QString
                                 #define MESSAGE2 (const unsigned char *) encryptedMemo
@@ -1143,6 +1143,7 @@ void Controller::refreshTransactions() {
                             }
                             else
                             {
+                               
                                 memodecrypt = "";
                             }
 
@@ -1306,7 +1307,9 @@ void Controller::refreshTransactions() {
 
                     int position = it.toObject()["position"].toInt();
 
-                    if ((memo.startsWith("{") == false) && (headerbytes > 0))
+                    int ciphercheck = memo.length() - crypto_secretstream_xchacha20poly1305_ABYTES;
+
+                    if ((memo.startsWith("{") == false) && (headerbytes > 0) && (ciphercheck > 0))
                     {
                         if (chatModel->getMemoByTx(txid) == QString("0xdeadbeef"))
                         {
@@ -1337,7 +1340,7 @@ void Controller::refreshTransactions() {
 
                             if (crypto_kx_seed_keypair(pk, sk, MESSAGEAS1) !=0)
                             {
-                                //
+                               main->logger->write("Suspicious  outgoing key pair, bail out ");
                             }
 
                             unsigned char client_rx[crypto_kx_SESSIONKEYBYTES], client_tx[crypto_kx_SESSIONKEYBYTES];
@@ -1348,7 +1351,7 @@ void Controller::refreshTransactions() {
 
                             if (crypto_kx_client_session_keys(client_rx, client_tx, pk, sk, pubkeyBob) != 0)
                             {
-                                /* Suspicious client public key, bail out */
+                               main->logger->write("Suspicious client public incoming key, bail out ");
                             }
 
                             const QByteArray ba = QByteArray::fromHex(memo.toUtf8());
@@ -1379,12 +1382,12 @@ void Controller::refreshTransactions() {
                             /////Only the QString gives weird data, so convert first to std::string
                             //   crypto_secretstream_xchacha20poly1305_keygen(client_rx);
                             if (crypto_secretstream_xchacha20poly1305_init_pull(&state, header, client_rx) != 0) {
-                                /* Invalid header, no need to go any further */
+                               main->logger->write("Invalid header incoming, no need to go any further "); 
                             }
 
                             if (crypto_secretstream_xchacha20poly1305_pull
                                 (&state, decrypted, NULL, tag, MESSAGE2, CIPHERTEXT1_LEN, NULL, 0) != 0) {
-                                /* Invalid/incomplete/corrupted ciphertext - abort */
+                                 main->logger->write("Invalid/incomplete/corrupted ciphertext - abort");
                             }
 
                             std::string decryptedMemo(reinterpret_cast<char*>(decrypted),MESSAGE1_LEN);
