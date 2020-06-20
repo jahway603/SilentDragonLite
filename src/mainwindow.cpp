@@ -17,6 +17,7 @@
 #include "settings.h"
 #include "version.h"
 #include "connection.h"
+#include "ui_sendHushTransactionChat.h"
 #include "ui_contactrequest.h"
 #include "ui_deposithush.h"
 #include "ui_requestContactDialog.h"
@@ -1465,8 +1466,7 @@ void MainWindow::setupchatTab() {
      contextMenu = new QMenu(ui->listContactWidget);
      requestAction = new QAction("Send a contact request - coming soon",contextMenu);
      editAction = new QAction("Delete this contact",contextMenu);
-     HushAction = new QAction("Send a friend some Hush - coming soon",contextMenu);
-     requestHushAction = new QAction("Request some Hush - coming soon",contextMenu);
+     HushAction = new QAction("Send or Request some Hush - coming soon",contextMenu);
      subatomicAction = new QAction("Make a subatomic swap with a friend- coming soon",contextMenu);
 
 
@@ -1478,23 +1478,54 @@ void MainWindow::setupchatTab() {
      ui->listContactWidget->addAction(requestAction);
      ui->listContactWidget->addAction(editAction);
      ui->listContactWidget->addAction(HushAction);
-     ui->listContactWidget->addAction(requestHushAction);
      ui->listContactWidget->addAction(subatomicAction);
      ui->memoTxtChat->setEnabled(true);
 
-     /*QObject::connect(requestHushAction, &QAction::triggered, [=]() {
           QModelIndex index = ui->listContactWidget->currentIndex();
-          QString label_contact = index.data(Qt::DisplayRole).toString();
+        QString label_contact = index.data(Qt::DisplayRole).toString();
         
         for(auto &p : AddressBook::getInstance()->getAllAddressLabels())
         if (label_contact == p.getName()) {
         ui->contactNameMemo->setText(p.getName());    
         rpc->refresh(true);
+    
+        }
+   });
+
+         QObject::connect(HushAction, &QAction::triggered, [=]() {   
+
+        QModelIndex index = ui->listContactWidget->currentIndex();
+        QString label_contact = index.data(Qt::DisplayRole).toString();
+
+        QDialog transactionDialog(this);
+        Ui_transactionHush transaction;
+        transaction.setupUi(&transactionDialog);
+
+        
+
+        for(auto &p : AddressBook::getInstance()->getAllAddressLabels())
+        if (label_contact == p.getName()) {
+       // Settings::saveRestore(&transactionDialog);     
+        QStandardItemModel* contact = new QStandardItemModel();
+        QString avatar = p.getAvatar();
+        QStandardItem* Items1 = new QStandardItem(p.getName());
+        Items1->setData(QIcon(avatar),Qt::DecorationRole);
+        contact->appendRow(Items1); 
+        transaction.contactName->setModel(contact);
+        transaction.contactName->setIconSize(QSize(60,70));
+        transaction.contactName->setUniformItemSizes(true);
+        transaction.contactName->setDragDropMode(QAbstractItemView::DropOnly);      
+        transaction.contactName->show();
+
+
+        QString amt = transaction.amountChat->text();
+        qDebug()<<"AMT : " << amt;
 
         }
-        MainWindow::showRequesthush();
-     
-     }); */
+             
+        transactionDialog.exec();
+        
+     }); 
 
           QObject::connect(editAction, &QAction::triggered, [=]() {
           QModelIndex index = ui->listContactWidget->currentIndex();
@@ -1517,16 +1548,7 @@ void MainWindow::setupchatTab() {
         }    
      });
 
-        QModelIndex index = ui->listContactWidget->currentIndex();
-        QString label_contact = index.data(Qt::DisplayRole).toString();
-        
-        for(auto &p : AddressBook::getInstance()->getAllAddressLabels())
-        if (label_contact == p.getName()) {
-        ui->contactNameMemo->setText(p.getName());    
-        rpc->refresh(true);
-    
-        }
-   });
+   
    
 ui->memoTxtChat->setLenDisplayLabelChat(ui->memoSizeChat);
 

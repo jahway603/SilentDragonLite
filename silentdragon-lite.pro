@@ -129,6 +129,7 @@ FORMS += \
     src/newwallet.ui \
     src/recurringpayments.ui \
     src/restoreseed.ui \
+    src/sendHushTransactionChat.ui \
     src/settings.ui \
     src/about.ui \
     src/confirm.ui \
