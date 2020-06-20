@@ -1488,7 +1488,7 @@ void MainWindow::setupchatTab() {
      QAction* requestHushAction;
      QAction* subatomicAction;
      contextMenu = new QMenu(ui->listContactWidget);
-     HushAction = new QAction("Send or Request some Hush ",contextMenu);
+     HushAction = new QAction("Send this contact Hush ",contextMenu);
      editAction = new QAction("Delete this contact",contextMenu);
      requestAction = new QAction("Send a contact request - coming soon",contextMenu);
      subatomicAction = new QAction("Make a subatomic swap with a friend- coming soon",contextMenu);
