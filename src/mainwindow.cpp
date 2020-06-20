@@ -1499,9 +1499,9 @@ void MainWindow::setupchatTab() {
     QObject::connect(ui->listContactWidget, &QTableView::clicked, [=] () {
 
      ui->listContactWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
-     ui->listContactWidget->addAction(requestAction);
-     ui->listContactWidget->addAction(editAction);
      ui->listContactWidget->addAction(HushAction);
+     ui->listContactWidget->addAction(editAction);
+     ui->listContactWidget->addAction(requestAction);  
      ui->listContactWidget->addAction(subatomicAction);
      ui->memoTxtChat->setEnabled(true);
 
