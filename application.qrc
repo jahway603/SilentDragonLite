@@ -48,6 +48,8 @@
         <file>res/unknownBlack.png</file>
         <file>res/unknownWhite.png</file>
         <file>res/dark-01.png</file>
+        <file>res/money-mouth.png</file>
+        <file>res/money-outgoing.png</file>
     </qresource>
     <qresource prefix="/img">
         <file>res/hushdlogo.gif</file>

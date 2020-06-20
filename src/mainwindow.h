@@ -53,11 +53,13 @@ public:
     QString doSendRequestTxValidations(Tx tx);
     QString getCid();
     QString getAmt();
+    QString getMoneyMemo();
     QString getPassword();
     std::map<QString, QString> pubkeyMap;
     QString getPubkeyByAddress(QString requestZaddr);
     void setPassword(QString Password);
     void setAmt(QString Amt);
+    void setMoneyMemo(QString MoneyMemo);
     void addPubkey(QString requestZaddr, QString pubkey);
     
     
@@ -115,6 +117,7 @@ private:
     void closeEventpw(QCloseEvent* event);
     QString _password;
     QString _amt;
+    QString _moneymemo;
 
 
     void setupSendTab();

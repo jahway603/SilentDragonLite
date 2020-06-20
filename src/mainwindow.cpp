@@ -618,6 +618,18 @@ void MainWindow::setAmt(QString amt)
     _amt = amt;
 }
 
+QString MainWindow::getMoneyMemo()
+{
+
+    return _moneymemo;
+}
+
+void MainWindow::setMoneyMemo(QString moneymemo)
+{
+
+    _moneymemo = moneymemo;
+}
+
 void MainWindow::setupStatusBar() {
     // Status Bar
     loadingLabel = new QLabel();
@@ -1513,6 +1525,9 @@ void MainWindow::setupchatTab() {
         QDialog transactionDialog(this);
         transaction.setupUi(&transactionDialog);
         Settings::saveRestore(&transactionDialog);
+        transaction.requestHush->setEnabled(false);
+        transaction.requestHush->setVisible(false);
+        transaction.amountChat->setValidator(this->getAmountValidator());
 
         
 
@@ -1529,12 +1544,16 @@ void MainWindow::setupchatTab() {
         transaction.contactName->setUniformItemSizes(true);
         transaction.contactName->setDragDropMode(QAbstractItemView::DropOnly);      
         transaction.contactName->show();
+        
 
         }
         
         QObject::connect(transaction.sendHush, &QPushButton::clicked, [&] (){
+            
             QString amt = transaction.amountChat->text();
-            this->setAmt(amt);          
+            QString memo = transaction.MemoMoney->text();
+            this->setAmt(amt);
+            this->setMoneyMemo(memo);          
             transactionDialog.close();
         });
         
@@ -1599,9 +1618,10 @@ Tx MainWindow::createTxFromSendChatPage() {
             QString myAddr = c.getMyAddress();
             QString type = "Money";
             QString addr = c.getPartnerAddress();
+            QString moneymemo = this->getMoneyMemo();
            
              /////////User input for chatmemos
-        QString memoplain = QString("You have received/sent ") + amtStr + QString(" HUSH") ;
+        QString memoplain = QString("Money transaction of : ") + amtStr + QString(" HUSH") +  QString("\n") +  QString("\n") + moneymemo;
 
   /////////We convert the user input from QString to unsigned char*, so we can encrypt it later
         int lengthmemo = memoplain.length();
