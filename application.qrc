@@ -50,6 +50,7 @@
         <file>res/dark-01.png</file>
         <file>res/money-mouth.png</file>
         <file>res/money-outgoing.png</file>
+        <file>res/hush-money-white.png</file>
     </qresource>
     <qresource prefix="/img">
         <file>res/hushdlogo.gif</file>

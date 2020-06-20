@@ -51,6 +51,7 @@ public:
     QString doSendChatTxValidations(Tx tx);
     QString doSendChatMoneyTxValidations(Tx tx);
     QString doSendRequestTxValidations(Tx tx);
+    QString doSendChatMoneyRequestTxValidations(Tx tx);
     QString getCid();
     QString getAmt();
     QString getMoneyMemo();
@@ -143,6 +144,7 @@ private:
     Tx   createTxFromChatPage();
     Tx   createTxForSafeContactRequest();
     Tx   createTxFromSendChatPage();
+    Tx   createTxFromSendRequestChatPage();
 
     void encryptWallet();
     void removeWalletEncryption();
@@ -152,6 +154,7 @@ private:
     void sendButton();
     void sendChat();
     void sendMoneyChat();
+    void sendMoneyRequestChat();
     void addContact();
     void ContactRequest();
     

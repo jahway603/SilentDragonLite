@@ -1488,9 +1488,8 @@ void MainWindow::setupchatTab() {
      QAction* requestHushAction;
      QAction* subatomicAction;
      contextMenu = new QMenu(ui->listContactWidget);
-     HushAction = new QAction("Send this contact Hush ",contextMenu);
+     HushAction = new QAction("Send or Request Hush ",contextMenu);
      editAction = new QAction("Delete this contact",contextMenu);
-     requestAction = new QAction("Send a contact request - coming soon",contextMenu);
      subatomicAction = new QAction("Make a subatomic swap with a friend- coming soon",contextMenu);
 
 
@@ -1500,8 +1499,7 @@ void MainWindow::setupchatTab() {
 
      ui->listContactWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
      ui->listContactWidget->addAction(HushAction);
-     ui->listContactWidget->addAction(editAction);
-     ui->listContactWidget->addAction(requestAction);  
+     ui->listContactWidget->addAction(editAction); 
      ui->listContactWidget->addAction(subatomicAction);
      ui->memoTxtChat->setEnabled(true);
 
@@ -1525,9 +1523,12 @@ void MainWindow::setupchatTab() {
         QDialog transactionDialog(this);
         transaction.setupUi(&transactionDialog);
         Settings::saveRestore(&transactionDialog);
-        transaction.requestHush->setEnabled(false);
-        transaction.requestHush->setVisible(false);
+       // transaction.requestHush->setEnabled(false);
+       // transaction.requestHush->setVisible(false);
         transaction.amountChat->setValidator(this->getAmountValidator());
+        QString icon = ":icons/res/hush-money-white.png";
+        QPixmap hush(icon);
+        transaction.label_3->setPixmap(hush);
 
         
 
@@ -1558,6 +1559,19 @@ void MainWindow::setupchatTab() {
         });
         
         QObject::connect(transaction.sendHush, &QPushButton::clicked, this , &MainWindow::sendMoneyChat);
+
+
+        
+        QObject::connect(transaction.requestHush, &QPushButton::clicked, [&] (){
+            
+            QString amt = transaction.amountChat->text();
+            QString memo = transaction.MemoMoney->text();
+            this->setAmt(amt);
+            this->setMoneyMemo(memo);          
+            transactionDialog.close();
+        });
+
+        QObject::connect(transaction.requestHush, &QPushButton::clicked, this , &MainWindow::sendMoneyRequestChat);
 
         
              
@@ -1868,6 +1882,284 @@ QString MainWindow::doSendChatMoneyTxValidations(Tx tx) {
 
     return "";
 }
+
+// Create a Tx from the current state of the Chat page. 
+Tx MainWindow::createTxFromSendRequestChatPage() {
+   Tx tx;
+    CAmount totalAmt;
+    // For each addr/amt in the Chat tab
+  {
+       
+        QString amtStr = this->getAmt();
+        CAmount amt; 
+        CAmount amtHm;
+       
+            amt = CAmount::fromDecimalString("0");
+            amtHm = CAmount::fromDecimalString("0");
+            totalAmt = totalAmt + amt;
+
+        QModelIndex index = ui->listContactWidget->currentIndex();
+        QString label_contact = index.data(Qt::DisplayRole).toString();
+
+    for(auto &c : AddressBook::getInstance()->getAllAddressLabels())
+
+     if (label_contact == c.getName()) {
+     
+            QString cid = c.getCid();
+            QString myAddr = c.getMyAddress();
+            QString type = "Money";
+            QString addr = c.getPartnerAddress();
+            QString moneymemo = this->getMoneyMemo();
+           
+             /////////User input for chatmemos
+        QString memoplain = QString("Request of : ") + amtStr + QString(" HUSH ") +  QString("\n") +  QString("\n") + moneymemo;
+
+  /////////We convert the user input from QString to unsigned char*, so we can encrypt it later
+        int lengthmemo = memoplain.length();
+
+        char *memoplainchar = NULL;
+        memoplainchar = new char[lengthmemo+2];
+        strncpy(memoplainchar, memoplain.toUtf8(), lengthmemo +1);
+
+        QString pubkey = this->getPubkeyByAddress(addr);
+        QString passphraseHash = DataStore::getChatDataStore()->getPassword();
+        int length = passphraseHash.length();
+
+ ////////////////Generate the secretkey for our message encryption
+
+        char *hashEncryptionKeyraw = NULL;
+        hashEncryptionKeyraw = new char[length+1];
+        strncpy(hashEncryptionKeyraw, passphraseHash.toUtf8(), length+1);
+
+        #define MESSAGEAS1 ((const unsigned char *) hashEncryptionKeyraw)
+        #define MESSAGEAS1_LEN length
+    
+
+        unsigned char sk[crypto_kx_SECRETKEYBYTES];
+        unsigned char pk[crypto_kx_PUBLICKEYBYTES];
+        unsigned char server_rx[crypto_kx_SESSIONKEYBYTES], server_tx[crypto_kx_SESSIONKEYBYTES];
+      
+                if (crypto_kx_seed_keypair(pk,sk,
+                           MESSAGEAS1) !=0) {
+
+                               this->logger->write("Suspicious keypair, bail out ");
+                           }
+         ////////////////Get the pubkey from Bob, so we can create the share key
+
+        const QByteArray pubkeyBobArray = QByteArray::fromHex(pubkey.toLatin1());
+        const unsigned char *pubkeyBob = reinterpret_cast<const unsigned char *>(pubkeyBobArray.constData());
+                    /////Create the shared key for sending the message
+
+            if (crypto_kx_server_session_keys(server_rx, server_tx,
+                                  pk, sk, pubkeyBob) != 0) {
+            this->logger->write("Suspicious client public send key, bail out ");
+             }
+
+    
+            // Let's try to preserve Unicode characters
+            QByteArray ba_memo = memoplain.toUtf8();
+            int ba_memo_length = ba_memo.size();
+
+            #define MESSAGEMoney (const unsigned char *) ba_memo.data()
+            #define MESSAGE_LENMoney ba_memo_length
+
+
+    ////////////Now lets encrypt the message Alice send to Bob//////////////////////////////
+             //#define MESSAGE (const unsigned char *) memoplainchar
+             //#define MESSAGE_LEN lengthmemo
+             #define CIPHERTEXT_LEN (crypto_secretstream_xchacha20poly1305_ABYTES + MESSAGE_LENMoney)
+             unsigned char ciphertext[CIPHERTEXT_LEN];
+             unsigned char header[crypto_secretstream_xchacha20poly1305_HEADERBYTES];
+
+            crypto_secretstream_xchacha20poly1305_state state;
+
+            /* Set up a new stream: initialize the state and create the header */
+            crypto_secretstream_xchacha20poly1305_init_push(&state, header, server_tx);
+
+
+             /* Now, encrypt the first chunk. `c1` will contain an encrypted,
+            * authenticated representation of `MESSAGE_PART1`. */
+            crypto_secretstream_xchacha20poly1305_push
+            (&state, ciphertext, NULL, MESSAGEMoney, MESSAGE_LENMoney, NULL, 0, crypto_secretstream_xchacha20poly1305_TAG_FINAL);
+
+            ////Create the HM for this message
+            QString headerbytes = QByteArray(reinterpret_cast<const char*>(header), crypto_secretstream_xchacha20poly1305_HEADERBYTES).toHex();
+            QString publickeyAlice = QByteArray(reinterpret_cast<const char*>(pk), crypto_kx_PUBLICKEYBYTES).toHex();
+
+
+            QString hmemo= createHeaderMemo(type,cid,myAddr,headerbytes,publickeyAlice,1,0);
+
+             /////Ciphertext Memo
+            QString memo = QByteArray(reinterpret_cast<const char*>(ciphertext), CIPHERTEXT_LEN).toHex();
+         
+   
+             tx.toAddrs.push_back(ToFields{addr, amtHm, hmemo});
+             tx.toAddrs.push_back(ToFields{addr, amt, memo});
+
+   } 
+   }
+
+    tx.fee = Settings::getMinerFee();
+
+     return tx;
+
+}
+
+void MainWindow::sendMoneyRequestChat() {
+
+////////////////////////////Todo: Check if a Contact is selected//////////
+
+    // Create a Tx from the values on the send tab. Note that this Tx object
+    // might not be valid yet.
+ 
+  /* QString Name = ui->contactNameMemo->text();
+
+      if ((ui->contactNameMemo->text().isEmpty()) || (ui->memoTxtChat->toPlainText().trimmed().isEmpty())) {
+     
+        QMessageBox msg(QMessageBox::Critical, tr("You have to select a contact and insert a Memo"),
+        tr("You have selected no Contact from Contactlist,\n")  + tr("\nor your Memo is empty"),
+        QMessageBox::Ok, this);
+
+        msg.exec();
+        return;
+    }*/
+
+
+    Tx tx = createTxFromSendRequestChatPage();
+
+    QString error = doSendChatMoneyRequestTxValidations(tx);
+
+    if (!error.isEmpty()) {
+        // Something went wrong, so show an error and exit
+        QMessageBox msg(QMessageBox::Critical, tr("Message Error"), error,
+                        QMessageBox::Ok, this);
+
+        msg.exec();
+
+        // abort the Tx
+        return;
+    }
+
+        auto movie = new QMovie(this);
+        auto movie1 = new QMovie(this);
+        movie->setFileName(":/img/res/loaderblack.gif");
+        movie1->setFileName(":/img/res/loaderwhite.gif");
+     
+        auto theme = Settings::getInstance()->get_theme_name();
+        if (theme == "Dark" || theme == "Midnight") {
+
+        connect(movie, &QMovie::frameChanged, [=]{
+        ui->sendChatButton->setIcon(movie->currentPixmap());
+        });      
+        movie->start();
+        ui->sendChatButton->show();
+        ui->sendChatButton->setEnabled(false);
+             
+        } else {
+
+        connect(movie1, &QMovie::frameChanged, [=]{
+        ui->sendChatButton->setIcon(movie1->currentPixmap());
+        });      
+        movie1->start();
+        ui->sendChatButton->show();
+        ui->sendChatButton->setEnabled(false);
+        }
+
+        ui->memoTxtChat->clear();
+        
+        // And send the Tx
+        rpc->executeTransaction(tx, 
+            [=] (QString txid) { 
+                ui->statusBar->showMessage(Settings::txidStatusMessage + " " + txid);
+                
+
+            QTimer::singleShot(1000, [=]() {
+         
+            if (theme == "Dark" || theme == "Midnight") {
+            QPixmap send(":/icons/res/send-white.png");
+            QIcon sendIcon(send);
+            ui->sendChatButton->setIcon(sendIcon);
+            movie->stop();
+            ui->sendChatButton->setEnabled(true);
+             }else{
+            
+            QPixmap send(":/icons/res/sendBlack.png");
+            QIcon sendIcon(send);
+            ui->sendChatButton->setIcon(sendIcon);
+            movie1->stop();
+            ui->sendChatButton->setEnabled(true);
+             }
+                    
+                  });
+                
+                // Force a UI update so we get the unconfirmed Tx
+                rpc->refresh(true);
+                ui->memoTxtChat->clear();
+
+            },
+            // Errored out
+            [=] (QString opid, QString errStr) {
+                ui->statusBar->showMessage(QObject::tr(" Tx ") % opid % QObject::tr(" failed"), 15 * 1000);
+                
+                if (!opid.isEmpty())
+                    errStr = QObject::tr("The transaction with id ") % opid % QObject::tr(" failed. The error was") + ":\n\n" + errStr;            
+
+                QMessageBox::critical(this, QObject::tr("Transaction Error"), errStr, QMessageBox::Ok);
+                         movie->stop();
+      
+              
+            if (theme == "Dark" || theme == "Midnight") {
+            QPixmap send(":/icons/res/send-white.png");
+            QIcon sendIcon(send);
+            ui->sendChatButton->setIcon(sendIcon);
+            movie->stop();
+            ui->sendChatButton->setEnabled(true);
+             }else{
+            
+            QPixmap send(":/icons/res/sendBlack.png");
+            QIcon sendIcon(send);
+            ui->sendChatButton->setIcon(sendIcon);
+            movie1->stop();
+            ui->sendChatButton->setEnabled(true);
+             }
+                    
+                   
+                           
+            }
+        );
+
+    }        
+
+QString MainWindow::doSendChatMoneyRequestTxValidations(Tx tx) {
+    // Check to see if we have enough verified funds to send the Tx.
+
+    CAmount total;
+    for (auto toAddr : tx.toAddrs) {
+        if (!Settings::isValidAddress(toAddr.addr)) {
+            QString addr = (toAddr.addr.length() > 100 ? toAddr.addr.left(100) + "..." : toAddr.addr);
+            return QString(tr("Recipient Address ")) % addr % tr(" is Invalid");
+        }
+
+        // This technically shouldn't be possible, but issue #62 seems to have discovered a bug
+        // somewhere, so just add a check to make sure. 
+        if (toAddr.amount.toqint64() < 0) {
+            return QString(tr("Amount for address '%1' is invalid!").arg(toAddr.addr));
+        }
+
+        total = total + toAddr.amount;
+    }
+    total = total + tx.fee;
+
+    auto available = rpc->getModel()->getAvailableBalance();
+
+    if (available < total) {
+        return tr("Not enough available funds to send this transaction\n\nHave: %1\nNeed: %2\n\nNote: Funds need 1 confirmations before they can be spent")
+            .arg(available.toDecimalhushString(), total.toDecimalhushString());
+    }
+
+    return "";
+}
+
 
 void MainWindow::updateChat()
 {
