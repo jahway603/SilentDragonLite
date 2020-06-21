@@ -65,12 +65,23 @@ NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent
 
     parent->button(QWizard::CommitButton)->setEnabled(false);
     setButtonText(QWizard::CommitButton, "Next");
+    form.txtPassword->setEnabled(false);
+    form.txtConfirmPassword->setEnabled(false); 
+
+           QObject::connect(form.TOS,  &QRadioButton::clicked, [=](bool checked) {
+        if (checked) {
+
+            form.txtPassword->setEnabled(true);
+            form.txtConfirmPassword->setEnabled(true);                 
+            
+        }
+    });
 
 
          auto fnPasswordEdited = [=](const QString&) {
         // Enable the Finish button if the passwords match.
         QString passphraseBlank = form.txtPassword->text();
-
+  
         QString passphrase = QString("HUSH3") + passphraseBlank + QString("SDL");
 
         
@@ -83,6 +94,7 @@ NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent
             form.radioRestoreWallet->setEnabled(true);
             form.radioNewWallet->setEnabled(true);
             form.radioNewWallet->setChecked(true);
+             parent->button(QWizard::CommitButton)->setEnabled(true);
 
             int length = passphrase.length();
 
@@ -134,12 +146,7 @@ NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent
         }
     });
 
-    QObject::connect(form.TOS,  &QRadioButton::clicked, [=](bool checked) {
-        if (checked) {
-            parent->button(QWizard::CommitButton)->setEnabled(true);
-            
-        }
-    });
+  
            
 
             
