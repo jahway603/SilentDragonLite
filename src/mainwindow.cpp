@@ -2617,7 +2617,7 @@ void MainWindow::on_givemeZaddr_clicked()
                 });
 }
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::emojiButton_clicked()
 {
 
         QDialog emojiDialog(this);
@@ -2671,12 +2671,3 @@ QObject::connect(emoji.partying_face, &QPushButton::clicked, [&] () {
     emojiDialog.exec();
 }
 
-void MainWindow::on_comboBox_currentIndexChanged(const QString &arg1)
-{
-
-     Qt::Key key = Qt::Key_1;
-    QKeyEvent pressEvent = QKeyEvent(QEvent::KeyPress, key, Qt::NoModifier, QKeySequence(key).toString());
-    QKeyEvent releaseEvent = QKeyEvent(QEvent::KeyRelease, key, Qt::NoModifier);
-    QCoreApplication::sendEvent(ui->memoTxtChat, &pressEvent);
-    QCoreApplication::sendEvent(ui->memoTxtChat, &releaseEvent);
-}
