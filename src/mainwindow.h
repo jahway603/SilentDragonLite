@@ -111,9 +111,7 @@ private slots:
 
     void on_givemeZaddr_clicked();
 
-  //  void on_pushButton_clicked();
-
-    void emojiButton_clicked();
+    void on_emojiButton_clicked();
 private:
 
     bool fileExists(QString path);

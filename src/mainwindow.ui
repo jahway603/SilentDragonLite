@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1274</width>
+    <width>1282</width>
     <height>779</height>
    </rect>
   </property>
@@ -428,7 +428,7 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>1226</width>
+                <width>1234</width>
                 <height>509</height>
                </rect>
               </property>
@@ -1727,12 +1727,45 @@
                <number>6</number>
               </property>
               <item>
+               <widget class="QPushButton" name="emojiButton">
+                <property name="minimumSize">
+                 <size>
+                  <width>20</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset>
+                  <normalon>:/emoji/res/emoji/emoji1.png</normalon>
+                 </iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>17</width>
+                  <height>17</height>
+                 </size>
+                </property>
+                <property name="flat">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
                <widget class="QPushButton" name="sendChatButton">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>50</height>
+                 </size>
                 </property>
                 <property name="baseSize">
                  <size>
@@ -1759,33 +1792,6 @@
                 </property>
                 <property name="default">
                  <bool>false</bool>
-                </property>
-                <property name="flat">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="pushButton">
-                <property name="minimumSize">
-                 <size>
-                  <width>20</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="icon">
-                 <iconset>
-                  <normalon>:/emoji/res/emoji/emoji1.png</normalon>
-                 </iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>17</width>
-                  <height>17</height>
-                 </size>
                 </property>
                 <property name="flat">
                  <bool>true</bool>
@@ -1828,7 +1834,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1274</width>
+     <width>1282</width>
      <height>22</height>
     </rect>
    </property>

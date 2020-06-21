@@ -2617,7 +2617,7 @@ void MainWindow::on_givemeZaddr_clicked()
                 });
 }
 
-void MainWindow::emojiButton_clicked()
+void MainWindow::on_emojiButton_clicked()
 {
 
         QDialog emojiDialog(this);
