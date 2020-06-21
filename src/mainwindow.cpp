@@ -1386,6 +1386,8 @@ void MainWindow::setupchatTab() {
      ui->listChat->addAction(viewexplorer);
      ui->listChat->addAction(copytxid);
 
+ });
+
      QObject::connect(copymessage, &QAction::triggered, [=] {
 
     
@@ -1478,7 +1480,7 @@ void MainWindow::setupchatTab() {
 }
 });
 
-});
+
 
 ///////// Add contextmenu 
      QMenu* contextMenu;

@@ -990,7 +990,7 @@ void Controller::refreshTransactions() {
                         chatModel->addconfirmations(txid, confirmations);
                     }
                     
-                    if ((confirmations == 1)  && (chatModel->getConfirmationByTx(txid) != QString("0xdeadbeef"))) {
+                    if ((confirmations > 0)  && (chatModel->getConfirmationByTx(txid) != QString("0xdeadbeef"))) {
                         DataStore::getChatDataStore()->clear();
                         chatModel->killConfirmationCache();
                         chatModel->killMemoCache();
