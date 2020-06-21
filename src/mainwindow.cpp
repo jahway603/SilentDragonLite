@@ -20,6 +20,7 @@
 #include "ui_sendHushTransactionChat.h"
 #include "ui_contactrequest.h"
 #include "ui_deposithush.h"
+#include "ui_emoji.h"
 #include "ui_requestContactDialog.h"
 #include "chatmodel.h"
 #include "requestdialog.h"
@@ -35,6 +36,9 @@
 #include "DataStore/DataStore.h"
 #include "firsttimewizard.h"
 #include "../lib/silentdragonlitelib.h"
+#include <QCoreApplication>
+#include <QGuiApplication>
+#include <QKeyEvent>
 
 
 #ifdef Q_OS_WIN
@@ -2611,4 +2615,68 @@ void MainWindow::on_givemeZaddr_clicked()
                 ui->listReceiveAddresses->setCurrentIndex(0);
               
                 });
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+
+        QDialog emojiDialog(this);
+        Ui_emojiDialog emoji;
+        emoji.setupUi(&emojiDialog);
+        Settings::saveRestore(&emojiDialog);
+
+QObject::connect(emoji.smiley, &QPushButton::clicked, [&] () {
+   ui->memoTxtChat->insertHtml(":smiley:");
+
+        emojiDialog.close();
+});
+
+QObject::connect(emoji.money, &QPushButton::clicked, [&] () {
+   ui->memoTxtChat->insertHtml(":money_mouth:");
+
+        emojiDialog.close();
+});
+
+QObject::connect(emoji.laughing, &QPushButton::clicked, [&] () {
+   ui->memoTxtChat->insertHtml(":laughing:");
+
+        emojiDialog.close();
+});
+
+QObject::connect(emoji.sweet_smile, &QPushButton::clicked, [&] () {
+   ui->memoTxtChat->insertHtml(":sweet_smile:");
+
+        emojiDialog.close();
+});
+
+QObject::connect(emoji.joy, &QPushButton::clicked, [&] () {
+   ui->memoTxtChat->insertHtml(":joy:");
+
+        emojiDialog.close();
+});
+
+QObject::connect(emoji.innocent, &QPushButton::clicked, [&] () {
+   ui->memoTxtChat->insertHtml(":innocent:");
+
+        emojiDialog.close();
+});
+
+QObject::connect(emoji.partying_face, &QPushButton::clicked, [&] () {
+   ui->memoTxtChat->insertHtml(":partying_face:");
+
+        emojiDialog.close();
+});
+
+
+    emojiDialog.exec();
+}
+
+void MainWindow::on_comboBox_currentIndexChanged(const QString &arg1)
+{
+
+     Qt::Key key = Qt::Key_1;
+    QKeyEvent pressEvent = QKeyEvent(QEvent::KeyPress, key, Qt::NoModifier, QKeySequence(key).toString());
+    QKeyEvent releaseEvent = QKeyEvent(QEvent::KeyRelease, key, Qt::NoModifier);
+    QCoreApplication::sendEvent(ui->memoTxtChat, &pressEvent);
+    QCoreApplication::sendEvent(ui->memoTxtChat, &releaseEvent);
 }

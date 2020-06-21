@@ -67,7 +67,6 @@ void ConnectionLoader::doAutoConnect()
 {
     qDebug() << "Doing autoconnect";
     auto config = std::shared_ptr<ConnectionConfig>(new ConnectionConfig());
-    config->dangerous = false;
     config->server = Settings::getInstance()->getSettings().server;
 
     // Initialize the library
@@ -78,7 +77,6 @@ void ConnectionLoader::doAutoConnect()
     {
         main->logger->write(QObject::tr("Using existing wallet."));
         char* resp = litelib_initialize_existing(
-            config->dangerous,
             config->server.toStdString().c_str()
         );
         QString response = litelib_process_response(resp);
@@ -93,7 +91,7 @@ void ConnectionLoader::doAutoConnect()
     else
     {
         main->logger->write(QObject::tr("Create/restore wallet."));
-        createOrRestore(config->dangerous, config->server);
+        createOrRestore(config->server);
         d->show();
     }
 
@@ -154,12 +152,12 @@ void ConnectionLoader::doAutoConnect()
     });
 }
 
-void ConnectionLoader::createOrRestore(bool dangerous, QString server)
+void ConnectionLoader::createOrRestore(QString server)
 {
     // Close the startup dialog, since we'll be showing the wizard
     d->hide();
     // Create a wizard
-    FirstTimeWizard wizard(dangerous, server);
+    FirstTimeWizard wizard(server);
     main->logger->write("Start new Wallet with FirstimeWizard");
     wizard.exec();
 }
