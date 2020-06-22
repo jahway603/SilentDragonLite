@@ -70,8 +70,17 @@
     <file>res/emoji/joy.png</file>
     <file>res/emoji/innocent.png</file>
     <file>res/emoji/partying_face.png</file>
-    <file>res/emoji/heart_eyes.png</file>
-    <file>res/emoji/fire.png</file>
+    <file>res/emoji/face_with_3hearts.png</file>
+    <file>res/emoji/face-with-rolling-eyes.png</file>
+    <file>res/emoji/face-with-tongue.png</file>
+    <file>res/emoji/heart_shaped_eyes.png</file>
+    <file>res/emoji/nauseated-face.png</file>
+    <file>res/emoji/pile-of-poo.png</file>
+    <file>res/emoji/serious-face-with-symbols-covering-mouth.png</file>
+    <file>res/emoji/smiling-face-with-sunglasses.png</file>
+    <file>res/emoji/stuck-out.png</file>
+    <file>res/emoji/sweet_smile.png</file>
+
 
     </qresource>
     <qresource prefix="/translations">

@@ -2667,6 +2667,61 @@ QObject::connect(emoji.partying_face, &QPushButton::clicked, [&] () {
         emojiDialog.close();
 });
 
+QObject::connect(emoji.rolling_eyes, &QPushButton::clicked, [&] () {
+   ui->memoTxtChat->insertHtml(":rolling_eyes:");
+
+        emojiDialog.close();
+});
+
+QObject::connect(emoji.tongue, &QPushButton::clicked, [&] () {
+   ui->memoTxtChat->insertHtml(":stuck_out_tongue:");
+
+        emojiDialog.close();
+});
+
+QObject::connect(emoji.hearts3, &QPushButton::clicked, [&] () {
+   ui->memoTxtChat->insertHtml(":face_with_3hearts:");
+
+        emojiDialog.close();
+});
+
+QObject::connect(emoji.heart_eyes, &QPushButton::clicked, [&] () {
+   ui->memoTxtChat->insertHtml(":heart_eyes:");
+
+        emojiDialog.close();
+});
+
+QObject::connect(emoji.nauseated, &QPushButton::clicked, [&] () {
+   ui->memoTxtChat->insertHtml(":nauseated:");
+
+        emojiDialog.close();
+});
+
+QObject::connect(emoji.poop, &QPushButton::clicked, [&] () {
+   ui->memoTxtChat->insertHtml(":poop:");
+
+        emojiDialog.close();
+});
+
+QObject::connect(emoji.symbols_mouth, &QPushButton::clicked, [&] () {
+   ui->memoTxtChat->insertHtml(":symbols_mouth:");
+
+        emojiDialog.close();
+});
+
+QObject::connect(emoji.sunglass, &QPushButton::clicked, [&] () {
+   ui->memoTxtChat->insertHtml(":sunglass:");
+
+        emojiDialog.close();
+});
+
+QObject::connect(emoji.stuck_out, &QPushButton::clicked, [&] () {
+   ui->memoTxtChat->insertHtml(":stuck_out:");
+
+        emojiDialog.close();
+});
+
+
 
     emojiDialog.exec();
 }
