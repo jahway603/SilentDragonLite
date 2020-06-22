@@ -544,6 +544,7 @@ void MainWindow::sendChat() {
         QMessageBox msg(QMessageBox::Critical, tr("You have to select a contact and insert a Memo"),
         tr("You have selected no Contact from Contactlist,\n")  + tr("\nor your Memo is empty"),
         QMessageBox::Ok, this);
+        ui->memoTxtChat->setEnabled(true);
 
         msg.exec();
         return;
@@ -573,6 +574,7 @@ void MainWindow::sendChat() {
                         QMessageBox::Ok, this);
 
         msg.exec();
+        ui->memoTxtChat->setEnabled(true);
 
         // abort the Tx
         return;
@@ -592,6 +594,7 @@ void MainWindow::sendChat() {
         movie->start();
         ui->sendChatButton->show();
         ui->sendChatButton->setEnabled(false);
+        ui->memoTxtChat->setEnabled(true);
              
         } else {
 
@@ -601,6 +604,8 @@ void MainWindow::sendChat() {
         movie1->start();
         ui->sendChatButton->show();
         ui->sendChatButton->setEnabled(false);
+        ui->memoTxtChat->setEnabled(true);
+
         }
 
         ui->memoTxtChat->clear();
@@ -619,6 +624,8 @@ void MainWindow::sendChat() {
             ui->sendChatButton->setIcon(sendIcon);
             movie->stop();
             ui->sendChatButton->setEnabled(true);
+            ui->memoTxtChat->setEnabled(true);
+
              }else{
             
             QPixmap send(":/icons/res/sendBlack.png");
@@ -626,6 +633,7 @@ void MainWindow::sendChat() {
             ui->sendChatButton->setIcon(sendIcon);
             movie1->stop();
             ui->sendChatButton->setEnabled(true);
+            ui->memoTxtChat->setEnabled(true);
              }
                     
                   });
@@ -638,6 +646,7 @@ void MainWindow::sendChat() {
             // Errored out
             [=] (QString opid, QString errStr) {
                 ui->statusBar->showMessage(QObject::tr(" Tx ") % opid % QObject::tr(" failed"), 15 * 1000);
+                ui->memoTxtChat->setEnabled(true);
                 
                 if (!opid.isEmpty())
                     errStr = QObject::tr("The transaction with id ") % opid % QObject::tr(" failed. The error was") + ":\n\n" + errStr;            
@@ -652,6 +661,7 @@ void MainWindow::sendChat() {
             ui->sendChatButton->setIcon(sendIcon);
             movie->stop();
             ui->sendChatButton->setEnabled(true);
+            ui->memoTxtChat->setEnabled(true);
              }else{
             
             QPixmap send(":/icons/res/sendBlack.png");
@@ -659,6 +669,7 @@ void MainWindow::sendChat() {
             ui->sendChatButton->setIcon(sendIcon);
             movie1->stop();
             ui->sendChatButton->setEnabled(true);
+            ui->memoTxtChat->setEnabled(true);
              }
                     
                    
@@ -676,6 +687,7 @@ QString MainWindow::doSendChatTxValidations(Tx tx) {
         if (!Settings::isValidAddress(toAddr.addr)) {
             QString addr = (toAddr.addr.length() > 100 ? toAddr.addr.left(100) + "..." : toAddr.addr);
             return QString(tr("Recipient Address ")) % addr % tr(" is Invalid");
+            ui->memoTxtChat->setEnabled(true);
         }
 
         // This technically shouldn't be possible, but issue #62 seems to have discovered a bug
@@ -693,6 +705,7 @@ QString MainWindow::doSendChatTxValidations(Tx tx) {
     if (available < total) {
         return tr("Not enough available funds to send this transaction\n\nHave: %1\nNeed: %2\n\nNote: Funds need 1 confirmations before they can be spent")
             .arg(available.toDecimalhushString(), total.toDecimalhushString());
+            ui->memoTxtChat->setEnabled(true);
     }
 
     return "";
