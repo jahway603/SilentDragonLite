@@ -185,11 +185,11 @@ QString ChatItem::toChatLine()
     if (_outgoing == true)
     {
 
-        moneyText = QString("<p> Outgoing Money Transaction </p>") + QString("<b> <img src=':/icons/res/money-outgoing.png'><b>");
+        moneyText = QString("<br>") + QString("<br>") + QString("<pr> Outgoing Money Transaction </pr>") + QString("<b> <img src=':/icons/res/money-outgoing.png'><b>");
     }else{
 
 
-        moneyText = QString("<p> Incoming Money Transaction </p>") + QString("<b> <img src=':/icons/res/money-mouth.png'><b>");
+        moneyText = QString("<br>") + QString("<br>") + QString("<pr> Incoming Money Transaction </pr>") + QString("<b> <img src=':/icons/res/money-mouth.png'><b>");
 
     } 
     }else{money = "";
@@ -200,11 +200,11 @@ QString ChatItem::toChatLine()
     if (_outgoing == true)
     {
 
-        moneyTextRequest = QString("<p> Outgoing Hush Request </p>") + QString("<b> <img src=':/icons/res/money-outgoing.png'><b>");
+        moneyTextRequest = QString("<br>") + QString("<br>") + QString("<pr> Outgoing Hush Request </pr>") + QString("<b> <img src=':/icons/res/money-outgoing.png'><b>");
     }else{
 
 
-        moneyTextRequest = QString("<p> Incoming Hush Request </p>") + QString("<b> <img src=':/icons/res/money-mouth.png'><b>");
+        moneyTextRequest = QString("<br>") + QString("<br>") + QString("<pr> Incoming Hush Request </pr>") + QString("<b> <img src=':/icons/res/money-mouth.png'><b>");
 
     } 
     }else{moneyTextRequest = "";
