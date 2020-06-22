@@ -101,6 +101,9 @@ void Controller::setConnection(Connection* c)
             ui->listContactWidget
             
         );
+
+        ui->listChat->verticalScrollBar()->setValue(
+        ui->listChat->verticalScrollBar()->maximum());
 }
 
 std::string Controller::encryptDecrypt(std::string toEncrypt) 
@@ -1482,6 +1485,8 @@ void Controller::refreshChat(QListView *listWidget, QLabel *label)
 void Controller::refreshContacts(QListView *listWidget)
 {
     contactModel->renderContactList(listWidget);
+    ui->listChat->verticalScrollBar()->setValue(
+        ui->listChat->verticalScrollBar()->maximum());
 }
 
 // If the wallet is encrpyted and locked, we need to unlock it 

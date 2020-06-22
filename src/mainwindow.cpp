@@ -2721,6 +2721,18 @@ QObject::connect(emoji.stuck_out, &QPushButton::clicked, [&] () {
         emojiDialog.close();
 });
 
+QObject::connect(emoji.hush_white, &QPushButton::clicked, [&] () {
+   ui->memoTxtChat->insertHtml(":hush_white:");
+
+        emojiDialog.close();
+});
+
+QObject::connect(emoji.sd, &QPushButton::clicked, [&] () {
+   ui->memoTxtChat->insertHtml(":sd:");
+
+        emojiDialog.close();
+});
+
 
 
     emojiDialog.exec();

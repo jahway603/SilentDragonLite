@@ -80,8 +80,8 @@
     <file>res/emoji/smiling-face-with-sunglasses.png</file>
     <file>res/emoji/stuck-out.png</file>
     <file>res/emoji/sweet_smile.png</file>
-
-
+    <file>res/emoji/hush-money-white.png</file>
+    <file>res/emoji/SD.png</file>
     </qresource>
     <qresource prefix="/translations">
         <file>res/silentdragonlite_de.qm</file>

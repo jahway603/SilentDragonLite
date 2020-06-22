@@ -72,6 +72,8 @@ inline void ListViewDelegate::paint(QPainter *painter, QStyleOptionViewItem cons
     bodydoc.setHtml(bodytext.replace(":sunglass:",  "<img src=':/emoji/res/emoji/smiling-face-with-sunglasses.png'>"));
     bodydoc.setHtml(bodytext.replace(":stuck_out:",  "<img src=':/emoji/res/emoji/stuck-out.png'>"));
     bodydoc.setHtml(bodytext.replace(";p",  "<img src=':/emoji/res/emoji/stuck-out.png'>"));
+    bodydoc.setHtml(bodytext.replace(":hush_white:",  "<img src=':/emoji/res/emoji/hush-money-white.png'>"));
+    bodydoc.setHtml(bodytext.replace(":sd:",  "<img src=':/emoji/res/emoji/SD.png'>"));
     qreal contentswidth = option.rect.width() * d_widthfraction - d_horizontalmargin - d_pointerwidth - d_leftpadding - d_rightpadding;
     bodydoc.setTextWidth(contentswidth);
     qreal bodyheight = bodydoc.size().height();
@@ -216,6 +218,8 @@ inline QSize ListViewDelegate::sizeHint(QStyleOptionViewItem const &option, QMod
     bodydoc.setHtml(bodytext.replace(":sunglass:",  "<img src=':/emoji/res/emoji/smiling-face-with-sunglasses.png'>"));
     bodydoc.setHtml(bodytext.replace(":stuck_out:",  "<img src=':/emoji/res/emoji/stuck-out.png'>"));
     bodydoc.setHtml(bodytext.replace(";p",  "<img src=':/emoji/res/emoji/stuck-out.png'>"));
+    bodydoc.setHtml(bodytext.replace(":hush_white:",  "<img src=':/emoji/res/emoji/hush-money-white.png'>"));
+    bodydoc.setHtml(bodytext.replace(":sd:",  "<img src=':/emoji/res/emoji/SD.png'>"));
 
     // the width of the contents are the (a fraction of the window width) minus (margins + padding + width of the bubble's tail)
     qreal contentswidth = option.rect.width() * d_widthfraction - d_horizontalmargin - d_pointerwidth - d_leftpadding - d_rightpadding;
