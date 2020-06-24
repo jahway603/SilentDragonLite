@@ -59,11 +59,9 @@ inline void ListViewDelegate::paint(QPainter *painter, QStyleOptionViewItem cons
     bodydoc.setHtml(bodytext.replace(":joy:",  "<img src=':/emoji/res/emoji/joy.png'>"));
     bodydoc.setHtml(bodytext.replace(":innocent:",  "<img src=':/emoji/res/emoji/innocent.png'>"));
     bodydoc.setHtml(bodytext.replace(":partying_face:",  "<img src=':/emoji/res/emoji/partying_face.png'>"));
-    bodydoc.setHtml(bodytext.replace(":heart_eyes:",  "<img src=':/emoji/res/emoji/heart_eyes.png'>"));
     bodydoc.setHtml(bodytext.replace(":fire:",  "<img src=':/emoji/res/emoji/fire.png'>"));
     bodydoc.setHtml(bodytext.replace(":rolling_eyes:",  "<img src=':/emoji/res/emoji/face-with-rolling-eyes.png'>"));
     bodydoc.setHtml(bodytext.replace(":stuck_out_tongue:",  "<img src=':/emoji/res/emoji/face-with-tongue.png'>"));
-    bodydoc.setHtml(bodytext.replace(":p",  "<img src=':/emoji/res/emoji/face-with-tongue.png'>"));
     bodydoc.setHtml(bodytext.replace(":face_with_3hearts:",  "<img src=':/emoji/res/emoji/face_with_3hearts.png'>"));
     bodydoc.setHtml(bodytext.replace(":heart_eyes:",  "<img src=':/emoji/res/emoji/heart_shaped_eyes.png'>"));
     bodydoc.setHtml(bodytext.replace(":nauseated:",  "<img src=':/emoji/res/emoji/nauseated-face.png'>"));
@@ -205,11 +203,9 @@ inline QSize ListViewDelegate::sizeHint(QStyleOptionViewItem const &option, QMod
     bodydoc.setHtml(bodytext.replace(":joy:",  "<img src=':/emoji/res/emoji/joy.png'>"));
     bodydoc.setHtml(bodytext.replace(":innocent:",  "<img src=':/emoji/res/emoji/innocent.png'>"));
     bodydoc.setHtml(bodytext.replace(":partying_face:",  "<img src=':/emoji/res/emoji/partying_face.png'>"));
-    bodydoc.setHtml(bodytext.replace(":heart_eyes:",  "<img src=':/emoji/res/emoji/heart_eyes.png'>"));
     bodydoc.setHtml(bodytext.replace(":fire:",  "<img src=':/emoji/res/emoji/fire.png'>"));
     bodydoc.setHtml(bodytext.replace(":rolling_eyes:",  "<img src=':/emoji/res/emoji/face-with-rolling-eyes.png'>"));
     bodydoc.setHtml(bodytext.replace(":stuck_out_tongue:",  "<img src=':/emoji/res/emoji/face-with-tongue.png'>"));
-    bodydoc.setHtml(bodytext.replace(":p",  "<img src=':/emoji/res/emoji/face-with-tongue.png'>"));
     bodydoc.setHtml(bodytext.replace(":face_with_3hearts:",  "<img src=':/emoji/res/emoji/face_with_3hearts.png'>"));
     bodydoc.setHtml(bodytext.replace(":heart_eyes:",  "<img src=':/emoji/res/emoji/heart_shaped_eyes.png'>"));
     bodydoc.setHtml(bodytext.replace(":nauseated:",  "<img src=':/emoji/res/emoji/nauseated-face.png'>"));
