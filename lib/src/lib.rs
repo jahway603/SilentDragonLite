@@ -102,7 +102,7 @@ pub extern fn litelib_initialize_new(server: *const c_char) -> *mut c_char {
 /// Restore a wallet from the seed phrase
 #[no_mangle]
 pub extern fn litelib_initialize_new_from_phrase(server: *const c_char, 
-            seed: *const c_char, birthday: u64, number: u64) -> *mut c_char {
+            seed: *const c_char, birthday: u64, number: u64, overwrite: bool) -> *mut c_char {
     let server_str = unsafe {
         assert!(!server.is_null());
 
@@ -124,7 +124,7 @@ pub extern fn litelib_initialize_new_from_phrase(server: *const c_char,
         }
     };
 
-    let lightclient = match LightClient::new_from_phrase(seed_str, &config, birthday, number, false) {
+    let lightclient = match LightClient::new_from_phrase(seed_str, &config, birthday, number, overwrite) {
         Ok(l) => l,
         Err(e) => {
             let e_str = CString::new(format!("Error: {}", e)).unwrap();
