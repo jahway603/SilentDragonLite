@@ -26,6 +26,7 @@
 #include "requestdialog.h"
 #include "ui_startupencryption.h" 
 #include "ui_removeencryption.h"
+#include "ui_seedrestore.h"
 #include "websockets.h"
 #include "sodium.h"
 #include "sodium/crypto_generichash_blake2b.h"
@@ -162,17 +163,124 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Rescan
     QObject::connect(ui->actionRescan, &QAction::triggered, [=]() {
-        // To rescan, we clear the wallet state, and then reload the connection
+
+        QFile file(dirwalletenc);
+        QFile file1(dirwallet);
+
+        if(fileExists(dirwalletenc))
+
+          {
+        file.remove();
+        file1.remove();
+          }
+
+
+    Ui_Restore restoreSeed;
+    QDialog dialog(this);
+    restoreSeed.setupUi(&dialog);
+    Settings::saveRestore(&dialog);
+
+
+            rpc->fetchSeed([&](QJsonValue reply) {
+        if (isJsonError(reply)) {
+            return;
+        }
+
+        restoreSeed.seed->setReadOnly(true);
+        restoreSeed.seed->setLineWrapMode(QPlainTextEdit::LineWrapMode::NoWrap);
+        QString seedJson = QLatin1String(QJsonDocument(reply.toObject()).toJson(QJsonDocument::Compact));
+        int startPos = seedJson.indexOf("seed") +7;
+        int endPos = seedJson.indexOf("}") -1;
+        int length = endPos - startPos;
+        QString seed = seedJson.mid(startPos, length);
+        restoreSeed.seed->setPlainText(seed);
+
+        int startPosB = seedJson.indexOf("birthday") +10;
+        int endPosB = seedJson.indexOf("seed") -2;
+        int lengthB = endPosB - startPosB;
+        QString birthday = seedJson.mid(startPosB, lengthB);
+        restoreSeed.birthday->setPlainText(birthday);
+        });
+
+    QObject::connect(restoreSeed.restore, &QPushButton::clicked, [&](){
+
+    QString seed = restoreSeed.seed->toPlainText();
+    if (seed.trimmed().split(" ").length() != 24) {
+        QMessageBox::warning(this, tr("Failed to restore wallet"), 
+            tr("SilentDragonLite needs 24 words to restore wallet"),
+            QMessageBox::Ok);
+        return false;
+    }
+
+
+    // 2. Validate birthday
+    QString birthday_str =  restoreSeed.birthday->toPlainText();
+    bool ok;
+    qint64 birthday = birthday_str.toUInt(&ok);
+    if (!ok) {
+        QMessageBox::warning(this, tr("Failed to parse wallet birthday"), 
+            tr("Couldn't understand wallet birthday. This should be a block height from where to rescan the wallet. You can leave it as '0' if you don't know what it should be."),
+            QMessageBox::Ok);
+        return false;
+    }
+
+
+    QString number_str =  restoreSeed.quantity->text();
+    qint64 number = number_str.toUInt();
+
+    auto config = std::shared_ptr<ConnectionConfig>(new ConnectionConfig());
+    config->server = Settings::getInstance()->getSettings().server;
+    // 3. Attempt to restore wallet with the seed phrase
+    {
+        char* resp = litelib_initialize_new_from_phrase(config->server.toStdString().c_str(),
+                seed.toStdString().c_str(), birthday, number);
+        QString reply = litelib_process_response(resp);
+
+        if (reply.toUpper().trimmed() != "OK") {
+            QMessageBox::warning(this, tr("Failed to restore wallet"), 
+                tr("Couldn't restore the wallet") + "\n" + reply,
+                QMessageBox::Ok);
+           
+        } 
+    }
+
+    // 4. Finally attempt to save the wallet
+    {
+        char* resp = litelib_execute("save", "");
+        QString reply = litelib_process_response(resp);
+
+        QByteArray ba_reply = reply.toUtf8();
+        QJsonDocument jd_reply = QJsonDocument::fromJson(ba_reply);
+        QJsonObject parsed = jd_reply.object();
+
+        if (parsed.isEmpty() || parsed["result"].isNull()) {
+            QMessageBox::warning(this, tr("Failed to save wallet"), 
+                tr("Couldn't save the wallet") + "\n" + reply,
+                QMessageBox::Ok);
+
+        } else {}  
+
+            dialog.close();
+          // To rescan, we clear the wallet state, and then reload the connection
         // This will start a sync, and show the scanning status. 
        this->getRPC()->clearWallet([=] (auto) {
             // Save the wallet
             this->getRPC()->saveWallet([=] (auto) {
                 // Then reload the connection. The ConnectionLoader deletes itself.
-                auto cl = new ConnectionLoader(this, rpc);
+               auto cl = new ConnectionLoader(this, rpc);
                 cl->loadConnection();
-            });
-        });
-    });
+                         });       
+                     });
+
+    
+                 }
+
+             });
+
+       // });
+               
+        dialog.exec();
+});
 
     // Address Book
     QObject::connect(ui->action_Address_Book, &QAction::triggered, this, &MainWindow::addressBook);
