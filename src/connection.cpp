@@ -67,7 +67,6 @@ void ConnectionLoader::doAutoConnect()
 {
     qDebug() << "Doing autoconnect";
     auto config = std::shared_ptr<ConnectionConfig>(new ConnectionConfig());
-    config->dangerous = false;
     config->server = Settings::getInstance()->getSettings().server;
 
     // Initialize the library
@@ -78,7 +77,6 @@ void ConnectionLoader::doAutoConnect()
     {
         main->logger->write(QObject::tr("Using existing wallet."));
         char* resp = litelib_initialize_existing(
-            config->dangerous,
             config->server.toStdString().c_str()
         );
         QString response = litelib_process_response(resp);
@@ -93,7 +91,7 @@ void ConnectionLoader::doAutoConnect()
     else
     {
         main->logger->write(QObject::tr("Create/restore wallet."));
-        createOrRestore(config->dangerous, config->server);
+        createOrRestore(config->server);
         d->show();
     }
 
@@ -105,11 +103,14 @@ void ConnectionLoader::doAutoConnect()
         // If success, set the connection
         main->logger->write("Connection is online.");
         connection->setInfo(reply);
+        main->logger->write("getting Connection reply");
         isSyncing = new QAtomicInteger<bool>();
         isSyncing->storeRelaxed(true);
+        main->logger->write("isSyncing");
 
         // Do a sync at startup
         syncTimer = new QTimer(main);
+        main->logger->write("Beginning sync");
         connection->doRPCWithDefaultErrorHandling("sync", "", [=](QJsonValue) {
             isSyncing->storeRelaxed(false);
             // Cancel the timer
@@ -124,10 +125,13 @@ void ConnectionLoader::doAutoConnect()
             if (isSyncing != nullptr && isSyncing->loadRelaxed()) {
                 // Get the sync status
                 connection->doRPC("syncstatus", "", [=](QJsonValue reply) {
+                   
                     if (isSyncing != nullptr && !reply.toObject()["synced_blocks"].isUndefined())
                     {
                         qint64 synced = reply["synced_blocks"].toInt();
+                         main->logger->write("synced_blocks" + synced) ;
                         qint64 total = reply["total_blocks"].toInt();
+                        main->logger->write("total_blocks" + total) ;
                         me->showInformation(
                             "Synced " + QString::number(synced) + " / " + QString::number(total)
                         );
@@ -141,30 +145,45 @@ void ConnectionLoader::doAutoConnect()
 
         syncTimer->setInterval(1* 1000);
         syncTimer->start();
+        main->logger->write("Start sync timer");
 
     }, [=](QString err) {
         showError(err);
     });
 }
 
-void ConnectionLoader::createOrRestore(bool dangerous, QString server)
+void ConnectionLoader::createOrRestore(QString server)
 {
     // Close the startup dialog, since we'll be showing the wizard
     d->hide();
     // Create a wizard
-    FirstTimeWizard wizard(dangerous, server);
+    FirstTimeWizard wizard(server);
+    main->logger->write("Start new Wallet with FirstimeWizard");
     wizard.exec();
 }
 
 void ConnectionLoader::doRPCSetConnection(Connection* conn)
 {
     qDebug() << "Connectionloader finished, setting connection";
+    main->logger->write("Connectionloader finished, setting connection");
     rpc->setConnection(conn);
     d->accept();
     QTimer::singleShot(1, [=]() { delete this; });
 
+try
+{
+
     QFile plaintextWallet(dirwalletconnection);
+    main->logger->write("Path to Wallet.dat : " );
     plaintextWallet.remove();
+
+}catch (...)
+
+{
+
+    main->logger->write("no Plaintext wallet.dat");
+}
+    
 }
 
 Connection* ConnectionLoader::makeConnection(std::shared_ptr<ConnectionConfig> config)

@@ -101,6 +101,9 @@ void Controller::setConnection(Connection* c)
             ui->listContactWidget
             
         );
+
+        ui->listChat->verticalScrollBar()->setValue(
+        ui->listChat->verticalScrollBar()->maximum());
 }
 
 std::string Controller::encryptDecrypt(std::string toEncrypt) 
@@ -635,7 +638,7 @@ void Controller::getInfoThenRefresh(bool force)
             refreshAddresses();     // This calls refreshZSentTransactions() and refreshReceivedZTrans()
             refreshTransactions();
         }
-
+         refreshBalances();
         int lag = longestchain - notarized ;
         this->setLag(lag);
     }, [=](QString err) {
@@ -727,7 +730,7 @@ void Controller::processUnspent(const QJsonValue& reply, QMap<QString, CAmount>*
             QString qsAddr  = it["address"].toString();
             int block       = it["created_in_block"].toInt();
             QString txid    = it["created_in_txid"].toString();
-            CAmount amount  = CAmount::fromqint64(it["value"].toInt());
+            CAmount amount  = CAmount::fromqint64(it["value"].toDouble());
 
             bool spendable = it["unconfirmed_spent"].isNull() && it["spent"].isNull();    // TODO: Wait for 1 confirmations
             bool pending   = !it["unconfirmed_spent"].isNull();
@@ -738,7 +741,7 @@ void Controller::processUnspent(const QJsonValue& reply, QMap<QString, CAmount>*
             if (spendable) 
             {
                 (*balancesMap)[qsAddr] = (*balancesMap)[qsAddr] +
-                                         CAmount::fromqint64(it["value"].toInt());
+                                         CAmount::fromqint64(it["value"].toDouble());
             }
         }
     };
@@ -903,9 +906,9 @@ void Controller::refreshBalances()
 
     // 1. Get the Balances
     zrpc->fetchBalance([=] (QJsonValue reply) {
-        CAmount balT        = CAmount::fromqint64(reply["tbalance"].toInt());
-        CAmount balZ        = CAmount::fromqint64(reply["zbalance"].toInt());
-        CAmount balVerified = CAmount::fromqint64(reply["verified_zbalance"].toInt());
+        CAmount balT        = CAmount::fromqint64(reply["tbalance"].toDouble());
+        CAmount balZ        = CAmount::fromqint64(reply["zbalance"].toDouble());
+        CAmount balVerified = CAmount::fromqint64(reply["verified_zbalance"].toDouble());
         
         model->setBalT(balT);
         model->setBalZ(balZ);
@@ -982,7 +985,7 @@ void Controller::refreshTransactions() {
                     address = o.toObject()["address"].toString();
 
                     // Sent items are -ve
-                    CAmount amount = CAmount::fromqint64(-1* o.toObject()["value"].toInt());
+                    CAmount amount = CAmount::fromqint64(-1* o.toObject()["value"].toDouble());
                     
                     // Check for Memos
                    
@@ -990,7 +993,7 @@ void Controller::refreshTransactions() {
                         chatModel->addconfirmations(txid, confirmations);
                     }
                     
-                    if ((confirmations == 1)  && (chatModel->getConfirmationByTx(txid) != QString("0xdeadbeef"))) {
+                    if ((confirmations > 0)  && (chatModel->getConfirmationByTx(txid) != QString("0xdeadbeef"))) {
                         DataStore::getChatDataStore()->clear();
                         chatModel->killConfirmationCache();
                         chatModel->killMemoCache();
@@ -1083,7 +1086,7 @@ void Controller::refreshTransactions() {
       
                             if (crypto_kx_seed_keypair(pk, sk, MESSAGEAS1) !=0)
                             {
-                                // ?
+                                main->logger->write("Keypair outgoing error");
                             }
                 
                             unsigned char server_rx[crypto_kx_SESSIONKEYBYTES], server_tx[crypto_kx_SESSIONKEYBYTES];
@@ -1095,7 +1098,7 @@ void Controller::refreshTransactions() {
 
                             if (crypto_kx_server_session_keys(server_rx, server_tx, pk, sk, pubkeyBob) != 0)
                             {
-                                /* Suspicious client public key, bail out */
+                                 main->logger->write("Suspicious client public outgoing key, bail out ");
                             }
                 
                             const QByteArray ba = QByteArray::fromHex(memo.toUtf8());
@@ -1108,7 +1111,7 @@ void Controller::refreshTransactions() {
 
                             QString memodecrypt;
 
-                            if (encryptedMemoSize1 > 15)
+                            if ((encryptedMemoSize1 - crypto_secretstream_xchacha20poly1305_ABYTES) > 0)
                             {
                                 //////unsigned char* as message from QString
                                 #define MESSAGE2 (const unsigned char *) encryptedMemo
@@ -1143,6 +1146,7 @@ void Controller::refreshTransactions() {
                             }
                             else
                             {
+                               
                                 memodecrypt = "";
                             }
 
@@ -1165,7 +1169,7 @@ void Controller::refreshTransactions() {
                             );
 
                             DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
-                            updateUIBalances();
+                           // updateUIBalances();
                         }
                     }
 
@@ -1190,18 +1194,18 @@ void Controller::refreshTransactions() {
             }
             else
             {
-                // Incoming Transaction
+               
+               { // Incoming Transaction
                 address = (it.toObject()["address"].isNull() ? "" : it.toObject()["address"].toString());
                 model->markAddressUsed(address);
 
                 QString memo;
-                if (!it.toObject()["memo"].isNull()) {
+                if (!it.toObject()["memo"].isNull())
                     memo = it.toObject()["memo"].toString();
-                }
 
                 items.push_back(TransactionItemDetail{
                         address,
-                    CAmount::fromqint64(it.toObject()["amount"].toInt()),
+                    CAmount::fromqint64(it.toObject()["amount"].toDouble()),
                         memo
                 });
 
@@ -1210,7 +1214,14 @@ void Controller::refreshTransactions() {
                 };
 
                 txdata.push_back(tx);
-                
+               }
+
+               address = (it.toObject()["address"].isNull() ? "" : it.toObject()["address"].toString());
+                model->markAddressUsed(address);
+
+                QString memo;
+                if (!it.toObject()["memo"].isNull())
+                    memo = it.toObject()["memo"].toString();
                 QString type;
                 QString publickey;
                 QString headerbytes;
@@ -1306,7 +1317,9 @@ void Controller::refreshTransactions() {
 
                     int position = it.toObject()["position"].toInt();
 
-                    if ((memo.startsWith("{") == false) && (headerbytes > 0))
+                    int ciphercheck = memo.length() - crypto_secretstream_xchacha20poly1305_ABYTES;
+
+                    if ((memo.startsWith("{") == false) && (headerbytes > 0) && (ciphercheck > 0))
                     {
                         if (chatModel->getMemoByTx(txid) == QString("0xdeadbeef"))
                         {
@@ -1337,7 +1350,7 @@ void Controller::refreshTransactions() {
 
                             if (crypto_kx_seed_keypair(pk, sk, MESSAGEAS1) !=0)
                             {
-                                //
+                               main->logger->write("Suspicious  outgoing key pair, bail out ");
                             }
 
                             unsigned char client_rx[crypto_kx_SESSIONKEYBYTES], client_tx[crypto_kx_SESSIONKEYBYTES];
@@ -1348,7 +1361,7 @@ void Controller::refreshTransactions() {
 
                             if (crypto_kx_client_session_keys(client_rx, client_tx, pk, sk, pubkeyBob) != 0)
                             {
-                                /* Suspicious client public key, bail out */
+                               main->logger->write("Suspicious client public incoming key, bail out ");
                             }
 
                             const QByteArray ba = QByteArray::fromHex(memo.toUtf8());
@@ -1379,12 +1392,12 @@ void Controller::refreshTransactions() {
                             /////Only the QString gives weird data, so convert first to std::string
                             //   crypto_secretstream_xchacha20poly1305_keygen(client_rx);
                             if (crypto_secretstream_xchacha20poly1305_init_pull(&state, header, client_rx) != 0) {
-                                /* Invalid header, no need to go any further */
+                               main->logger->write("Invalid header incoming, no need to go any further "); 
                             }
 
                             if (crypto_secretstream_xchacha20poly1305_pull
                                 (&state, decrypted, NULL, tag, MESSAGE2, CIPHERTEXT1_LEN, NULL, 0) != 0) {
-                                /* Invalid/incomplete/corrupted ciphertext - abort */
+                                 main->logger->write("Invalid/incomplete/corrupted ciphertext - abort");
                             }
 
                             std::string decryptedMemo(reinterpret_cast<char*>(decrypted),MESSAGE1_LEN);
@@ -1464,8 +1477,9 @@ void Controller::refreshTransactions() {
         chat->renderChatBox(ui, ui->listChat,ui->memoSizeChat);
         ui->listChat->verticalScrollBar()->setValue(
         ui->listChat->verticalScrollBar()->maximum());
-
+        
     });
+    
 }
 
 void Controller::refreshChat(QListView *listWidget, QLabel *label)
@@ -1479,6 +1493,8 @@ void Controller::refreshChat(QListView *listWidget, QLabel *label)
 void Controller::refreshContacts(QListView *listWidget)
 {
     contactModel->renderContactList(listWidget);
+    ui->listChat->verticalScrollBar()->setValue(
+        ui->listChat->verticalScrollBar()->maximum());
 }
 
 // If the wallet is encrpyted and locked, we need to unlock it 

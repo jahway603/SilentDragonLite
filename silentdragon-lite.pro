@@ -14,6 +14,7 @@ QT += widgets
 QT += websockets
 
 
+
 TARGET = SilentDragonLite
 
 TEMPLATE = app
@@ -121,6 +122,7 @@ HEADERS += \
 FORMS += \
     src/contactrequest.ui \
     src/deposithush.ui \
+    src/emoji.ui \
     src/encryption.ui \
     src/hushrequest.ui \
     src/mainwindow.ui \
@@ -129,6 +131,8 @@ FORMS += \
     src/newwallet.ui \
     src/recurringpayments.ui \
     src/restoreseed.ui \
+    src/seedrestore.ui \
+    src/sendHushTransactionChat.ui \
     src/settings.ui \
     src/about.ui \
     src/confirm.ui \

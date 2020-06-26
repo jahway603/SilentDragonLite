@@ -116,6 +116,46 @@ std::map<QString, ChatItem> ChatDataStore::getAllOldContactRequests()
     return filteredItems;
 }
 
+std::map<QString, ChatItem> ChatDataStore::getAllCashMemosIncoming()
+{
+    std::map<QString, ChatItem> filteredItems;
+  
+    for(auto &c: this->data)   
+    {
+        if (
+            (c.second.isOutgoing() == false) &&
+            (c.second.getType() == "Money")  &&
+            (c.second.getMemo().startsWith("{"))  
+              
+        ) 
+        
+        {
+            filteredItems[c.first] = c.second;
+        }
+    }
+    return filteredItems;
+}
+
+std::map<QString, ChatItem> ChatDataStore::getAllCashMemosOutgoing()
+{
+    std::map<QString, ChatItem> filteredItems;
+  
+    for(auto &c: this->data)   
+    {
+        if (
+            (c.second.isOutgoing() == true) &&
+            (c.second.getType() == "Money")  &&
+            (c.second.getMemo().startsWith("{"))  
+              
+        ) 
+        
+        {
+            filteredItems[c.first] = c.second;
+        }
+    }
+    return filteredItems;
+}
+
 std::map<QString, ChatItem> ChatDataStore::getAllMemos()
 {
     std::map<QString, ChatItem> filteredItems;

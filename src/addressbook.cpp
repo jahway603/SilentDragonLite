@@ -250,6 +250,9 @@ void AddressBook::open(MainWindow* parent, QLineEdit* target)
             
         );
 
+       parent->ui->listChat->verticalScrollBar()->setValue(
+        parent->ui->listChat->verticalScrollBar()->maximum());
+
     });
 
    //  AddressBook::getInstance()->addAddressLabel(newLabel, ab.addr->text(), cid);

@@ -51,6 +51,27 @@ inline void ListViewDelegate::paint(QPainter *painter, QStyleOptionViewItem cons
     bodydoc.setDefaultFont(QFont("Roboto", 12));
     QString bodytext(index.data(Qt::DisplayRole).toString());
     bodydoc.setHtml(bodytext.replace("\n",  "<br>")); 
+    bodydoc.setHtml(bodytext.replace(":smiley:",  "<img src=':/emoji/res/emoji/emoji1.png'>"));
+    bodydoc.setHtml(bodytext.replace(":-)",  "<img src=':/emoji/res/emoji/emoji1.png'>"));
+    bodydoc.setHtml(bodytext.replace(":money_mouth:",  "<img src=':/emoji/res/emoji/money-mouth.png'>"));
+    bodydoc.setHtml(bodytext.replace(":laughing:",  "<img src=':/emoji/res/emoji/laughing.png'>"));
+    bodydoc.setHtml(bodytext.replace(":sweet_smile:",  "<img src=':/emoji/res/emoji/sweet_smile.png'>"));
+    bodydoc.setHtml(bodytext.replace(":joy:",  "<img src=':/emoji/res/emoji/joy.png'>"));
+    bodydoc.setHtml(bodytext.replace(":innocent:",  "<img src=':/emoji/res/emoji/innocent.png'>"));
+    bodydoc.setHtml(bodytext.replace(":partying_face:",  "<img src=':/emoji/res/emoji/partying_face.png'>"));
+    bodydoc.setHtml(bodytext.replace(":fire:",  "<img src=':/emoji/res/emoji/fire.png'>"));
+    bodydoc.setHtml(bodytext.replace(":rolling_eyes:",  "<img src=':/emoji/res/emoji/face-with-rolling-eyes.png'>"));
+    bodydoc.setHtml(bodytext.replace(":stuck_out_tongue:",  "<img src=':/emoji/res/emoji/face-with-tongue.png'>"));
+    bodydoc.setHtml(bodytext.replace(":face_with_3hearts:",  "<img src=':/emoji/res/emoji/face_with_3hearts.png'>"));
+    bodydoc.setHtml(bodytext.replace(":heart_eyes:",  "<img src=':/emoji/res/emoji/heart_shaped_eyes.png'>"));
+    bodydoc.setHtml(bodytext.replace(":nauseated:",  "<img src=':/emoji/res/emoji/nauseated-face.png'>"));
+    bodydoc.setHtml(bodytext.replace(":poop:",  "<img src=':/emoji/res/emoji/pile-of-poo.png'>"));
+    bodydoc.setHtml(bodytext.replace(":symbols_mouth:",  "<img src=':/emoji/res/emoji/serious-face-with-symbols-covering-mouth.png'>"));
+    bodydoc.setHtml(bodytext.replace(":sunglass:",  "<img src=':/emoji/res/emoji/smiling-face-with-sunglasses.png'>"));
+    bodydoc.setHtml(bodytext.replace(":stuck_out:",  "<img src=':/emoji/res/emoji/stuck-out.png'>"));
+    bodydoc.setHtml(bodytext.replace(";p",  "<img src=':/emoji/res/emoji/stuck-out.png'>"));
+    bodydoc.setHtml(bodytext.replace(":hush_white:",  "<img src=':/emoji/res/emoji/hush-money-white.png'>"));
+    bodydoc.setHtml(bodytext.replace(":sd:",  "<img src=':/emoji/res/emoji/SD.png'>"));
     qreal contentswidth = option.rect.width() * d_widthfraction - d_horizontalmargin - d_pointerwidth - d_leftpadding - d_rightpadding;
     bodydoc.setTextWidth(contentswidth);
     qreal bodyheight = bodydoc.size().height();
@@ -174,7 +195,27 @@ inline QSize ListViewDelegate::sizeHint(QStyleOptionViewItem const &option, QMod
     bodydoc.setDefaultFont(QFont("Roboto", 12));
     QString bodytext(index.data(Qt::DisplayRole).toString());
     bodydoc.setHtml(bodytext.replace("\n",  "<br>"));
-
+    bodydoc.setHtml(bodytext.replace(":smiley:",  "<img src=':/emoji/res/emoji/emoji1.png'>"));
+    bodydoc.setHtml(bodytext.replace(":-)",  "<img src=':/emoji/res/emoji/emoji1.png'>"));
+    bodydoc.setHtml(bodytext.replace(":money_mouth:",  "<img src=':/emoji/res/emoji/money-mouth.png'>"));
+    bodydoc.setHtml(bodytext.replace(":laughing:",  "<img src=':/emoji/res/emoji/laughing.png'>"));
+    bodydoc.setHtml(bodytext.replace(":sweet_smile:",  "<img src=':/emoji/res/emoji/sweet_smile.png'>"));
+    bodydoc.setHtml(bodytext.replace(":joy:",  "<img src=':/emoji/res/emoji/joy.png'>"));
+    bodydoc.setHtml(bodytext.replace(":innocent:",  "<img src=':/emoji/res/emoji/innocent.png'>"));
+    bodydoc.setHtml(bodytext.replace(":partying_face:",  "<img src=':/emoji/res/emoji/partying_face.png'>"));
+    bodydoc.setHtml(bodytext.replace(":fire:",  "<img src=':/emoji/res/emoji/fire.png'>"));
+    bodydoc.setHtml(bodytext.replace(":rolling_eyes:",  "<img src=':/emoji/res/emoji/face-with-rolling-eyes.png'>"));
+    bodydoc.setHtml(bodytext.replace(":stuck_out_tongue:",  "<img src=':/emoji/res/emoji/face-with-tongue.png'>"));
+    bodydoc.setHtml(bodytext.replace(":face_with_3hearts:",  "<img src=':/emoji/res/emoji/face_with_3hearts.png'>"));
+    bodydoc.setHtml(bodytext.replace(":heart_eyes:",  "<img src=':/emoji/res/emoji/heart_shaped_eyes.png'>"));
+    bodydoc.setHtml(bodytext.replace(":nauseated:",  "<img src=':/emoji/res/emoji/nauseated-face.png'>"));
+    bodydoc.setHtml(bodytext.replace(":poop:",  "<img src=':/emoji/res/emoji/pile-of-poo.png'>"));
+    bodydoc.setHtml(bodytext.replace(":symbols_mouth:",  "<img src=':/emoji/res/emoji/serious-face-with-symbols-covering-mouth.png'>"));
+    bodydoc.setHtml(bodytext.replace(":sunglass:",  "<img src=':/emoji/res/emoji/smiling-face-with-sunglasses.png'>"));
+    bodydoc.setHtml(bodytext.replace(":stuck_out:",  "<img src=':/emoji/res/emoji/stuck-out.png'>"));
+    bodydoc.setHtml(bodytext.replace(";p",  "<img src=':/emoji/res/emoji/stuck-out.png'>"));
+    bodydoc.setHtml(bodytext.replace(":hush_white:",  "<img src=':/emoji/res/emoji/hush-money-white.png'>"));
+    bodydoc.setHtml(bodytext.replace(":sd:",  "<img src=':/emoji/res/emoji/SD.png'>"));
 
     // the width of the contents are the (a fraction of the window width) minus (margins + padding + width of the bubble's tail)
     qreal contentswidth = option.rect.width() * d_widthfraction - d_horizontalmargin - d_pointerwidth - d_leftpadding - d_rightpadding;

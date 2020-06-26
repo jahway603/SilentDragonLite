@@ -10,7 +10,6 @@ class Controller;
 
 struct ConnectionConfig {
     QString server;
-    bool    dangerous;
     QString proxy;
 };
 
@@ -32,7 +31,7 @@ private:
 
     void doAutoConnect();
 
-    void createOrRestore(bool dangerous, QString server);
+    void createOrRestore(QString server);
 
     void showError(QString explanation);
     void showInformation(QString info, QString detail = "");

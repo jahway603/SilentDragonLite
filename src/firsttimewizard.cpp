@@ -9,10 +9,9 @@
 #include "../lib/silentdragonlitelib.h"
 
 
-FirstTimeWizard::FirstTimeWizard(bool dangerous, QString server)
+FirstTimeWizard::FirstTimeWizard(QString server)
 {
     setWindowTitle("New wallet wizard");
-    this->dangerous = dangerous;
     this->server = server;
 
     ////backup addresslabels.dat if there is one, to restore it later
@@ -65,12 +64,23 @@ NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent
 
     parent->button(QWizard::CommitButton)->setEnabled(false);
     setButtonText(QWizard::CommitButton, "Next");
+    form.txtPassword->setEnabled(false);
+    form.txtConfirmPassword->setEnabled(false); 
+
+           QObject::connect(form.TOS,  &QRadioButton::clicked, [=](bool checked) {
+        if (checked) {
+
+            form.txtPassword->setEnabled(true);
+            form.txtConfirmPassword->setEnabled(true);                 
+            
+        }
+    });
 
 
          auto fnPasswordEdited = [=](const QString&) {
         // Enable the Finish button if the passwords match.
         QString passphraseBlank = form.txtPassword->text();
-
+  
         QString passphrase = QString("HUSH3") + passphraseBlank + QString("SDL");
 
         
@@ -83,6 +93,7 @@ NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent
             form.radioRestoreWallet->setEnabled(true);
             form.radioNewWallet->setEnabled(true);
             form.radioNewWallet->setChecked(true);
+             parent->button(QWizard::CommitButton)->setEnabled(true);
 
             int length = passphrase.length();
 
@@ -134,12 +145,7 @@ NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent
         }
     });
 
-    QObject::connect(form.TOS,  &QRadioButton::clicked, [=](bool checked) {
-        if (checked) {
-            parent->button(QWizard::CommitButton)->setEnabled(true);
-            
-        }
-    });
+  
            
 
             
@@ -187,7 +193,7 @@ NewSeedPage::NewSeedPage(FirstTimeWizard *parent) : QWizardPage(parent) {
 void NewSeedPage::initializePage() {
     // Call the library to create a new wallet.
 
-    char* resp = litelib_initialize_new(parent->dangerous, parent->server.toStdString().c_str());
+    char* resp = litelib_initialize_new(parent->server.toStdString().c_str());
     QString reply = litelib_process_response(resp);
 
     QByteArray ba_reply = reply.toUtf8();
@@ -266,7 +272,7 @@ QString number_str =  form.number->text();
 qint64 number = number_str.toUInt();
     // 3. Attempt to restore wallet with the seed phrase
     {
-        char* resp = litelib_initialize_new_from_phrase(parent->dangerous, parent->server.toStdString().c_str(),
+        char* resp = litelib_initialize_new_from_phrase(parent->server.toStdString().c_str(),
                 seed.toStdString().c_str(), birthday, number);
         QString reply = litelib_process_response(resp);
 

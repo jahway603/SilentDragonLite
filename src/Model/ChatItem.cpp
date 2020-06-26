@@ -158,6 +158,9 @@ QString ChatItem::toChatLine()
 {
     QDateTime myDateTime;
     QString lock;
+    QString money;
+    QString moneyText;
+    QString moneyTextRequest;
     myDateTime.setTime_t(_timestamp);
 
     if (_notarize == true)
@@ -175,11 +178,43 @@ QString ChatItem::toChatLine()
         {
 
         lock = "<b> <img src=':/icons/res/lock_green.png'><b>";
-        }
+        }else{}
+
+    if (_memo.startsWith("Money transaction of :"))
+    {
+    if (_outgoing == true)
+    {
+
+        moneyText = QString("<br>") + QString("<br>") + QString("<pr> Outgoing Money Transaction </pr>") + QString("<b> <img src=':/icons/res/money-outgoing.png'><b>");
+    }else{
+
+
+        moneyText = QString("<br>") + QString("<br>") + QString("<pr> Incoming Money Transaction </pr>") + QString("<b> <img src=':/icons/res/money-mouth.png'><b>");
+
+    } 
+    }else{money = "";
+    moneyText = ""; }
+
+      if (_memo.startsWith("Request of :"))
+    {
+    if (_outgoing == true)
+    {
+
+        moneyTextRequest = QString("<br>") + QString("<br>") + QString("<pr> Outgoing Hush Request </pr>") + QString("<b> <img src=':/icons/res/money-outgoing.png'><b>");
+    }else{
+
+
+        moneyTextRequest = QString("<br>") + QString("<br>") + QString("<pr> Incoming Hush Request </pr>") + QString("<b> <img src=':/icons/res/money-mouth.png'><b>");
+
+    } 
+    }else{moneyTextRequest = "";
+    moneyTextRequest = "";    }
+
+    
     
 
     QString line = QString("<small>") + myDateTime.toString("yyyy-MM-dd hh:mm");
-    line += QString(lock) + QString("</small>");
+    line += QString(lock) + QString(moneyText) + QString(moneyTextRequest) +  QString("</small>");
     line +=QString("<p>") + _memo.toHtmlEscaped() + QString("</p>");
     return line;
 }

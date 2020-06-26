@@ -47,8 +47,11 @@
         <file>res/addContactBlack.png</file>
         <file>res/unknownBlack.png</file>
         <file>res/unknownWhite.png</file>
-        <file>res/hush-passion.png</file>
         <file>res/dark-01.png</file>
+        <file>res/money-mouth.png</file>
+        <file>res/money-outgoing.png</file>
+        <file>res/hush-money-white.png</file>
+
     </qresource>
     <qresource prefix="/img">
         <file>res/hushdlogo.gif</file>
@@ -58,6 +61,27 @@
         <file>res/silentdragonlite-animated-startup-dark.gif</file>
         <file>res/loaderblack.gif</file>
         <file>res/loaderwhite.gif</file>
+    </qresource>
+    <qresource prefix="/emoji">
+    <file>res/emoji/emoji1.png</file>
+    <file>res/emoji/laughing.png</file>
+    <file>res/emoji/money-mouth.png</file>
+    <file>res/emoji/sweet_smile.png</file>
+    <file>res/emoji/joy.png</file>
+    <file>res/emoji/innocent.png</file>
+    <file>res/emoji/partying_face.png</file>
+    <file>res/emoji/face_with_3hearts.png</file>
+    <file>res/emoji/face-with-rolling-eyes.png</file>
+    <file>res/emoji/face-with-tongue.png</file>
+    <file>res/emoji/heart_shaped_eyes.png</file>
+    <file>res/emoji/nauseated-face.png</file>
+    <file>res/emoji/pile-of-poo.png</file>
+    <file>res/emoji/serious-face-with-symbols-covering-mouth.png</file>
+    <file>res/emoji/smiling-face-with-sunglasses.png</file>
+    <file>res/emoji/stuck-out.png</file>
+    <file>res/emoji/sweet_smile.png</file>
+    <file>res/emoji/hush-money-white.png</file>
+    <file>res/emoji/SD.png</file>
     </qresource>
     <qresource prefix="/translations">
         <file>res/silentdragonlite_de.qm</file>
