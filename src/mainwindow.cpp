@@ -841,7 +841,7 @@ void MainWindow::setupSettingsModal() {
         
         // List of default servers
         settings.cmbServer->addItem("https://lite.myhush.org");
-        settings.cmbServer->addItem("rnhk4pwlsbaqzx7wcqfy47lijf2opklstaukq35reiz5rn76crfqpjqd.onion:9067");
+        settings.cmbServer->addItem("6onaaujm4ozaokzu.onion:80");
 
 
         // Load current values into the dialog        
