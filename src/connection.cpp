@@ -124,14 +124,14 @@ void ConnectionLoader::doAutoConnect()
             // Check the sync status
             if (isSyncing != nullptr && isSyncing->loadRelaxed()) {
                 // Get the sync status
+
+                try {
                 connection->doRPC("syncstatus", "", [=](QJsonValue reply) {
                    
-                    if (isSyncing != nullptr && !reply.toObject()["synced_blocks"].isUndefined())
+                    if (isSyncing != nullptr && reply.toObject()["synced_blocks"].toInt())
                     {
                         qint64 synced = reply["synced_blocks"].toInt();
-                         main->logger->write("synced_blocks" + synced) ;
                         qint64 total = reply["total_blocks"].toInt();
-                        main->logger->write("total_blocks" + total) ;
                         me->showInformation(
                             "Synced " + QString::number(synced) + " / " + QString::number(total)
                         );
@@ -140,6 +140,12 @@ void ConnectionLoader::doAutoConnect()
                 [=](QString err) {
                     qDebug() << "Sync error" << err;
                 });
+            }catch (...)
+            {
+                main->logger->write("catch sync progress reply");
+
+            }
+
             }
         });
 
