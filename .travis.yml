@@ -18,7 +18,6 @@ before_script:
 
 
 before_install:
- - rustup component add rustfmt --toolchain stable-x86_64-unknown-linux-gnu
  - gem install bundler
  - curl -sSL https://sh.rustup.rs | sh -s -- -y --default-toolchain=stable --profile=minimal
  - export PATH="$PATH:$HOME/.cargo/bin"
