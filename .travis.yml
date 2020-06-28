@@ -4,7 +4,7 @@ matrix:
   include:
     # works on Precise and Trusty
     - os: linux
-    - dist: bionec
+    - dist: xenial
       compiler: clang
       addons:
         apt:
@@ -18,7 +18,7 @@ before_script:
 before_install:
  - rustup component add rustfmt --toolchain stable-x86_64-unknown-linux-gnu
  - gem install bundler
- - curl -sSL https://sh.rustup.rs | sh -s -- -y --default-toolchain=nightly --profile=minimal
+ - curl -sSL https://sh.rustup.rs | sh -s -- -y --default-toolchain=stable --profile=minimal
  - export PATH="$PATH:$HOME/.cargo/bin"
  - sudo add-apt-repository ppa:beineri/opt-qt-5.14.2-bionic -y
  - sudo apt-get update -qq
