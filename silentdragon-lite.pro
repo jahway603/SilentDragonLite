@@ -50,6 +50,7 @@ SOURCES += \
     src/3rdparty/qrcode/BitBuffer.cpp \
     src/3rdparty/qrcode/QrCode.cpp \
     src/3rdparty/qrcode/QrSegment.cpp \
+    src/3rdparty/json/json.hpp \
     src/settings.cpp \
     src/sendtab.cpp \
     src/txtablemodel.cpp \
