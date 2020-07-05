@@ -1332,9 +1332,9 @@ void MainWindow::setupTransactionsTab() {
     // Set up context menu on transactions tab
     auto theme = Settings::getInstance()->get_theme_name();
     if (theme == "Dark" || theme == "Midnight") {
-    ui->listChat->setStyleSheet("background-image: url(:/icons/res/SDLogo.png) ;background-attachment: fixed ;background-position: center center ;background-repeat: no-repeat;background-size: cover");
+    ui->listChat->setStyleSheet("background-image: url(:/icons/res/SDLogo.png) ;background-attachment: fixed ;background-position: center center ;background-repeat: no-repeat");
      }
-    if (theme == "Default") {ui->listChat->setStyleSheet("background-image: url(:/icons/res/sdlogo2.png) ;background-attachment: fixed ;background-position: center center ;background-repeat: no-repeat;background-size: cover");}
+    if (theme == "Default") {ui->listChat->setStyleSheet("background-image: url(:/icons/res/sdlogo2.png) ;background-attachment: fixed ;background-position: center center ;background-repeat: no-repeat");}
    
     ui->listChat->setResizeMode(QListView::Adjust);
     ui->listChat->setWordWrap(true);
