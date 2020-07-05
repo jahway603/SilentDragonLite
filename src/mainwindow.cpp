@@ -41,6 +41,8 @@
 #include <QGuiApplication>
 #include <QKeyEvent>
 
+using json = nlohmann::json;
+
 
 #ifdef Q_OS_WIN
 auto dirwallet = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("silentdragonlite/silentdragonlite-wallet.dat");
@@ -181,14 +183,14 @@ MainWindow::MainWindow(QWidget *parent) :
     Settings::saveRestore(&dialog);
 
 
-            rpc->fetchSeed([&](QJsonValue reply) {
+            rpc->fetchSeed([=](json reply) {
         if (isJsonError(reply)) {
             return;
         }
 
         restoreSeed.seed->setReadOnly(true);
         restoreSeed.seed->setLineWrapMode(QPlainTextEdit::LineWrapMode::NoWrap);
-        QString seedJson = QLatin1String(QJsonDocument(reply.toObject()).toJson(QJsonDocument::Compact));
+        QString seedJson = QString::fromStdString(reply.get<json::string_t>());
         int startPos = seedJson.indexOf("seed") +7;
         int endPos = seedJson.indexOf("}") -1;
         int length = endPos - startPos;
@@ -1104,7 +1106,7 @@ void MainWindow::exportSeed() {
 
     
 
-    rpc->fetchSeed([=](QJsonValue reply) {
+    rpc->fetchSeed([=](json reply) {
         if (isJsonError(reply)) {
             return;
         }
@@ -1122,7 +1124,7 @@ void MainWindow::exportSeed() {
 
         pui.privKeyTxt->setReadOnly(true);
         pui.privKeyTxt->setLineWrapMode(QPlainTextEdit::LineWrapMode::NoWrap);
-        pui.privKeyTxt->setPlainText(QLatin1String(QJsonDocument(reply.toObject()).toJson(QJsonDocument::Compact)));
+        pui.privKeyTxt->setPlainText(QString::fromStdString(reply.dump()));
         
         pui.helpLbl->setText(tr("This is your wallet seed. Please back it up carefully and safely."));
 
@@ -1176,14 +1178,14 @@ void MainWindow::exportKeys(QString addr) {
 
     bool allKeys = addr.isEmpty() ? true : false;
 
-    auto fnUpdateUIWithKeys = [=](QJsonValue reply) {
+    auto fnUpdateUIWithKeys = [=](json reply) {
         if (isJsonError(reply)) {
             return;                
         }
 
-        if (reply.isNull() || !reply.isArray()) {
+        if (reply.is_discarded() || !reply.is_array()) {
             QMessageBox::critical(this, tr("Error getting private keys"),
-                tr("Error loading private keys: ") + QLatin1String(QJsonDocument(reply.toObject()).toJson(QJsonDocument::Compact)),
+                tr("Error loading private keys: ") + QString::fromStdString(reply.dump()),
                 QMessageBox::Ok);
             return;
         }
@@ -1222,8 +1224,8 @@ void MainWindow::exportKeys(QString addr) {
         });
 
         QString allKeysTxt;
-        for (auto i : reply.toArray()) {
-            allKeysTxt = allKeysTxt % i.toObject()["private_key"].toString() % " # addr=" % i.toObject()["address"].toString() % "\n";
+        for (auto i : reply.get<json::array_t>()) {
+            allKeysTxt = allKeysTxt % QString::fromStdString(i["private_key"]) % " # addr=" % QString::fromStdString(i["address"]) % "\n";
         }
 
         pui.privKeyTxt->setPlainText(allKeysTxt);
@@ -1330,7 +1332,7 @@ void MainWindow::setupTransactionsTab() {
     // Set up context menu on transactions tab
     auto theme = Settings::getInstance()->get_theme_name();
     if (theme == "Dark" || theme == "Midnight") {
-    ui->listChat->setStyleSheet("background-image: url(:/icons/res/sdlogo.png) ;background-attachment: fixed ;background-position: center center ;background-repeat: no-repeat;background-size: cover");
+    ui->listChat->setStyleSheet("background-image: url(:/icons/res/SDLogo.png) ;background-attachment: fixed ;background-position: center center ;background-repeat: no-repeat;background-size: cover");
      }
     if (theme == "Default") {ui->listChat->setStyleSheet("background-image: url(:/icons/res/sdlogo2.png) ;background-attachment: fixed ;background-position: center center ;background-repeat: no-repeat;background-size: cover");}
    
@@ -2304,8 +2306,8 @@ void MainWindow::updateContacts()
 }
 
 void MainWindow::addNewZaddr(bool sapling) {
-    rpc->createNewZaddr(sapling, [=] (QJsonValue reply) {
-        QString addr = reply.toArray()[0].toString();
+    rpc->createNewZaddr(sapling, [=] (json reply) {
+        QString addr = QString::fromStdString(reply.get<json::array_t>()[0]);
         // Make sure the RPC class reloads the z-addrs for future use
         rpc->refreshAddresses();
 
@@ -2355,8 +2357,8 @@ std::function<void(bool)> MainWindow::addZAddrsToComboList(bool sapling) {
 
 void MainWindow::setupReceiveTab() {
     auto addNewTAddr = [=] () {
-        rpc->createNewTaddr([=] (QJsonValue reply) {
-            QString addr = reply.toArray()[0].toString();
+        rpc->createNewTaddr([=] (json reply) {
+            QString addr = QString::fromStdString(reply.get<json::array_t>()[0]);
             // Make sure the RPC class reloads the t-addrs for future use
             rpc->refreshAddresses();
 
@@ -2731,8 +2733,8 @@ void MainWindow::on_givemeZaddr_clicked()
 {
 
     bool sapling = true;
-    rpc->createNewZaddr(sapling, [=] (QJsonValue reply) {
-                QString hushchataddr = reply.toArray()[0].toString();
+    rpc->createNewZaddr(sapling, [=] (json reply) {
+                QString hushchataddr = QString::fromStdString(reply.get<json::array_t>()[0]);
                 QClipboard *zaddr_Clipboard = QApplication::clipboard();
                 zaddr_Clipboard ->setText(hushchataddr);
                 QMessageBox::information(this, "Your new HushChat address was copied to your clipboard!",hushchataddr);

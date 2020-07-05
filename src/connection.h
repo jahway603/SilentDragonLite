@@ -5,6 +5,7 @@
 #include "ui_connection.h"
 #include "precompiled.h"
 
+using json = nlohmann::json;
 
 class Controller;
 
@@ -54,15 +55,15 @@ private:
 class Callback: public QObject {
     Q_OBJECT
 public:
-    Callback(const std::function<void(QJsonValue)> cb, const std::function<void(QString)> errCb) { this->cb = cb; this->errCb = errCb;}
+    Callback(const std::function<void(json)> cb, const std::function<void(QString)> errCb) { this->cb = cb; this->errCb = errCb;}
     ~Callback() = default;
 
 public slots:
-    void processRPCCallback(QJsonValue resp);
+    void processRPCCallback(json resp);
     void processError(QString error);
 
 private:
-    std::function<void(QJsonValue)> cb;
+    std::function<void(json)> cb;
     std::function<void(QString)> errCb;
 
 };
@@ -89,7 +90,7 @@ public:
     virtual void run();
 
 signals:
-    void responseReady(QJsonValue);
+    void responseReady(json);
     void handleError(QString);
 
 private:
@@ -114,19 +115,19 @@ public:
     void shutdown();
 
 
-    void doRPC(const QString cmd, const QString args, const std::function<void(QJsonValue)>& cb,
+    void doRPC(const QString cmd, const QString args, const std::function<void(json)>& cb,
                const std::function<void(QString)>& errCb);
-    void doRPCWithDefaultErrorHandling(const QString cmd, const QString args, const std::function<void(QJsonValue)>& cb);
-    void doRPCIgnoreError(const QString cmd, const QString args, const std::function<void(QJsonValue)>& cb) ;
+    void doRPCWithDefaultErrorHandling(const QString cmd, const QString args, const std::function<void(json)>& cb);
+    void doRPCIgnoreError(const QString cmd, const QString args, const std::function<void(json)>& cb) ;
 
     void showTxError(const QString& error);
 
-    QJsonValue getInfo() { return serverInfo; }
-    void        setInfo(const QJsonValue& info) { serverInfo = info; }
+    json    getInfo() { return serverInfo; }
+    void    setInfo(const json& info) { serverInfo = info; }
 
 private:
     bool shutdownInProgress = false;
-    QJsonValue serverInfo;
+    json serverInfo;
 };
 
 #endif

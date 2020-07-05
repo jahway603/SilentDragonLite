@@ -196,14 +196,11 @@ void NewSeedPage::initializePage() {
     char* resp = litelib_initialize_new(parent->server.toStdString().c_str());
     QString reply = litelib_process_response(resp);
 
-    QByteArray ba_reply = reply.toUtf8();
-    QJsonDocument jd_reply = QJsonDocument::fromJson(ba_reply);
-    QJsonObject parsed = jd_reply.object();
-
-    if (parsed.isEmpty() || parsed["seed"].isNull()) {
+    auto parsed = json::parse(reply.toStdString().c_str(), nullptr, false);
+    if (parsed.is_discarded() || parsed.is_null() || parsed.find("seed") == parsed.end()) {
         form.txtSeed->setPlainText(tr("Error creating a wallet") + "\n" + reply);
     } else {
-        QString seed = parsed["seed"].toString();
+        QString seed = QString::fromStdString(parsed["seed"].get<json::string_t>());
         form.txtSeed->setPlainText(seed);
     }
 
@@ -216,11 +213,9 @@ bool NewSeedPage::validatePage() {
     char* resp = litelib_execute("save", "");
     QString reply = litelib_process_response(resp);
 
-    QByteArray ba_reply = reply.toUtf8();
-    QJsonDocument jd_reply = QJsonDocument::fromJson(ba_reply);
-    QJsonObject parsed = jd_reply.object();
+    auto parsed = json::parse(reply.toStdString().c_str(), nullptr, false);
+    if (parsed.is_discarded() || parsed.is_null() || parsed.find("result") == parsed.end()) {
 
-    if (parsed.isEmpty() || parsed["result"].isNull()) {
         QMessageBox::warning(this, tr("Failed to save wallet"), 
             tr("Couldn't save the wallet") + "\n" + reply,
             QMessageBox::Ok);
@@ -289,11 +284,8 @@ qint64 number = number_str.toUInt();
         char* resp = litelib_execute("save", "");
         QString reply = litelib_process_response(resp);
 
-        QByteArray ba_reply = reply.toUtf8();
-        QJsonDocument jd_reply = QJsonDocument::fromJson(ba_reply);
-        QJsonObject parsed = jd_reply.object();
-
-        if (parsed.isEmpty() || parsed["result"].isNull()) {
+        auto parsed = json::parse(reply.toStdString().c_str(), nullptr, false);
+        if (parsed.is_discarded() || parsed.is_null() || parsed.find("result") == parsed.end()) {
             QMessageBox::warning(this, tr("Failed to save wallet"), 
                 tr("Couldn't save the wallet") + "\n" + reply,
                 QMessageBox::Ok);
