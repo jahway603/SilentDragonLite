@@ -17,6 +17,7 @@ ContactModel *contactModel = new ContactModel();
 
 using json = nlohmann::json;
 
+
 Controller::Controller(MainWindow* main) 
 {
     auto cl = new ConnectionLoader(main, this);
@@ -102,6 +103,9 @@ void Controller::setConnection(Connection* c)
             ui->listContactWidget
             
         );
+
+        ui->listChat->verticalScrollBar()->setValue(
+        ui->listChat->verticalScrollBar()->maximum());
 }
 
 std::string Controller::encryptDecrypt(std::string toEncrypt) 
@@ -121,7 +125,7 @@ std::string Controller::encryptDecrypt(std::string toEncrypt)
 }
 
 // Build the RPC JSON Parameters for this tx
-void Controller::fillTxJsonParams(json& allRecepients, Tx tx) 
+void Controller::fillTxJsonParams(json& allRecepients, Tx tx)
 {   
     Q_ASSERT(allRecepients.is_array());
 
@@ -141,12 +145,11 @@ void Controller::fillTxJsonParams(json& allRecepients, Tx tx)
             DataStore::getSietchDataStore()->setData(QString("Sietch") + QString(i), zdust.toUtf8());
         } );
     }
-
     // Set sietch zdust addr to json.
-    // Using DataStore singelton, to store the data into the dusts, bing bada boom :D
+    // Using DataStore singelton, to store the data into the dust.
     for(uint8_t i = 0; i < 6; i++)
     {
-        dust.at(i)["address"] = DataStore::getSietchDataStore()->getData(QString("Sietch" + QString(i))).toStdString();
+    dust.at(i)["address"] = DataStore::getSietchDataStore()->getData(QString("Sietch" + QString(i))).toStdString();
     }
 
     DataStore::getSietchDataStore()->clear(); // clears the datastore
@@ -157,42 +160,41 @@ void Controller::fillTxJsonParams(json& allRecepients, Tx tx)
     const int randomStringLength = sizerandomString;
 
     QString randomString;
+    QRandomGenerator *gen = QRandomGenerator::system();
     for(int i=0; i<randomStringLength; ++i)
     {
-       int index = qrand() % possibleCharacters.length();
+       // int index = qrand() % possibleCharacters.length();
+       int index = gen->bounded(0, possibleCharacters.length() - 1);
        QChar nextChar = possibleCharacters.at(index);
        randomString.append(nextChar);
     }
-
-    for(uint8_t i = 0; i < 6; i++)
+  
+   for(uint8_t i = 0; i < 6; i++)
     {
         int length = randomString.length(); 
         int randomSize = rand() % 120 +10;
-
         char *randomHash = NULL;
         randomHash = new char[length+1];
         strncpy(randomHash, randomString.toLocal8Bit(), length +1);  
-
         #define MESSAGE ((const unsigned char *) randomHash)
         #define MESSAGE_LEN length
         #define MESSAGE_LEN1 length + randomSize
+    
+        unsigned char hash[crypto_secretstream_xchacha20poly1305_ABYTES];
 
-unsigned char hash[crypto_secretstream_xchacha20poly1305_ABYTES];
-
-crypto_generichash(hash, sizeof hash,
+        crypto_generichash(hash, sizeof hash,
                    MESSAGE, MESSAGE_LEN1,
                    NULL, 0);
 
-std::string decryptedMemo(reinterpret_cast<char*>(hash),MESSAGE_LEN1);
-std::string encrypt = this->encryptDecrypt(decryptedMemo);
-QString randomHashafter1 = QByteArray(reinterpret_cast<const char*>(encrypt.c_str()),encrypt.size()).toHex();
-dust.at(i)["memo"] = randomHashafter1.toStdString();
+        std::string decryptedMemo(reinterpret_cast<char*>(hash),MESSAGE_LEN1);
+        std::string encrypt = this->encryptDecrypt(decryptedMemo);
+        QString randomHashafter1 = QByteArray(reinterpret_cast<const char*>(encrypt.c_str()),encrypt.size()).toHex();
+        dust.at(i)["memo"] = randomHashafter1.toStdString();
+    }
 
-    }    
-
-   for(uint8_t i = 0; i < 6; i++)
+    for(auto &it: dust)
     {
-        dust.at(i)["amount"] = 0; 
+        it["amount"] = 0;
     }
 
         
@@ -205,18 +207,20 @@ dust.at(i)["memo"] = randomHashafter1.toStdString();
         if (Settings::isZAddress(toAddr.addr) && !toAddr.memo.trimmed().isEmpty())
             rec["memo"] = toAddr.memo.toStdString();
 
-        allRecepients.push_back(rec) ;
+        allRecepients.push_back(rec);
     }
 
-        allRecepients.insert(std::begin(allRecepients), {
+    allRecepients.insert(std::begin(allRecepients), {
             dust.at(0),
             dust.at(1),
             dust.at(2),
             dust.at(3),
             dust.at(4),
             dust.at(5)
-           
+
         }) ;
+
+        qDebug()<<"ADDR DUST";
 }
 
 void Controller::noConnection() 
@@ -257,11 +261,11 @@ void Controller::refresh(bool force)
     getInfoThenRefresh(force);
 }
 
-void Controller::processInfo(const json& info) 
+void Controller::processInfo(const json& info)
 {
     // Testnet?
     QString chainName;
-    if (!info["chain_name"].is_null()) 
+    if (!info["chain_name"].is_null())
     {
         chainName = QString::fromStdString(info["chain_name"].get<json::string_t>());
         Settings::getInstance()->setTestnet(chainName == "test");
@@ -282,18 +286,16 @@ void Controller::getInfoThenRefresh(bool force)
 
     static bool prevCallSucceeded = false;
 
-    zrpc->fetchInfo([=] (const json& reply) {   
+    zrpc->fetchInfo([=] (const json& reply) {
         prevCallSucceeded = true;       
         int curBlock  = reply["latest_block_height"].get<json::number_integer_t>();
         bool doUpdate = force || (model->getLatestBlock() != curBlock);
         int difficulty = reply["difficulty"].get<json::number_integer_t>();
         int blocks_until_halving= 340000 - curBlock;
-        int halving_days = (blocks_until_halving * 150) / (60*60*24) ;
+        int halving_days = (blocks_until_halving * 150) / (60 * 60 * 24) ;
         int longestchain = reply["longestchain"].get<json::number_integer_t>();
         int notarized = reply["notarized"].get<json::number_integer_t>();
         
- 
-      
         model->setLatestBlock(curBlock);
         if (
             Settings::getInstance()->get_currency_name() == "EUR" || 
@@ -309,11 +311,7 @@ void Controller::getInfoThenRefresh(bool force)
             );
             ui->longestchain->setText(
                 "Block: " + QLocale(QLocale::German).toString(longestchain)
-               
             );
-
-            
-
             ui->difficulty->setText(
                 QLocale(QLocale::German).toString(difficulty)
             );
@@ -342,12 +340,9 @@ void Controller::getInfoThenRefresh(bool force)
             );
         }
 
-        ui->Version->setText(
-            QString::fromStdString(reply["version"].get<json::string_t>())
-        ); 
-        ui->Vendor->setText(
-            QString::fromStdString(reply["vendor"].get<json::string_t>())
-        );
+        ui->Version->setText(QString::fromStdString(reply["version"].get<json::string_t>())); 
+        ui->Vendor->setText(QString::fromStdString(reply["vendor"].get<json::string_t>()));
+
         main->logger->write(
             QString("Refresh. curblock ") % QString::number(curBlock) % ", update=" % (doUpdate ? "true" : "false") 
         );
@@ -358,7 +353,6 @@ void Controller::getInfoThenRefresh(bool force)
         QIcon i(":/icons/res/connected.gif");
         QString chainName = Settings::getInstance()->isTestnet() ? "test" : "main";
         main->statusLabel->setText(chainName + "(" + QString::number(curBlock) + ")");
-
 
         // use currency ComboBox as input 
 
@@ -376,8 +370,6 @@ void Controller::getInfoThenRefresh(bool force)
             ui->marketcapTab->setText(
                 " $ " + (QLocale(QLocale::English).toString(cap,'f', 2))
             );
-
-            
 
         }   
         else if (Settings::getInstance()->get_currency_name() == "EUR") 
@@ -568,7 +560,7 @@ void Controller::getInfoThenRefresh(bool force)
         zrpc->fetchSupply([=] (const json& reply) {   
             int supply  = reply["supply"].get<json::number_integer_t>();
             int zfunds = reply["zfunds"].get<json::number_integer_t>();
-            int total = reply["total"].get<json::number_integer_t>();
+            int total = reply["total"].get<json::number_integer_t>();;
             if (
                 Settings::getInstance()->get_currency_name() == "EUR" || 
                 Settings::getInstance()->get_currency_name() == "CHF" || 
@@ -595,7 +587,7 @@ void Controller::getInfoThenRefresh(bool force)
             refreshAddresses();     // This calls refreshZSentTransactions() and refreshReceivedZTrans()
             refreshTransactions();
         }
-
+         refreshBalances();
         int lag = longestchain - notarized ;
         this->setLag(lag);
     }, [=](QString err) {
@@ -652,7 +644,7 @@ void Controller::refreshAddresses()
 
         model->replaceZaddresses(newzaddresses);
         auto taddrs = reply["t_addresses"].get<json::array_t>();
-        for (auto& it : taddrs) 
+        for (auto& it : taddrs)
         {   
             auto addr = QString::fromStdString(it.get<json::string_t>());
             if (Settings::isTAddress(addr))
@@ -690,7 +682,7 @@ void Controller::processUnspent(const json& reply, QMap<QString, CAmount>* balan
             CAmount amount  = CAmount::fromqint64(it["value"].get<json::number_unsigned_t>());
 
             bool spendable = it["unconfirmed_spent"].is_null() && it["spent"].is_null();    // TODO: Wait for 1 confirmations
-            bool pending   = !it["unconfirmed_spent"].is_null();
+            bool pending   = !it["unconfirmed_spent"].is_null();;
 
             unspentOutputs->push_back(
                 UnspentOutput{ qsAddr, txid, amount, block, spendable, pending }
@@ -878,7 +870,6 @@ void Controller::refreshBalances()
         CAmount balAvailable = balT + balVerified;
         model->setAvailableBalance(balAvailable);
         updateUIBalances();
-        
     });
 
     // 2. Get the UTXOs
@@ -916,7 +907,8 @@ void Controller::refreshTransactions() {
     zrpc->fetchTransactions([=] (json reply) {
         QList<TransactionItem> txdata;        
 
-        for (auto& it : reply.get<json::array_t>()) {  
+        for (auto& it : reply.get<json::array_t>()) {
+        {
             QString address;
             CAmount total_amount;
             QList<TransactionItemDetail> items;
@@ -924,204 +916,195 @@ void Controller::refreshTransactions() {
             long confirmations;
             if (it.find("unconfirmed") != it.end() && it["unconfirmed"].get<json::boolean_t>()) {
                 confirmations = 0;
-            } else {
+            }else{
                 confirmations = model->getLatestBlock() - it["block_height"].get<json::number_integer_t>() + 1;
             }
+
             
             auto txid = QString::fromStdString(it["txid"]);
             auto datetime = it["datetime"].get<json::number_integer_t>();
-         
+
             // First, check if there's outgoing metadata
             if (!it["outgoing_metadata"].is_null()) {
             
                 for (auto o: it["outgoing_metadata"].get<json::array_t>())
-                 {
-                // if (chatModel->getCidByTx(txid) == QString("0xdeadbeef")){   
-                     QString address;
+                 
+                {    
+                    // if (chatModel->getCidByTx(txid) == QString("0xdeadbeef")){
+                    QString address;
     
                     address = QString::fromStdString(o["address"]);
-                
+
                     // Sent items are -ve
-                    CAmount amount = CAmount::fromqint64(-1* o["value"].get<json::number_unsigned_t>()); 
+                    CAmount amount = CAmount::fromqint64(-1* o["value"].get<json::number_unsigned_t>());
                     
-                   // Check for Memos
-
-                      if (confirmations == 0) {  
-                             chatModel->addconfirmations(txid, confirmations);
-                        } 
-
-                     if ((confirmations == 1)  && (chatModel->getConfirmationByTx(txid) != QString("0xdeadbeef"))){  
-                             DataStore::getChatDataStore()->clear();
-                             chatModel->killConfirmationCache();
-                             chatModel->killMemoCache();
-                             this->refresh(true);
-                        } 
+                    // Check for Memos
                    
+                    if (confirmations == 0) {
+                        chatModel->addconfirmations(txid, confirmations);
+                    }
+                    
+                    if ((confirmations > 0)  && (chatModel->getConfirmationByTx(txid) != QString("0xdeadbeef"))) {
+                        DataStore::getChatDataStore()->clear();
+                        chatModel->killConfirmationCache();
+                        chatModel->killMemoCache();
+                        this->refresh(true);
+                    }
+
                     QString memo;
                     QString cid;
                     QString headerbytes;
                     QString publickey;
                     if (!o["memo"].is_null()) {
-                     memo = QString::fromStdString(o["memo"].get<json::string_t>());
+                    memo = QString::fromStdString(o["memo"].get<json::string_t>());
                     
-                       if (memo.startsWith("{")) {
- try 
-       {
-                  QJsonDocument headermemo = QJsonDocument::fromJson(memo.toUtf8());
+                        if (memo.startsWith("{")) {
+                            try
+                            {
+                                QJsonDocument headermemo = QJsonDocument::fromJson(memo.toUtf8());
 
-                  cid = headermemo["cid"].toString();
-                  headerbytes = headermemo["e"].toString();
+                                cid = headermemo["cid"].toString();
+                                headerbytes = headermemo["e"].toString();
 
-                    chatModel->addCid(txid, cid);   
-                    chatModel->addHeader(txid, headerbytes);
+                                chatModel->addCid(txid, cid);
+                                chatModel->addHeader(txid, headerbytes);
 
-                } catch(...) 
-
-                {
-
-                }
-                       }
+                            }
+                            catch (...)
+                            {
+                                // on any exception caught
+                            }
+                        }
                           
                         bool isNotarized;
 
                         if (confirmations > getLag())
                         {
                             isNotarized = true;
-                        }else{
-
+                        }
+                        else
+                        {
                             isNotarized = false;
+                        } 
+
+                        if (chatModel->getCidByTx(txid) != QString("0xdeadbeef"))
+                        {
+                            cid = chatModel->getCidByTx(txid);
+                        }
+                        else
+                        {
+                            cid = "";
                         }
 
-                    if (chatModel->getCidByTx(txid) != QString("0xdeadbeef")){
 
-                        cid = chatModel->getCidByTx(txid);
+                        if (chatModel->getHeaderByTx(txid) != QString("0xdeadbeef"))
+                        {
+                            headerbytes = chatModel->getHeaderByTx(txid);
+                        }
+                        else
+                        {
+                            headerbytes = "";
+                        }
 
-                         }else{
-                         cid = "";
-                             }
-
-
-                if (chatModel->getHeaderByTx(txid) != QString("0xdeadbeef")){
-
-                        headerbytes = chatModel->getHeaderByTx(txid);
-                
-
-                }else{
-                    headerbytes = "";
-                    }
-
-                  if (main->getPubkeyByAddress(address) != QString("0xdeadbeef")){
-
-                        publickey = main->getPubkeyByAddress(address);
-
-                 
-
-                }else{
-                    publickey = "";
-                    } 
+                        if (main->getPubkeyByAddress(address) != QString("0xdeadbeef"))
+                        {
+                            publickey = main->getPubkeyByAddress(address);
+                        }
+                        else
+                        {
+                            publickey = "";
+                        }
                     
-        /////We need to filter out Memos smaller then the ciphertext size, or it will dump
+                        /////We need to filter out Memos smaller then the ciphertext size, or it will dump
+                        if ((memo.startsWith("{") == false) && (headerbytes.length() > 20))
+                        {
+                            QString passphrase = DataStore::getChatDataStore()->getPassword();
+                            int length = passphrase.length();
 
-         if ((memo.startsWith("{") == false) && (headerbytes.length() > 20))
-        {   
-               
-            QString passphrase = DataStore::getChatDataStore()->getPassword();
-            QString hashEncryptionKey = passphrase;
-            int length = hashEncryptionKey.length();
+                            ////////////////Generate the secretkey for our message encryption
+                            char *hashEncryptionKeyraw = NULL;
+                            hashEncryptionKeyraw = new char[length+1];
+                            strncpy(hashEncryptionKeyraw, passphrase.toUtf8(), length +1);
 
- ////////////////Generate the secretkey for our message encryption
-
-             char *hashEncryptionKeyraw = NULL;
-                    hashEncryptionKeyraw = new char[length+1];
-                    strncpy(hashEncryptionKeyraw, hashEncryptionKey.toLocal8Bit(), length +1);
-        const QByteArray pubkeyBobArray = QByteArray::fromHex(publickey.toLatin1());
-        const unsigned char *pubkeyBob = reinterpret_cast<const unsigned char *>(pubkeyBobArray.constData()); 
+                            const QByteArray pubkeyBobArray = QByteArray::fromHex(publickey.toLatin1());
+                            const unsigned char *pubkeyBob = reinterpret_cast<const unsigned char *>(pubkeyBobArray.constData());
          
+                            #define MESSAGEAS1 ((const unsigned char *) hashEncryptionKeyraw) ///////////
+                            #define MESSAGEAS1_LEN length
 
-
-
-            #define MESSAGEAS1 ((const unsigned char *) hashEncryptionKeyraw)///////////
-              #define MESSAGEAS1_LEN length
-
-   
-                 unsigned char hash1[crypto_kx_SEEDBYTES];
-
-                 crypto_hash_sha256(hash1,MESSAGEAS1, MESSAGEAS1_LEN);
-                 unsigned char sk[crypto_kx_SECRETKEYBYTES];
-                 unsigned char pk[crypto_kx_PUBLICKEYBYTES];
+                            unsigned char sk[crypto_kx_SECRETKEYBYTES];
+                            unsigned char pk[crypto_kx_PUBLICKEYBYTES];
       
-        if (crypto_kx_seed_keypair(pk,sk,
-                           hash1) !=0) {
-                           }
-
-        unsigned char server_rx[crypto_kx_SESSIONKEYBYTES], server_tx[crypto_kx_SESSIONKEYBYTES];
+                            if (crypto_kx_seed_keypair(pk, sk, MESSAGEAS1) !=0)
+                            {
+                                main->logger->write("Keypair outgoing error");
+                            }
+                
+                            unsigned char server_rx[crypto_kx_SESSIONKEYBYTES], server_tx[crypto_kx_SESSIONKEYBYTES];
 
       
-         ////////////////Get the pubkey from Bob, so we can create the share key
+                            ////////////////Get the pubkey from Bob, so we can create the share key
 
-       
-                    /////Create the shared key for sending the message
+                            /////Create the shared key for sending the message
 
-            if (crypto_kx_server_session_keys(server_rx, server_tx,
-                                  pk, sk, pubkeyBob) != 0) {
-            /* Suspicious client public key, bail out */
-             }
-    
+                            if (crypto_kx_server_session_keys(server_rx, server_tx, pk, sk, pubkeyBob) != 0)
+                            {
+                                 main->logger->write("Suspicious client public outgoing key, bail out ");
+                            }
+                
+                            const QByteArray ba = QByteArray::fromHex(memo.toUtf8());
+                            const unsigned char *encryptedMemo = reinterpret_cast<const unsigned char *>(ba.constData());
 
-        const QByteArray ba = QByteArray::fromHex(memo.toLatin1());
-        const unsigned char *encryptedMemo = reinterpret_cast<const unsigned char *>(ba.constData());
+                            const QByteArray ba1 = QByteArray::fromHex(headerbytes.toLatin1());
+                            const unsigned char *header = reinterpret_cast<const unsigned char *>(ba1.constData());
 
-        const QByteArray ba1 = QByteArray::fromHex(headerbytes.toLatin1());
-        const unsigned char *header = reinterpret_cast<const unsigned char *>(ba1.constData());
-       
-        int encryptedMemoSize1 = ba.length();
+                            int encryptedMemoSize1 = ba.length();
 
-        QString memodecrypt;
+                            QString memodecrypt;
 
-        if (encryptedMemoSize1 > 15)
-        {
-        //////unsigned char* as message from QString
-         #define MESSAGE2 (const unsigned char *) encryptedMemo 
+                            if ((encryptedMemoSize1 - crypto_secretstream_xchacha20poly1305_ABYTES) > 0)
+                            {
+                                //////unsigned char* as message from QString
+                                #define MESSAGE2 (const unsigned char *) encryptedMemo
 
-         ///////// length of the encrypted message
-         #define CIPHERTEXT1_LEN  encryptedMemoSize1
+                                ///////// length of the encrypted message
+                                #define CIPHERTEXT1_LEN  encryptedMemoSize1
 
-         ///////Message length is smaller then the encrypted message
-         #define MESSAGE1_LEN encryptedMemoSize1 - crypto_secretstream_xchacha20poly1305_ABYTES 
+                                ///////Message length is smaller then the encrypted message
+                                #define MESSAGE1_LEN encryptedMemoSize1 - crypto_secretstream_xchacha20poly1305_ABYTES
 
-            //////Set the length of the decrypted message
+                                //////Set the length of the decrypted message
 
-         unsigned char decrypted[MESSAGE1_LEN];
-         unsigned char tag[crypto_secretstream_xchacha20poly1305_TAG_FINAL];
-         crypto_secretstream_xchacha20poly1305_state state;
+                                unsigned char decrypted[MESSAGE1_LEN];
+                                unsigned char tag[crypto_secretstream_xchacha20poly1305_TAG_FINAL];
+                                crypto_secretstream_xchacha20poly1305_state state;
 
-            /////Our decrypted message is now in decrypted. We need it as QString to render it
-                /////Only the QString gives weird data, so convert first to std::string
-                 //   crypto_secretstream_xchacha20poly1305_keygen(client_rx);
-                if (crypto_secretstream_xchacha20poly1305_init_pull(&state, header, server_tx) != 0) {
-                 /* Invalid header, no need to go any further */
-                    }
+                                /////Our decrypted message is now in decrypted. We need it as QString to render it
+                                /////Only the QString gives weird data, so convert first to std::string
+                                //   crypto_secretstream_xchacha20poly1305_keygen(client_rx);
+                                if (crypto_secretstream_xchacha20poly1305_init_pull(&state, header, server_tx) != 0) {
+                                    /* Invalid header, no need to go any further */
+                                }
+ 
+                                if (crypto_secretstream_xchacha20poly1305_pull
+                                    (&state, decrypted, NULL, tag, MESSAGE2, CIPHERTEXT1_LEN, NULL, 0) != 0) {
+                                    /* Invalid/incomplete/corrupted ciphertext - abort */
+                                }
 
-                if (crypto_secretstream_xchacha20poly1305_pull
-             (&state, decrypted, NULL, tag, MESSAGE2, CIPHERTEXT1_LEN, NULL, 0) != 0) {
-            /* Invalid/incomplete/corrupted ciphertext - abort */
-                }
-
-            std::string decryptedMemo(reinterpret_cast<char*>(decrypted),MESSAGE1_LEN);
+                                std::string decryptedMemo(reinterpret_cast<char*>(decrypted),MESSAGE1_LEN);
             
-             memodecrypt = QString::fromUtf8( decryptedMemo.data(), decryptedMemo.size());
+                                memodecrypt = QString::fromUtf8( decryptedMemo.data(), decryptedMemo.size());
+                            }
+                            else
+                            {
+                               
+                                memodecrypt = "";
+                            }
 
-        }else{
-                 memodecrypt = "";
+                            /////Now we can convert it to QString
+                            //////////////Give us the output of the decrypted message as debug to see if it was successfully
 
-        }
-              /////Now we can convert it to QString
-            
-             
-
-         //////////////Give us the output of the decrypted message as debug to see if it was successfully
-
-                         ChatItem item = ChatItem(
+                            ChatItem item = ChatItem(
                                 datetime,
                                 address,
                                 QString(""),
@@ -1135,49 +1118,46 @@ void Controller::refreshTransactions() {
                                 isNotarized,
                                 false
                             );
-                        DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
 
-                        updateUIBalances();
-      
+                            DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
+                           // updateUIBalances();
                         }
-               
-                    } 
+                    }
 
                     items.push_back(TransactionItemDetail{address, amount, memo});
                     total_amount = total_amount + amount;
 
-                 }
+                }
                 
                 {
-                     QList<QString> addresses;
+                    QList<QString> addresses;
                     for (auto item : items) {
-                    // Concat all the addresses
-                   
-                    
-                   addresses.push_back(item.address);   
-                  address = addresses.join(","); 
+                        // Concat all the addresses
+                        addresses.push_back(item.address);
+                        address = addresses.join(",");
                     }
-                
-                  }
+                }
                         
                 txdata.push_back(TransactionItem{
                    "send", datetime, address, txid,confirmations, items
                 });
                 
-            } else {
-                // Incoming Transaction
+            }
+            else
+            {
+               
+               { // Incoming Transaction
                 address = (it["address"].is_null() ? "" : QString::fromStdString(it["address"]));
                 model->markAddressUsed(address);
 
                 QString memo;
                 if (!it["memo"].is_null()) {
                     memo = QString::fromStdString(it["memo"]);
-                }
 
                 items.push_back(TransactionItemDetail{
-                    address,
+                        address,
                     CAmount::fromqint64(it["amount"].get<json::number_integer_t>()),
-                    memo
+                        memo
                 });
 
                 TransactionItem tx{
@@ -1185,7 +1165,9 @@ void Controller::refreshTransactions() {
                 };
 
                 txdata.push_back(tx);
-                
+               }
+
+           
                     QString type;
                     QString publickey;
                     QString headerbytes;
@@ -1197,8 +1179,8 @@ void Controller::refreshTransactions() {
                 if (!it["memo"].is_null()) {
 
                 if (memo.startsWith("{")) {
-    try 
-       {
+                 try 
+                 {
                   QJsonDocument headermemo = QJsonDocument::fromJson(memo.toUtf8());
 
                   cid = headermemo["cid"].toString();
@@ -1210,225 +1192,220 @@ void Controller::refreshTransactions() {
                     chatModel->addCid(txid, cid);
                     chatModel->addrequestZaddr(txid, requestZaddr);
                     chatModel->addHeader(txid, headerbytes);
-                
+
                 if (publickey.length() > 10){
                     main->addPubkey(requestZaddr, publickey);
                 }
 
-                } catch(...)
-                {
-
-                }
-                }
-  
-                if (chatModel->getCidByTx(txid) != QString("0xdeadbeef")){
-
-                        cid = chatModel->getCidByTx(txid);
-
-                }else{
-                    cid = "";
-                    }
-    
-                if (chatModel->getrequestZaddrByTx(txid) != QString("0xdeadbeef")){
-
-                        requestZaddr = chatModel->getrequestZaddrByTx(txid);
-                }else{
-                            requestZaddr = "";
-                    }   
-
-                    
-                if (chatModel->getHeaderByTx(txid) != QString("0xdeadbeef")){
-
-                        headerbytes = chatModel->getHeaderByTx(txid);
-           
-
-                }else{
-                    headerbytes = "";
-                    }  
-
-            if (main->getPubkeyByAddress(requestZaddr) != QString("0xdeadbeef")){
-
-                        publickey = main->getPubkeyByAddress(requestZaddr);
-             
-
-                }else{
-                    publickey = "";
-                    } 
-
-                if (contactModel->getContactbyAddress(requestZaddr) != QString("0xdeadbeef")){
-
-                     isContact = true;
-                     contactname = contactModel->getContactbyAddress(requestZaddr);
-
-                }else{
-
-                     isContact = false;
-                     contactname = "";
-
-                }
-
-                  bool isNotarized;
-
-                        if (confirmations > getLag())
-                        {
-                            isNotarized = true;
-                        }else{
-
-                            isNotarized = false;
                         }
-
-            int position = it["position"].get<json::number_integer_t>(); 
-
-        if ((memo.startsWith("{") == false) && (headerbytes > 0))
-        {   
-
-        if (chatModel->getMemoByTx(txid) == QString("0xdeadbeef")){
-    
-
-           if (position == 1)
-           {
-
-                chatModel->addMemo(txid, headerbytes);
-           }else{}
-
-            QString passphrase = DataStore::getChatDataStore()->getPassword();
-            QString hashEncryptionKey = passphrase;
-            int length = hashEncryptionKey.length();
-
-                    char *hashEncryptionKeyraw = NULL;
-                    hashEncryptionKeyraw = new char[length+1];
-                    strncpy(hashEncryptionKeyraw, hashEncryptionKey.toLocal8Bit(), length +1);
-
-        //const QByteArray ba2 = QByteArray::fromHex(hashEncryptionKey.toLatin1());
-       // const unsigned char *hashEncryptionKeyraw = reinterpret_cast<const unsigned char *>(ba2.constData());
+                        catch (...)
+                        {
+                            // on any exception
+                        }
+                    }
   
-        const QByteArray pubkeyBobArray = QByteArray::fromHex(publickey.toLatin1());
-        const unsigned char *pubkeyBob = reinterpret_cast<const unsigned char *>(pubkeyBobArray.constData());  
-
-
-    #define MESSAGEAS1 ((const unsigned char *) hashEncryptionKeyraw)///////////
-    #define MESSAGEAS1_LEN length
-
-   
-    unsigned char hash1[crypto_kx_SEEDBYTES];
-
-    crypto_hash_sha256(hash1,MESSAGEAS1, MESSAGEAS1_LEN);
-    unsigned char sk[crypto_kx_SECRETKEYBYTES];
-    unsigned char pk[crypto_kx_PUBLICKEYBYTES];
-      
-        if (crypto_kx_seed_keypair(pk,sk,
-                           hash1) !=0) {
-
-
-                           }
-  unsigned char client_rx[crypto_kx_SESSIONKEYBYTES], client_tx[crypto_kx_SESSIONKEYBYTES];
-
-      
-         ////////////////Get the pubkey from Bob, so we can create the share key
-
-       
-                    /////Create the shared key for sending the message
-
-            if (crypto_kx_client_session_keys(client_rx, client_tx,
-                                  pk, sk, pubkeyBob) != 0) {
-            /* Suspicious client public key, bail out */
-             }
+                    if (chatModel->getCidByTx(txid) != QString("0xdeadbeef"))
+                    {
+                        cid = chatModel->getCidByTx(txid);
+                    }
+                    else
+                    {
+                        cid = "";
+                    }
     
-    
-
-        const QByteArray ba = QByteArray::fromHex(memo.toLatin1());
-        const unsigned char *encryptedMemo = reinterpret_cast<const unsigned char *>(ba.constData());
-
-        const QByteArray ba1 = QByteArray::fromHex(headerbytes.toLatin1());
-        const unsigned char *header = reinterpret_cast<const unsigned char *>(ba1.constData());
-
-        int encryptedMemoSize1 = ba.length();
-        int headersize = ba1.length();
-
-        //////unsigned char* as message from QString
-         #define MESSAGE2 (const unsigned char *) encryptedMemo 
-
-         ///////// length of the encrypted message
-         #define CIPHERTEXT1_LEN  encryptedMemoSize1
-
-         ///////Message length is smaller then the encrypted message
-         #define MESSAGE1_LEN encryptedMemoSize1 - crypto_secretstream_xchacha20poly1305_ABYTES 
-
-            //////Set the length of the decrypted message
-
-         unsigned char decrypted[MESSAGE1_LEN];
-         unsigned char tag[crypto_secretstream_xchacha20poly1305_TAG_FINAL];
-         crypto_secretstream_xchacha20poly1305_state state;
-
-            /////Our decrypted message is now in decrypted. We need it as QString to render it
-                /////Only the QString gives weird data, so convert first to std::string
-                 //   crypto_secretstream_xchacha20poly1305_keygen(client_rx);
-                if (crypto_secretstream_xchacha20poly1305_init_pull(&state, header, client_rx) != 0) {
-                 /* Invalid header, no need to go any further */
+                    if (chatModel->getrequestZaddrByTx(txid) != QString("0xdeadbeef"))
+                    {
+                        requestZaddr = chatModel->getrequestZaddrByTx(txid);
+                    }
+                    else
+                    {
+                        requestZaddr = "";
                     }
 
-                if (crypto_secretstream_xchacha20poly1305_pull
-             (&state, decrypted, NULL, tag, MESSAGE2, CIPHERTEXT1_LEN, NULL, 0) != 0) {
-            /* Invalid/incomplete/corrupted ciphertext - abort */
-                }
+                    if (chatModel->getHeaderByTx(txid) != QString("0xdeadbeef"))
+                    {
+                        headerbytes = chatModel->getHeaderByTx(txid);
+                    }
+                    else
+                    {
+                        headerbytes = "";
+                    }
 
-            std::string decryptedMemo(reinterpret_cast<char*>(decrypted),MESSAGE1_LEN);
+                    if (main->getPubkeyByAddress(requestZaddr) != QString("0xdeadbeef"))
+                    {
+                        publickey = main->getPubkeyByAddress(requestZaddr);
+                    }
+                    else
+                    {
+                        publickey = "";
+                    }
 
-              /////Now we can convert it to QString
-                    QString memodecrypt;
-      
-             memodecrypt = QString::fromUtf8( decryptedMemo.data(), decryptedMemo.size());
-        
+                    if (contactModel->getContactbyAddress(requestZaddr) != QString("0xdeadbeef"))
+                    {
+                         isContact = true;
+                         contactname = contactModel->getContactbyAddress(requestZaddr);
+                    }
+                    else
+                    {
+                         isContact = false;
+                         contactname = "";
+                    }
 
+                    bool isNotarized;
 
-             // }
-         //////////////Give us the output of the decrypted message as debug to see if it was successfully
-                          
+                    if (confirmations > getLag())
+                    {
+                        isNotarized = true;
+                    }
+                    else
+                    {
+                        isNotarized = false;
+                    }
 
+                    int position = it["position"].get<json::number_integer_t>(); 
 
-                         ChatItem item = ChatItem(
+                    int ciphercheck = memo.length() - crypto_secretstream_xchacha20poly1305_ABYTES;
+
+                    if ((memo.startsWith("{") == false) && (headerbytes > 0) && (ciphercheck > 0))
+                    {
+                        if (chatModel->getMemoByTx(txid) == QString("0xdeadbeef"))
+                        {
+                            if (position == 1)
+                            {
+                                chatModel->addMemo(txid, headerbytes);
+                            }
+                            else
+                            {
+                                //
+                            }
+
+                            QString passphrase = DataStore::getChatDataStore()->getPassword();
+                            int length = passphrase.length();
+
+                            char *hashEncryptionKeyraw = NULL;
+                            hashEncryptionKeyraw = new char[length+1];
+                            strncpy(hashEncryptionKeyraw, passphrase.toUtf8(), length +1);
+
+                            const QByteArray pubkeyBobArray = QByteArray::fromHex(publickey.toLatin1());
+                            const unsigned char *pubkeyBob = reinterpret_cast<const unsigned char *>(pubkeyBobArray.constData());
+
+                            #define MESSAGEAS1 ((const unsigned char *) hashEncryptionKeyraw)///////////
+                            #define MESSAGEAS1_LEN length
+
+                            unsigned char sk[crypto_kx_SECRETKEYBYTES];
+                            unsigned char pk[crypto_kx_PUBLICKEYBYTES];
+
+                            if (crypto_kx_seed_keypair(pk, sk, MESSAGEAS1) !=0)
+                            {
+                               main->logger->write("Suspicious  outgoing key pair, bail out ");
+                            }
+
+                            unsigned char client_rx[crypto_kx_SESSIONKEYBYTES], client_tx[crypto_kx_SESSIONKEYBYTES];
+
+                            ////////////////Get the pubkey from Bob, so we can create the share key
+
+                            /////Create the shared key for sending the message
+
+                            if (crypto_kx_client_session_keys(client_rx, client_tx, pk, sk, pubkeyBob) != 0)
+                            {
+                               main->logger->write("Suspicious client public incoming key, bail out ");
+                            }
+
+                            const QByteArray ba = QByteArray::fromHex(memo.toUtf8());
+                            const unsigned char *encryptedMemo = reinterpret_cast<const unsigned char *>(ba.constData());
+
+                            const QByteArray ba1 = QByteArray::fromHex(headerbytes.toLatin1());
+                            const unsigned char *header = reinterpret_cast<const unsigned char *>(ba1.constData());
+
+                            int encryptedMemoSize1 = ba.length();
+                            int headersize = ba1.length();
+
+                            //////unsigned char* as message from QString
+                            #define MESSAGE2 (const unsigned char *) encryptedMemo
+
+                            ///////// length of the encrypted message
+                            #define CIPHERTEXT1_LEN  encryptedMemoSize1
+
+                            ///////Message length is smaller then the encrypted message
+                            #define MESSAGE1_LEN encryptedMemoSize1 - crypto_secretstream_xchacha20poly1305_ABYTES
+
+                            //////Set the length of the decrypted message
+
+                            unsigned char decrypted[MESSAGE1_LEN+1];
+                            unsigned char tag[crypto_secretstream_xchacha20poly1305_TAG_FINAL];
+                            crypto_secretstream_xchacha20poly1305_state state;
+
+                            /////Our decrypted message is now in decrypted. We need it as QString to render it
+                            /////Only the QString gives weird data, so convert first to std::string
+                            //   crypto_secretstream_xchacha20poly1305_keygen(client_rx);
+                            if (crypto_secretstream_xchacha20poly1305_init_pull(&state, header, client_rx) != 0) {
+                               main->logger->write("Invalid header incoming, no need to go any further "); 
+                            }
+
+                            if (crypto_secretstream_xchacha20poly1305_pull
+                                (&state, decrypted, NULL, tag, MESSAGE2, CIPHERTEXT1_LEN, NULL, 0) != 0) {
+                                 main->logger->write("Invalid/incomplete/corrupted ciphertext - abort");
+                            }
+
+                            std::string decryptedMemo(reinterpret_cast<char*>(decrypted),MESSAGE1_LEN);
+
+                            /////Now we can convert it to QString
+                            QString memodecrypt;
+
+                            memodecrypt = QString::fromUtf8( decryptedMemo.data(), decryptedMemo.size());
+
+                            // }
+                            //////////////Give us the output of the decrypted message as debug to see if it was successfully
+
+                            ChatItem item = ChatItem(
                                 datetime,
                                 address,
                                 contactname,
                                 memodecrypt,
                                 requestZaddr,
                                 type,
-                                cid, 
+                                cid,
                                 txid,
                                 confirmations,
                                 false,
                                 isNotarized,
                                 isContact
                             );
-                        DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);                 
-       
-                        }else{
-                  
-                    } 
-                    
-                    }else{
 
-                                ChatItem item = ChatItem(
-                                datetime,
-                                address,
-                                contactname,
-                                memo,
-                                requestZaddr,
-                                type,
-                                cid, 
-                                txid,
-                                confirmations,
-                                false,
-                                isNotarized,
-                                isContact
-                            );
-                        DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);                    
+                            DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
+
+                        }
+                        else
+                        {
+                            //
+                        }
+
+                    }
+                    else
+                    {
+                        ChatItem item = ChatItem(
+                            datetime,
+                            address,
+                            contactname,
+                            memo,
+                            requestZaddr,
+                            type,
+                            cid,
+                            txid,
+                            confirmations,
+                            false,
+                            isNotarized,
+                            isContact
+                        );
+                        DataStore::getChatDataStore()->setData(ChatIDGenerator::getInstance()->generateID(item), item);
                     }
                 }
+               }
             }
-       }
+            }
+        }
 
-        // Calculate the total unspent amount that's pending. This will need to be 
+        // Calculate the total unspent amount that's pending. This will need to be
         // shown in the UI so the user can keep track of pending funds
         CAmount totalPending;
         for (auto txitem : txdata) {
@@ -1444,13 +1421,14 @@ void Controller::refreshTransactions() {
         // Update UI Balance
         updateUIBalances();
 
-         // Update model data, which updates the table view
-        transactionsTableModel->replaceData(txdata);    
-        chat->renderChatBox(ui, ui->listChat,ui->memoSizeChat);   
+        // Update model data, which updates the table view
+        transactionsTableModel->replaceData(txdata);
+        chat->renderChatBox(ui, ui->listChat,ui->memoSizeChat);
         ui->listChat->verticalScrollBar()->setValue(
         ui->listChat->verticalScrollBar()->maximum());
-
-         });
+        
+    });
+    
 }
 
 void Controller::refreshChat(QListView *listWidget, QLabel *label)
@@ -1464,6 +1442,8 @@ void Controller::refreshChat(QListView *listWidget, QLabel *label)
 void Controller::refreshContacts(QListView *listWidget)
 {
     contactModel->renderContactList(listWidget);
+    ui->listChat->verticalScrollBar()->setValue(
+        ui->listChat->verticalScrollBar()->maximum());
 }
 
 // If the wallet is encrpyted and locked, we need to unlock it 
@@ -1560,11 +1540,11 @@ void Controller::executeTransaction(Tx tx,
         std::cout << std::setw(2) << params << std::endl;
 
         zrpc->sendTransaction(QString::fromStdString(params.dump()), [=](const json& reply) {
-            if (reply.find("txid") == reply.end()) 
+            if (reply.find("txid") == reply.end())
             {
                 error("", "Couldn't understand Response: " + QString::fromStdString(reply.dump()));
-            } 
-            else 
+            }
+            else
             {
                 QString txid = QString::fromStdString(reply["txid"].get<json::string_t>());
                 submitted(txid);
@@ -1773,7 +1753,7 @@ void Controller::refreshZECPrice()
             const json& item  = parsed.get<json::object_t>();
             const json& hush  = item["hush"].get<json::object_t>();
 
-            if (hush["usd"] >= 0) 
+            if (hush["usd"] >= 0)
             {
                 qDebug() << "Found hush key in price json";
                 qDebug() << "HUSH = $" << QString::number((double)hush["usd"]);
@@ -1804,7 +1784,7 @@ void Controller::refreshZECPrice()
                 Settings::getInstance()->setRUBPrice( hush["rub"]);
             }
 
-            if (hush["cad"] >= 0)            
+            if (hush["cad"] >= 0)
             {
                 qDebug() << "HUSH = CAD" << QString::number((double)hush["cad"]);
                 Settings::getInstance()->setCADPrice( hush["cad"]);
@@ -1858,7 +1838,7 @@ void Controller::refreshZECPrice()
                 Settings::getInstance()->setBTCVolume( hush["btc_24h_vol"]);
             }
             
-            if (hush["cny_24h_vol"] >= 0)
+           if (hush["cny_24h_vol"] >= 0)
             {  
                 qDebug() << "HUSH = cny_24h_vol" << QString::number((double)hush["cny_24h_vol"]);
                 Settings::getInstance()->setCNYVolume( hush["cny_24h_vol"]);
@@ -2049,7 +2029,7 @@ void Controller::shutdownhushd()
     }
       
         bool finished = false;
-        zrpc->saveWallet([&] (json) {        
+        zrpc->saveWallet([&] (json) {
             if (!finished)
                 d.accept();
             finished = true;

@@ -42,12 +42,12 @@ public:
     void fetchTransactions        (const std::function<void(json)>& cb);
     void fetchAddresses           (const std::function<void(json)>& cb);
 
-    void fetchInfo(const std::function<void(json)>& cb, 
+    void fetchInfo(const std::function<void(json)>& cb,
                     const std::function<void(QString)>& err);
 
 
 
-    void fetchLatestBlock(const std::function<void(json)>& cb, 
+    void fetchLatestBlock(const std::function<void(json)>& cb,
                         const std::function<void(QString)>& err);
     
     void fetchBalance(const std::function<void(json)>& cb);

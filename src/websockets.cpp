@@ -923,7 +923,7 @@ void AppDataServer::processGetTransactions(MainWindow* mainWindow, std::shared_p
             {"amount", model->getAmt(i)},
             {"txid", model->getTxId(i)},
             {"address", model->getAddr(i)},
-            {"memo", model->getMemo(i)},
+      //      {"memo", model->getMemo(i)},
             {"confirmations", model->getConfirmations(i)}
         });
     }

@@ -14,6 +14,7 @@ QT += widgets
 QT += websockets
 
 
+
 TARGET = SilentDragonLite
 
 TEMPLATE = app
@@ -49,6 +50,7 @@ SOURCES += \
     src/3rdparty/qrcode/BitBuffer.cpp \
     src/3rdparty/qrcode/QrCode.cpp \
     src/3rdparty/qrcode/QrSegment.cpp \
+    src/3rdparty/json/json.hpp \
     src/settings.cpp \
     src/sendtab.cpp \
     src/txtablemodel.cpp \
@@ -94,7 +96,6 @@ HEADERS += \
     src/3rdparty/qrcode/BitBuffer.hpp \
     src/3rdparty/qrcode/QrCode.hpp \
     src/3rdparty/qrcode/QrSegment.hpp \
-    src/3rdparty/json/json.hpp \
     src/settings.h \
     src/txtablemodel.h \
     src/qrcodelabel.h \
@@ -122,6 +123,7 @@ HEADERS += \
 FORMS += \
     src/contactrequest.ui \
     src/deposithush.ui \
+    src/emoji.ui \
     src/encryption.ui \
     src/hushrequest.ui \
     src/mainwindow.ui \
@@ -130,6 +132,8 @@ FORMS += \
     src/newwallet.ui \
     src/recurringpayments.ui \
     src/restoreseed.ui \
+    src/seedrestore.ui \
+    src/sendHushTransactionChat.ui \
     src/settings.ui \
     src/about.ui \
     src/confirm.ui \
@@ -162,6 +166,7 @@ TRANSLATIONS = res/silentdragonlite_es.ts \
                res/silentdragonlite_fa.ts \
                res/silentdragonlite_id.ts \
                res/silentdragonlite_ar.ts \
+               res/silentdragonlite_ro.ts \
                res/silentdragonlite_tr.ts 
              
 include(singleapplication/singleapplication.pri)

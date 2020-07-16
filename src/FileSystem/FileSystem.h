@@ -9,6 +9,7 @@
 #include "../Crypto/FileEncryption.h"
 #include <fstream>
 using json = nlohmann::json;
+
 class FileSystem
 {
     private:

@@ -129,7 +129,7 @@ void LiteInterface::removeWalletEncryption(QString password, const std::function
 }
 
 
-void LiteInterface::sendTransaction(QString params, const std::function<void(json)>& cb, 
+void LiteInterface::sendTransaction(QString params, const std::function<void(json)>& cb,
     const std::function<void(QString)>& err) {
     if (conn == nullptr)
         return;
@@ -137,7 +137,7 @@ void LiteInterface::sendTransaction(QString params, const std::function<void(jso
     conn->doRPC("send", params, cb, err);
 }
 
-void LiteInterface::fetchInfo(const std::function<void(json)>& cb, 
+void LiteInterface::fetchInfo(const std::function<void(json)>& cb,
     const std::function<void(QString)>&  err) {
     if (conn == nullptr)
         return;
@@ -153,7 +153,7 @@ void LiteInterface::fetchSupply(const std::function<void(json)>& cb) {
 }
 
 
-void LiteInterface::fetchLatestBlock(const std::function<void(json)>& cb, 
+void LiteInterface::fetchLatestBlock(const std::function<void(json)>& cb,
                         const std::function<void(QString)>& err) {
     if (conn == nullptr)
         return;

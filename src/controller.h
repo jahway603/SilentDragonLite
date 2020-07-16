@@ -19,6 +19,7 @@
 #include "Model/ContactRequestChatItem.h"
 #include "Model/ContactItem.h"
 #include "contactmodel.h"
+
 using json = nlohmann::json;
 
 struct WatchedTx {
@@ -40,7 +41,7 @@ public:
     Connection* getConnection() { return zrpc->getConnection(); }
     void setConnection(Connection* c);
     void refresh(bool force = false);
-    void refreshAddresses(); 
+    void refreshAddresses();
     int getLag();   
     void setLag(int lag);
     int _lag;
@@ -99,35 +100,35 @@ public:
     void noConnection();
     bool isEmbedded() { return ehushd != nullptr; }
 
-    void encryptWallet(QString password, const std::function<void(json)>& cb) { 
+    void encryptWallet(QString password, const std::function<void(json)>& cb) {
         zrpc->encryptWallet(password, cb); 
     }
     
-    void removeWalletEncryption(QString password, const std::function<void(json)>& cb) { 
+    void removeWalletEncryption(QString password, const std::function<void(json)>& cb) {
                 zrpc->removeWalletEncryption(password, cb); }
 
     void saveWallet(const std::function<void(json)>& cb) { zrpc->saveWallet(cb); }
 
     void clearWallet(const std::function<void(json)>& cb) { zrpc->clearWallet(cb); }
 
-    void createNewZaddr(bool sapling, const std::function<void(json)>& cb) { 
+    void createNewZaddr(bool sapling, const std::function<void(json)>& cb) {
         unlockIfEncrypted([=] () {
             zrpc->createNewZaddr(sapling, cb);
         }, [=](){});
     }
 
    
-    void createNewTaddr(const std::function<void(json)>& cb) { 
+    void createNewTaddr(const std::function<void(json)>& cb) {
         unlockIfEncrypted([=] () {
             zrpc->createNewTaddr(cb); 
         }, [=](){});
     }
-     void createNewSietchZaddr(const std::function<void(json)>& cb) { 
+     void createNewSietchZaddr(const std::function<void(json)>& cb) {
         unlockIfEncrypted([=] () {
            zrpc->createNewSietchZaddr(cb); 
         }, [=](){});
     }
-    void fetchPrivKey(QString addr, const std::function<void(json)>& cb) { 
+    void fetchPrivKey(QString addr, const std::function<void(json)>& cb) {
         unlockIfEncrypted([=] () {
             zrpc->fetchPrivKey(addr, cb); 
         },
@@ -136,7 +137,7 @@ public:
         });
     }
 
-    void fetchAllPrivKeys(const std::function<void(json)> cb) { 
+    void fetchAllPrivKeys(const std::function<void(json)> cb) {
         unlockIfEncrypted([=] () {
             zrpc->fetchAllPrivKeys(cb); 
         },

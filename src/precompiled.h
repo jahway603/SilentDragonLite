@@ -71,9 +71,10 @@
 #include <QObject>
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QPainterPath>
 
-#include "3rdparty/json/json.hpp"
 #include "3rdparty/qrcode/QrCode.hpp"
+#include "3rdparty/json/json.hpp"
 
 #define SODIUM_STATIC
 #include "3rdparty/sodium.h"

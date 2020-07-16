@@ -123,22 +123,6 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="newZaddr">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Create New Address</string>
-       </property>
-       <property name="autoDefault">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -394,7 +378,7 @@
     </layout>
    </item>
    <item row="11" column="0">
-    <widget class="QLabel" name="memoSizeChat">
+    <widget class="QLabel" name="memoSizeChatRequest">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -407,7 +391,7 @@
     </widget>
    </item>
    <item row="9" column="0" colspan="6">
-    <widget class="QTextEdit" name="memorequest">
+    <widget class="ChatMemoEditRequest" name="memorequest">
      <property name="placeholderText">
       <string>Add a memo to your request</string>
      </property>
@@ -453,6 +437,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ChatMemoEditRequest</class>
+   <extends>QTextEdit</extends>
+   <header>mainwindow.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

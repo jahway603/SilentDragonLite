@@ -39,6 +39,18 @@ QString ChatDataStore::getPassword()
     return _password;
 }
 
+QString ChatDataStore::getSendZaddr()
+{
+
+    return _zaddr;
+}
+
+void ChatDataStore::setSendZaddr(QString zaddr)
+{
+
+    _zaddr = zaddr;
+}
+
 void ChatDataStore::setPassword(QString password)
 {
 
@@ -47,7 +59,7 @@ void ChatDataStore::setPassword(QString password)
 
 QString ChatDataStore::dump()
 {
-	json chats;
+    json chats;
     chats["count"] = this->data.size();
     json j = {};
     for (auto &c: this->data)
@@ -55,7 +67,7 @@ QString ChatDataStore::dump()
         j.push_back(c.second.toJson());
     }
     chats["chatitems"] = j;
-	return QString::fromStdString(chats.dump());
+    return QString::fromStdString(chats.dump());
 }
 
 std::map<QString, ChatItem> ChatDataStore::getAllRawChatItems()
@@ -96,6 +108,46 @@ std::map<QString, ChatItem> ChatDataStore::getAllOldContactRequests()
             (c.second.isContact() == true) &&
             (c.second.getMemo().startsWith("{")) 
         ) 
+        {
+            filteredItems[c.first] = c.second;
+        }
+    }
+    return filteredItems;
+}
+
+std::map<QString, ChatItem> ChatDataStore::getAllCashMemosIncoming()
+{
+    std::map<QString, ChatItem> filteredItems;
+  
+    for(auto &c: this->data)   
+    {
+        if (
+            (c.second.isOutgoing() == false) &&
+            (c.second.getType() == "Money")  &&
+            (c.second.getMemo().startsWith("{"))  
+              
+        ) 
+        
+        {
+            filteredItems[c.first] = c.second;
+        }
+    }
+    return filteredItems;
+}
+
+std::map<QString, ChatItem> ChatDataStore::getAllCashMemosOutgoing()
+{
+    std::map<QString, ChatItem> filteredItems;
+  
+    for(auto &c: this->data)   
+    {
+        if (
+            (c.second.isOutgoing() == true) &&
+            (c.second.getType() == "Money")  &&
+            (c.second.getMemo().startsWith("{"))  
+              
+        ) 
+        
         {
             filteredItems[c.first] = c.second;
         }

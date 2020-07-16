@@ -43,7 +43,7 @@ QString ContactDataStore::dump()
         j.push_back(c.second.toJson());
     }
     contacts["contacts"] = j;
-	return QString::fromStdString(contacts.dump(4));
+   return QString::fromStdString(contacts.dump(4));
 }
 
 ContactDataStore* ContactDataStore::instance = nullptr;
