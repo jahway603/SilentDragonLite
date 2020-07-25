@@ -190,17 +190,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
         restoreSeed.seed->setReadOnly(true);
         restoreSeed.seed->setLineWrapMode(QPlainTextEdit::LineWrapMode::NoWrap);
-        QString seedJson = QString::fromStdString(reply.get<json::string_t>());
-        int startPos = seedJson.indexOf("seed") +7;
-        int endPos = seedJson.indexOf("}") -1;
-        int length = endPos - startPos;
-        QString seed = seedJson.mid(startPos, length);
-        restoreSeed.seed->setPlainText(seed);
+        QString seedJson = QString::fromStdString(reply["seed"].get<json::string_t>());
+        restoreSeed.seed->setPlainText(seedJson);
 
-        int startPosB = seedJson.indexOf("birthday") +10;
-        int endPosB = seedJson.indexOf("seed") -2;
-        int lengthB = endPosB - startPosB;
-        QString birthday = seedJson.mid(startPosB, lengthB);
+        QString birthday = QString::number(reply["birthday"].get<json::number_unsigned_t>());
         restoreSeed.birthday->setPlainText(birthday);
         });
 
@@ -278,8 +271,6 @@ MainWindow::MainWindow(QWidget *parent) :
                  }
 
              });
-
-       // });
                
         dialog.exec();
 });
