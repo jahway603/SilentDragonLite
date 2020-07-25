@@ -166,7 +166,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Rescan
     QObject::connect(ui->actionRescan, &QAction::triggered, [=]() {
 
-        QFile file(dirwalletenc);
+       /* QFile file(dirwalletenc);
         QFile file1(dirwallet);
 
         if(fileExists(dirwalletenc))
@@ -174,7 +174,7 @@ MainWindow::MainWindow(QWidget *parent) :
           {
         file.remove();
         file1.remove();
-          }
+          }*/
 
 
     Ui_Restore restoreSeed;
@@ -234,7 +234,7 @@ MainWindow::MainWindow(QWidget *parent) :
     config->server = Settings::getInstance()->getSettings().server;
     // 3. Attempt to restore wallet with the seed phrase
     {
-        char* resp = litelib_initialize_new_from_phrase(config->server.toStdString().c_str(),
+        char* resp = litelib_initialize_new_from_phrase(config->dangerous, config->server.toStdString().c_str(),
                 seed.toStdString().c_str(), birthday, number);
         QString reply = litelib_process_response(resp);
 

@@ -16,7 +16,7 @@ class FirstTimeWizard: public QWizard
 
     
 public:
-    FirstTimeWizard(QString server);
+    FirstTimeWizard(bool dangerous, QString server);
     
 
 protected:
@@ -29,6 +29,7 @@ private:
         Page_Restore
     };
 
+    bool dangerous;
     QString server;
 
     friend class NewOrRestorePage;
