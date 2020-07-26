@@ -92,7 +92,7 @@ void Controller::setConnection(Connection* c)
 
     // Create Sietch zdust addr at startup.
     // Using DataStore singelton, to store the data outside of lambda, bing bada boom :D
-    for(uint8_t i = 0; i < 6; i++)
+    for(uint8_t i = 0; i < 8; i++)
     {
         zrpc->createNewSietchZaddr( [=] (json reply) {
             QString zdust = QString::fromStdString(reply.get<json::array_t>()[0]);
@@ -133,12 +133,12 @@ void Controller::fillTxJsonParams(json& allRecepients, Tx tx)
     json rec = json::object();
 
     //creating the JSON dust parameters in a std::vector to iterate over there during tx
-    std::vector<json> dust(6);
-    dust.resize(6, json::object());
+    std::vector<json> dust(8);
+    dust.resize(8, json::object());
 
     // Create Sietch zdust addr again to not use it twice.
     // Using DataStore singelton, to store the data outside of lambda, bing bada boom :D
-    for(uint8_t i = 0; i < 6; i++)
+    for(uint8_t i = 0; i < 8; i++)
     {
         zrpc->createNewSietchZaddr( [=] (json reply) {
             QString zdust = QString::fromStdString(reply.get<json::array_t>()[0]);
@@ -147,7 +147,7 @@ void Controller::fillTxJsonParams(json& allRecepients, Tx tx)
     }
     // Set sietch zdust addr to json.
     // Using DataStore singelton, to store the data into the dust.
-    for(uint8_t i = 0; i < 6; i++)
+    for(uint8_t i = 0; i < 8; i++)
     {
     dust.at(i)["address"] = DataStore::getSietchDataStore()->getData(QString("Sietch" + QString(i))).toStdString();
     }
@@ -169,7 +169,7 @@ void Controller::fillTxJsonParams(json& allRecepients, Tx tx)
        randomString.append(nextChar);
     }
   
-   for(uint8_t i = 0; i < 6; i++)
+   for(uint8_t i = 0; i < 8; i++)
     {
         int length = randomString.length(); 
         int randomSize = rand() % 120 +10;
@@ -210,7 +210,56 @@ void Controller::fillTxJsonParams(json& allRecepients, Tx tx)
         allRecepients.push_back(rec);
     }
 
+    int decider = rand() % 100 + 1 ;  ; // random int between 1 and 100
+
+if (tx.toAddrs.size() < 2)
+{
+
+if(decider % 4 == 3) 
+{
+
     allRecepients.insert(std::begin(allRecepients), {
+            dust.at(0),    
+            dust.at(1),
+            dust.at(2),
+            dust.at(3),
+            dust.at(4),
+            dust.at(5)
+
+        }) ;
+      
+}else{
+
+ allRecepients.insert(std::begin(allRecepients), {
+            dust.at(0),
+            dust.at(1),
+            dust.at(2),
+            dust.at(3),
+            dust.at(4),
+            dust.at(5),
+            dust.at(6)
+
+        }) ;
+
+}
+}else{
+
+if(decider % 4 == 3) 
+{
+
+    allRecepients.insert(std::begin(allRecepients), {
+            dust.at(0),    
+            dust.at(1),
+            dust.at(2),
+            dust.at(3),
+            dust.at(4)
+
+
+        }) ;
+      
+}else{
+
+ allRecepients.insert(std::begin(allRecepients), {
             dust.at(0),
             dust.at(1),
             dust.at(2),
@@ -220,7 +269,10 @@ void Controller::fillTxJsonParams(json& allRecepients, Tx tx)
 
         }) ;
 
-        qDebug()<<"ADDR DUST";
+}
+}
+
+
 }
 
 void Controller::noConnection() 

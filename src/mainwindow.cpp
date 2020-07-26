@@ -92,7 +92,7 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
      ui->memoTxtChat->setAutoFillBackground(false);
-     ui->memoTxtChat->setPlaceholderText("Send Message");
+     ui->memoTxtChat->setPlaceholderText("Send Message (you can only write messages after the initial message from your contact)");
      ui->memoTxtChat->setTextColor(Qt::white);
     
     // Status Bar
@@ -1613,7 +1613,7 @@ void MainWindow::setupchatTab() {
      ui->listContactWidget->addAction(HushAction);
      ui->listContactWidget->addAction(editAction); 
      ui->listContactWidget->addAction(subatomicAction);
-     ui->memoTxtChat->setEnabled(true);
+     ui->memoTxtChat->setEnabled(false);
 
           QModelIndex index = ui->listContactWidget->currentIndex();
         QString label_contact = index.data(Qt::DisplayRole).toString();
