@@ -126,7 +126,7 @@ void Chat::renderChatBox(Ui::MainWindow *ui, QListView *view, QLabel *label)
                 Items1->setData(INCOMING, Qt::UserRole + 1);
                 chat->appendRow(Items1);
                 ui->listChat->setModel(chat);
-                
+                ui->memoTxtChat->setEnabled(true);
                
             }
             else
