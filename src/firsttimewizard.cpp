@@ -32,6 +32,7 @@ FirstTimeWizard::FirstTimeWizard(bool dangerous, QString server)
     this->dangerous = dangerous;
     this->server = server;
 
+
     ////backup addresslabels.dat if there is one, to restore it later
 
     auto dir =  QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
@@ -115,6 +116,9 @@ NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent
             form.txtPassword->setEnabled(true);
             form.txtConfirmPassword->setEnabled(true);                 
             
+        }else{
+            parent->button(QWizard::CommitButton)->setEnabled(false);
+            parent->button(QWizard::NextButton)->setEnabled(false);
         }
     });
 
@@ -135,7 +139,7 @@ NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent
             form.radioRestoreWallet->setEnabled(true);
             form.radioNewWallet->setEnabled(true);
             form.radioNewWallet->setChecked(true);
-             parent->button(QWizard::CommitButton)->setEnabled(true);
+            
 
             int length = passphrase.length();
 
@@ -172,6 +176,7 @@ NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent
     QObject::connect(form.radioNewWallet,  &QRadioButton::clicked, [=](bool checked) {
         if (checked) {
             form.radioRestoreWallet->setChecked(false);
+            parent->button(QWizard::CommitButton)->setEnabled(true);
             
         }
     });
@@ -179,6 +184,7 @@ NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent
     QObject::connect(form.radioRestoreWallet, &QRadioButton::clicked, [=](bool checked) {
         if (checked) {
             form.radioNewWallet->setChecked(false);
+            parent->button(QWizard::CommitButton)->setEnabled(true);
           
         }
     });
