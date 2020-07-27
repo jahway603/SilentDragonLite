@@ -17,13 +17,17 @@ class FirstTimeWizard: public QWizard
     
 public:
     FirstTimeWizard(bool dangerous, QString server);
+
     QString getSeed();
-    void setSeed(QString Seed);
-    QString _seed;
-    QString getBirthday();
-    void setBirthday(QString Birthday);
+    QString getBirthday();   
     QString _birthday;
+    QString _seed;
+    void setSeed(QString Seed); 
+    void setBirthday(QString Birthday);   
     void cancelEvent();
+
+public slots: 
+    void slot_change_theme(const QString& themeName);
     
 
 protected:

@@ -26,8 +26,49 @@ auto dirwalletbackupfirst = QDir(QStandardPaths::writableLocation(QStandardPaths
 #endif
 
 
+
+
+void FirstTimeWizard::slot_change_theme(const QString& theme_name)
+
+{
+    Settings::getInstance()->set_theme_name(theme_name);
+    
+
+    // Include css
+    QString saved_theme_name;
+    try
+    {
+       saved_theme_name = Settings::getInstance()->get_theme_name();
+    }
+    catch (...)
+    {
+        saved_theme_name = "Dark";
+    }
+
+    QFile qFile(":/css/res/css/" + saved_theme_name +".css");
+    if (qFile.open(QFile::ReadOnly))
+    {
+      QString styleSheet = QLatin1String(qFile.readAll());
+      this->setStyleSheet(""); // resets styles, makes app restart unnecessary
+      this->setStyleSheet(styleSheet);
+    }
+
+}
+
 FirstTimeWizard::FirstTimeWizard(bool dangerous, QString server)
 {
+    // Include css    
+    QString theme_name;
+    try
+    {
+       theme_name = Settings::getInstance()->get_theme_name();
+    }
+    catch (...)
+    {
+        theme_name = "Dark";
+    }
+    this->slot_change_theme(theme_name);
+
     setWindowTitle("New wallet wizard");
     this->dangerous = dangerous;
     this->server = server;
@@ -139,11 +180,12 @@ NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent
             form.radioRestoreWallet->setEnabled(true);
             form.radioNewWallet->setEnabled(true);
             form.radioNewWallet->setChecked(true);
+            parent->button(QWizard::NextButton)->setEnabled(false);
             
 
             int length = passphrase.length();
 
-    char *sequence = NULL;
+        char *sequence = NULL;
         sequence = new char[length+1];
         strncpy(sequence, passphrase.toUtf8(), length +1);
         
