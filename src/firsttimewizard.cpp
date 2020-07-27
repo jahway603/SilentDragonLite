@@ -2,11 +2,28 @@
 
 #include "ui_newseed.h"
 #include "ui_restoreseed.h"
+#include "ui_verifyseed.h"
 #include "ui_newwallet.h"
 #include "mainwindow.h"
 #include "DataStore/DataStore.h"
 
 #include "../lib/silentdragonlitelib.h"
+
+#ifdef Q_OS_WIN
+auto dirwalletfirst = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("silentdragonlite/silentdragonlite-wallet.dat");
+auto dirwalletencfirst = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("silentdragonlite/silentdragonlite-wallet-enc.dat");
+auto dirwalletbackupfirst = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("silentdragonlite/silentdragonlite-wallet.datBackup");
+#endif
+#ifdef Q_OS_MACOS
+auto dirwalletfirst = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("silentdragonlite/silentdragonlite-wallet.dat");
+auto dirwalletencfirst = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("silentdragonlite/silentdragonlite-wallet-enc.dat");
+auto dirwalletbackupfirst = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("silentdragonlite/silentdragonlite-wallet.datBackup");
+#endif
+#ifdef Q_OS_LINUX
+auto dirwalletfirst = QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath(".silentdragonlite/silentdragonlite-wallet.dat");
+auto dirwalletencfirst = QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat");
+auto dirwalletbackupfirst = QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath(".silentdragonlite/silentdragonlite-wallet.datBackup");
+#endif
 
 
 FirstTimeWizard::FirstTimeWizard(bool dangerous, QString server)
@@ -14,6 +31,7 @@ FirstTimeWizard::FirstTimeWizard(bool dangerous, QString server)
     setWindowTitle("New wallet wizard");
     this->dangerous = dangerous;
     this->server = server;
+
 
     ////backup addresslabels.dat if there is one, to restore it later
 
@@ -48,6 +66,30 @@ int FirstTimeWizard::nextId() const {
     }
 }
 
+QString FirstTimeWizard::getSeed()
+{
+
+    return _seed;
+}
+
+void FirstTimeWizard::setSeed(QString seed)
+{
+
+    _seed = seed;
+}
+
+QString FirstTimeWizard::getBirthday()
+{
+
+    return _birthday;
+}
+
+void FirstTimeWizard::setBirthday(QString birthday)
+{
+
+    _birthday = birthday;
+}
+
 NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent) {
     setTitle("Create or Restore wallet.");
 
@@ -74,6 +116,9 @@ NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent
             form.txtPassword->setEnabled(true);
             form.txtConfirmPassword->setEnabled(true);                 
             
+        }else{
+            parent->button(QWizard::CommitButton)->setEnabled(false);
+            parent->button(QWizard::NextButton)->setEnabled(false);
         }
     });
 
@@ -94,7 +139,7 @@ NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent
             form.radioRestoreWallet->setEnabled(true);
             form.radioNewWallet->setEnabled(true);
             form.radioNewWallet->setChecked(true);
-             parent->button(QWizard::CommitButton)->setEnabled(true);
+            
 
             int length = passphrase.length();
 
@@ -125,16 +170,13 @@ NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent
     /* out of memory */
 }
         QString passphraseHash1 = QByteArray(reinterpret_cast<const char*>(key), KEY_LEN).toHex();
-        DataStore::getChatDataStore()->setPassword(passphraseHash1);
-         //main->setPassword(Password);
-
-         //qDebug()<<"Objekt gesetzt";
-            
+        DataStore::getChatDataStore()->setPassword(passphraseHash1);         
  
-                // Exclusive buttons
+     // Exclusive buttons
     QObject::connect(form.radioNewWallet,  &QRadioButton::clicked, [=](bool checked) {
         if (checked) {
             form.radioRestoreWallet->setChecked(false);
+            parent->button(QWizard::CommitButton)->setEnabled(true);
             
         }
     });
@@ -142,6 +184,7 @@ NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent
     QObject::connect(form.radioRestoreWallet, &QRadioButton::clicked, [=](bool checked) {
         if (checked) {
             form.radioNewWallet->setChecked(false);
+            parent->button(QWizard::CommitButton)->setEnabled(true);
           
         }
     });
@@ -201,16 +244,45 @@ void NewSeedPage::initializePage() {
     if (parsed.is_discarded() || parsed.is_null() || parsed.find("seed") == parsed.end()) {
         form.txtSeed->setPlainText(tr("Error creating a wallet") + "\n" + reply);
     } else {
+        QString birthday = QString::number(parsed["birthday"].get<json::number_unsigned_t>());
         QString seed = QString::fromStdString(parsed["seed"].get<json::string_t>());
         form.txtSeed->setPlainText(seed);
+        parent->setSeed(seed);
+        parent->setBirthday(birthday);
+        form.birthday->setPlainText(birthday);
+        parent->button(QWizard::CancelButton)->setEnabled(false);
+        disconnect(parent->button(QWizard::CancelButton ), SIGNAL( clicked() ), parent, SLOT( reject() ) );
+        connect(parent->button(QWizard::CancelButton ), SIGNAL( clicked() ), parent, SLOT( cancelEvent() ) );
+
     }
 
 
 }
 
+void FirstTimeWizard::cancelEvent()
+    {
+    	if( QMessageBox::question( this, ( "Quit Setup" ), ( "Setup is not complete yet. Are you sure you want to quit setup?" ), QMessageBox::Yes, QMessageBox::No ) == QMessageBox::Yes ) {
+    		// allow cancel
+    		reject();
+    	}
+    }
+
 // Will be called just before closing. Make sure we can save the seed in the wallet
 // before we allow the page to be closed
 bool NewSeedPage::validatePage() {
+
+    Ui_verifyseed verifyseed;
+    QDialog dialog(this);
+    verifyseed.setupUi(&dialog);
+    Settings::saveRestore(&dialog);
+
+    dialog.exec();
+
+    QString seed = parent->getSeed();
+    QString birthday = parent->getBirthday();
+
+    if ((verifyseed.verifyText->toPlainText() == seed) && (verifyseed.verifyBirthday->toPlainText() == birthday))
+    {
     char* resp = litelib_execute("save", "");
     QString reply = litelib_process_response(resp);
 
@@ -223,6 +295,20 @@ bool NewSeedPage::validatePage() {
         return false;
     } else {
         return true;
+    }
+    }else{
+
+        qDebug()<<"Falscher Seed";
+        QFile file(dirwalletencfirst);
+        QFile file1(dirwalletfirst);
+
+        file.remove();
+        file1.remove();
+        QMessageBox::warning(this, tr("Wrong Seed"), 
+            tr("Please try again") + "\n" ,
+            QMessageBox::Ok);
+        return false;
+        this->validatePage();
     }
 }
 

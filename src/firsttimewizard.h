@@ -17,6 +17,13 @@ class FirstTimeWizard: public QWizard
     
 public:
     FirstTimeWizard(bool dangerous, QString server);
+    QString getSeed();
+    void setSeed(QString Seed);
+    QString _seed;
+    QString getBirthday();
+    void setBirthday(QString Birthday);
+    QString _birthday;
+    void cancelEvent();
     
 
 protected:
@@ -51,6 +58,7 @@ public:
 class NewSeedPage: public QWizardPage {
 public:
     NewSeedPage(FirstTimeWizard* parent);
+ 
 
 protected:
     virtual void initializePage();
