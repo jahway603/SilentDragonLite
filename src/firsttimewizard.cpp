@@ -125,13 +125,9 @@ NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent
     /* out of memory */
 }
         QString passphraseHash1 = QByteArray(reinterpret_cast<const char*>(key), KEY_LEN).toHex();
-        DataStore::getChatDataStore()->setPassword(passphraseHash1);
-         //main->setPassword(Password);
-
-         //qDebug()<<"Objekt gesetzt";
-            
+        DataStore::getChatDataStore()->setPassword(passphraseHash1);         
  
-                // Exclusive buttons
+     // Exclusive buttons
     QObject::connect(form.radioNewWallet,  &QRadioButton::clicked, [=](bool checked) {
         if (checked) {
             form.radioRestoreWallet->setChecked(false);
@@ -201,8 +197,10 @@ void NewSeedPage::initializePage() {
     if (parsed.is_discarded() || parsed.is_null() || parsed.find("seed") == parsed.end()) {
         form.txtSeed->setPlainText(tr("Error creating a wallet") + "\n" + reply);
     } else {
+        QString birthday = QString::number(parsed["birthday"].get<json::number_unsigned_t>());
         QString seed = QString::fromStdString(parsed["seed"].get<json::string_t>());
         form.txtSeed->setPlainText(seed);
+        form.birthday->setPlainText(birthday);
     }
 
 
