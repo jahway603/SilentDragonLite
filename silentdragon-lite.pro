@@ -138,7 +138,8 @@ FORMS += \
     src/about.ui \
     src/confirm.ui \
     src/privkey.ui \
-    src/memodialog.ui \ 
+    src/memodialog.ui \  
+    src/verifyseed.ui \
     src/startupencryption.ui \
     src/viewalladdresses.ui \
     src/connection.ui \

@@ -2,11 +2,28 @@
 
 #include "ui_newseed.h"
 #include "ui_restoreseed.h"
+#include "ui_verifyseed.h"
 #include "ui_newwallet.h"
 #include "mainwindow.h"
 #include "DataStore/DataStore.h"
 
 #include "../lib/silentdragonlitelib.h"
+
+#ifdef Q_OS_WIN
+auto dirwalletfirst = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("silentdragonlite/silentdragonlite-wallet.dat");
+auto dirwalletencfirst = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("silentdragonlite/silentdragonlite-wallet-enc.dat");
+auto dirwalletbackupfirst = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("silentdragonlite/silentdragonlite-wallet.datBackup");
+#endif
+#ifdef Q_OS_MACOS
+auto dirwalletfirst = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("silentdragonlite/silentdragonlite-wallet.dat");
+auto dirwalletencfirst = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("silentdragonlite/silentdragonlite-wallet-enc.dat");
+auto dirwalletbackupfirst = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("silentdragonlite/silentdragonlite-wallet.datBackup");
+#endif
+#ifdef Q_OS_LINUX
+auto dirwalletfirst = QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath(".silentdragonlite/silentdragonlite-wallet.dat");
+auto dirwalletencfirst = QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath(".silentdragonlite/silentdragonlite-wallet-enc.dat");
+auto dirwalletbackupfirst = QDir(QStandardPaths::writableLocation(QStandardPaths::HomeLocation)).filePath(".silentdragonlite/silentdragonlite-wallet.datBackup");
+#endif
 
 
 FirstTimeWizard::FirstTimeWizard(bool dangerous, QString server)
@@ -46,6 +63,30 @@ int FirstTimeWizard::nextId() const {
         default:
             return -1;
     }
+}
+
+QString FirstTimeWizard::getSeed()
+{
+
+    return _seed;
+}
+
+void FirstTimeWizard::setSeed(QString seed)
+{
+
+    _seed = seed;
+}
+
+QString FirstTimeWizard::getBirthday()
+{
+
+    return _birthday;
+}
+
+void FirstTimeWizard::setBirthday(QString birthday)
+{
+
+    _birthday = birthday;
 }
 
 NewOrRestorePage::NewOrRestorePage(FirstTimeWizard *parent) : QWizardPage(parent) {
@@ -200,6 +241,8 @@ void NewSeedPage::initializePage() {
         QString birthday = QString::number(parsed["birthday"].get<json::number_unsigned_t>());
         QString seed = QString::fromStdString(parsed["seed"].get<json::string_t>());
         form.txtSeed->setPlainText(seed);
+        parent->setSeed(seed);
+        parent->setBirthday(birthday);
         form.birthday->setPlainText(birthday);
     }
 
@@ -209,6 +252,19 @@ void NewSeedPage::initializePage() {
 // Will be called just before closing. Make sure we can save the seed in the wallet
 // before we allow the page to be closed
 bool NewSeedPage::validatePage() {
+
+    Ui_verifyseed verifyseed;
+    QDialog dialog(this);
+    verifyseed.setupUi(&dialog);
+    Settings::saveRestore(&dialog);
+
+    dialog.exec();
+
+    QString seed = parent->getSeed();
+    QString birthday = parent->getBirthday();
+
+    if ((verifyseed.verifyText->toPlainText() == seed) && (verifyseed.verifyBirthday->toPlainText() == birthday ))
+    {
     char* resp = litelib_execute("save", "");
     QString reply = litelib_process_response(resp);
 
@@ -221,6 +277,20 @@ bool NewSeedPage::validatePage() {
         return false;
     } else {
         return true;
+    }
+    }else{
+
+        qDebug()<<"Falscher Seed";
+        QFile file(dirwalletencfirst);
+        QFile file1(dirwalletfirst);
+
+        file.remove();
+        file1.remove();
+        QMessageBox::warning(this, tr("Wrong Seed"), 
+            tr("Please try again") + "\n" ,
+            QMessageBox::Ok);
+        return false;
+        this->validatePage();
     }
 }
 
