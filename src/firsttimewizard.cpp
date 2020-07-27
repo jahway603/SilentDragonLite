@@ -244,10 +244,22 @@ void NewSeedPage::initializePage() {
         parent->setSeed(seed);
         parent->setBirthday(birthday);
         form.birthday->setPlainText(birthday);
+        parent->button(QWizard::CancelButton)->setEnabled(false);
+        disconnect(parent->button(QWizard::CancelButton ), SIGNAL( clicked() ), parent, SLOT( reject() ) );
+        connect(parent->button(QWizard::CancelButton ), SIGNAL( clicked() ), parent, SLOT( cancelEvent() ) );
+
     }
 
 
 }
+
+void FirstTimeWizard::cancelEvent()
+    {
+    	if( QMessageBox::question( this, ( "Quit Setup" ), ( "Setup is not complete yet. Are you sure you want to quit setup?" ), QMessageBox::Yes, QMessageBox::No ) == QMessageBox::Yes ) {
+    		// allow cancel
+    		reject();
+    	}
+    }
 
 // Will be called just before closing. Make sure we can save the seed in the wallet
 // before we allow the page to be closed
@@ -263,7 +275,7 @@ bool NewSeedPage::validatePage() {
     QString seed = parent->getSeed();
     QString birthday = parent->getBirthday();
 
-    if ((verifyseed.verifyText->toPlainText() == seed) && (verifyseed.verifyBirthday->toPlainText() == birthday ))
+    if ((verifyseed.verifyText->toPlainText() == seed) && (verifyseed.verifyBirthday->toPlainText() == birthday))
     {
     char* resp = litelib_execute("save", "");
     QString reply = litelib_process_response(resp);

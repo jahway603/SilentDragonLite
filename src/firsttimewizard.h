@@ -23,6 +23,7 @@ public:
     QString getBirthday();
     void setBirthday(QString Birthday);
     QString _birthday;
+    void cancelEvent();
     
 
 protected:
