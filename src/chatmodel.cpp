@@ -67,7 +67,7 @@ void ChatModel::showMessages()
 {
     for(auto &c : this->chatItems)
     {
-      //  qDebug() << c.second.toChatLine();
+
     }
           
 }
@@ -153,12 +153,11 @@ void MainWindow::renderContactRequest(){
 
         QObject::connect(requestContact.requestContact, &QTableView::clicked, [&] () {
 
-            for (auto &c : DataStore::getChatDataStore()->getAllRawChatItems()){
+        for (auto &c : DataStore::getChatDataStore()->getAllRawChatItems()){
         QModelIndex index = requestContact.requestContact->currentIndex();
         QString label_contact = index.data(Qt::DisplayRole).toString();
         QStandardItemModel* contactMemo = new QStandardItemModel();
 
-        qDebug()<<label_contact;
 
 
     
@@ -728,9 +727,6 @@ void::MainWindow::addContact()
         ui->listReceiveAddresses->insertItem(0, myAddr); 
         ui->listReceiveAddresses->setCurrentIndex(0);
         DataStore::getChatDataStore()->setSendZaddr(myAddr);
-    
-
-        qDebug()<<"Zaddr: "<<myAddr;
     });
 
     }catch(...)
