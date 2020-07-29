@@ -127,6 +127,8 @@ void Chat::renderChatBox(Ui::MainWindow *ui, QListView *view, QLabel *label)
                 chat->appendRow(Items1);
                 ui->listChat->setModel(chat);
                 ui->memoTxtChat->setEnabled(true);
+                ui->emojiButton->setEnabled(true);
+                ui->sendChatButton->setEnabled(true);
                
             }
             else

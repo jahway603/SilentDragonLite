@@ -1423,6 +1423,8 @@ void MainWindow::setupTransactionsTab() {
 void MainWindow::setupchatTab() {
 
     ui->memoTxtChat->setEnabled(false);
+    ui->emojiButton->setEnabled(false);
+    ui->sendChatButton->setEnabled(false);
 
           /////////////Setting Icons for Chattab and different themes
        
@@ -1471,6 +1473,8 @@ void MainWindow::setupchatTab() {
     QObject::connect(ui->sendChatButton, &QPushButton::clicked, [&] () {
 
         ui->memoTxtChat->setEnabled(false);
+        ui->emojiButton->setEnabled(false);
+                
 
     });
     QObject::connect(ui->safeContactRequest, &QPushButton::clicked, this, &MainWindow::addContact);
@@ -1613,9 +1617,12 @@ void MainWindow::setupchatTab() {
      ui->listContactWidget->addAction(HushAction);
      ui->listContactWidget->addAction(editAction); 
      ui->listContactWidget->addAction(subatomicAction);
-     ui->memoTxtChat->setEnabled(false);
 
-          QModelIndex index = ui->listContactWidget->currentIndex();
+     ui->memoTxtChat->setEnabled(false);
+     ui->emojiButton->setEnabled(false);
+     ui->sendChatButton->setEnabled(false);
+
+        QModelIndex index = ui->listContactWidget->currentIndex();
         QString label_contact = index.data(Qt::DisplayRole).toString();
         
         for(auto &p : AddressBook::getInstance()->getAllAddressLabels())
