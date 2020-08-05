@@ -1205,7 +1205,7 @@ void Controller::refreshTransactions() {
                 QString memo;
                 if (!it["memo"].is_null()) {
                     memo = QString::fromStdString(it["memo"]);
-
+                }
                 items.push_back(TransactionItemDetail{
                         address,
                     CAmount::fromqint64(it["amount"].get<json::number_integer_t>()),
@@ -1217,7 +1217,7 @@ void Controller::refreshTransactions() {
                 };
 
                 txdata.push_back(tx);
-               }
+               
 
            
                     QString type;
