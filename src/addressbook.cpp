@@ -513,15 +513,12 @@ void AddressBook::writeToStorage()
         
     }
     out << QString("v2") << contacts;
-    qDebug()<<"schreibe in Datei: ";
     file.close();
 
 
         FileEncryption::encrypt(target_encaddr_file, target_decaddr_file , pwHash);
         QFile file1(target_decaddr_file);
-        file1.remove();
-    
-        qDebug()<<"encrypt Addrbook writeToStorage";
+        file1.remove();   
     
 }
 

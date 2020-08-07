@@ -92,7 +92,7 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
      ui->memoTxtChat->setAutoFillBackground(false);
-     ui->memoTxtChat->setPlaceholderText("Send Message");
+     ui->memoTxtChat->setPlaceholderText("Send Message (you can only write messages after the initial message from your contact)");
      ui->memoTxtChat->setTextColor(Qt::white);
     
     // Status Bar
@@ -166,7 +166,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Rescan
     QObject::connect(ui->actionRescan, &QAction::triggered, [=]() {
 
-        QFile file(dirwalletenc);
+       /* QFile file(dirwalletenc);
         QFile file1(dirwallet);
 
         if(fileExists(dirwalletenc))
@@ -174,7 +174,7 @@ MainWindow::MainWindow(QWidget *parent) :
           {
         file.remove();
         file1.remove();
-          }
+          }*/
 
 
     Ui_Restore restoreSeed;
@@ -190,17 +190,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
         restoreSeed.seed->setReadOnly(true);
         restoreSeed.seed->setLineWrapMode(QPlainTextEdit::LineWrapMode::NoWrap);
-        QString seedJson = QString::fromStdString(reply.get<json::string_t>());
-        int startPos = seedJson.indexOf("seed") +7;
-        int endPos = seedJson.indexOf("}") -1;
-        int length = endPos - startPos;
-        QString seed = seedJson.mid(startPos, length);
-        restoreSeed.seed->setPlainText(seed);
+        QString seedJson = QString::fromStdString(reply["seed"].get<json::string_t>());
+        restoreSeed.seed->setPlainText(seedJson);
 
-        int startPosB = seedJson.indexOf("birthday") +10;
-        int endPosB = seedJson.indexOf("seed") -2;
-        int lengthB = endPosB - startPosB;
-        QString birthday = seedJson.mid(startPosB, lengthB);
+        QString birthday = QString::number(reply["birthday"].get<json::number_unsigned_t>());
         restoreSeed.birthday->setPlainText(birthday);
         });
 
@@ -234,7 +227,7 @@ MainWindow::MainWindow(QWidget *parent) :
     config->server = Settings::getInstance()->getSettings().server;
     // 3. Attempt to restore wallet with the seed phrase
     {
-        char* resp = litelib_initialize_new_from_phrase(config->server.toStdString().c_str(),
+        char* resp = litelib_initialize_new_from_phrase(config->dangerous, config->server.toStdString().c_str(),
                 seed.toStdString().c_str(), birthday, number);
         QString reply = litelib_process_response(resp);
 
@@ -278,8 +271,6 @@ MainWindow::MainWindow(QWidget *parent) :
                  }
 
              });
-
-       // });
                
         dialog.exec();
 });
@@ -1432,6 +1423,8 @@ void MainWindow::setupTransactionsTab() {
 void MainWindow::setupchatTab() {
 
     ui->memoTxtChat->setEnabled(false);
+    ui->emojiButton->setEnabled(false);
+    ui->sendChatButton->setEnabled(false);
 
           /////////////Setting Icons for Chattab and different themes
        
@@ -1480,6 +1473,8 @@ void MainWindow::setupchatTab() {
     QObject::connect(ui->sendChatButton, &QPushButton::clicked, [&] () {
 
         ui->memoTxtChat->setEnabled(false);
+        ui->emojiButton->setEnabled(false);
+                
 
     });
     QObject::connect(ui->safeContactRequest, &QPushButton::clicked, this, &MainWindow::addContact);
@@ -1622,9 +1617,12 @@ void MainWindow::setupchatTab() {
      ui->listContactWidget->addAction(HushAction);
      ui->listContactWidget->addAction(editAction); 
      ui->listContactWidget->addAction(subatomicAction);
-     ui->memoTxtChat->setEnabled(true);
 
-          QModelIndex index = ui->listContactWidget->currentIndex();
+     ui->memoTxtChat->setEnabled(false);
+     ui->emojiButton->setEnabled(false);
+     ui->sendChatButton->setEnabled(false);
+
+        QModelIndex index = ui->listContactWidget->currentIndex();
         QString label_contact = index.data(Qt::DisplayRole).toString();
         
         for(auto &p : AddressBook::getInstance()->getAllAddressLabels())
