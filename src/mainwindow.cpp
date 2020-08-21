@@ -633,6 +633,21 @@ void MainWindow::removeWalletEncryptionStartUp() {
    QDialog d(this);
     Ui_startup ed;
     ed.setupUi(&d);
+
+     QObject::connect(ed.new_restore, &QPushButton::clicked, [&] {
+
+    d.close();
+     QFile wallet(dirwallet);
+     QFile walletenc(dirwalletenc);
+
+     wallet.remove();
+     walletenc.remove();
+
+       auto cl = new ConnectionLoader(this, rpc);
+       cl->loadConnection();
+
+       
+   });
   
     if (d.exec() == QDialog::Accepted) 
     {
@@ -696,7 +711,7 @@ void MainWindow::removeWalletEncryptionStartUp() {
 
         this->doClosePw();
     }
-  
+
 }
 
 QString MainWindow::getPassword()
