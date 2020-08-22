@@ -318,7 +318,9 @@ bool NewSeedPage::validatePage() {
     verifyseed.setupUi(&dialog);
     Settings::saveRestore(&dialog);
 
-    
+    form.birthday->setVisible(false);
+    form.txtSeed->setVisible(false);
+   
 
     QString seed = parent->getSeed();
     QString birthday = parent->getBirthday();
@@ -616,6 +618,8 @@ bool NewSeedPage::validatePage() {
         QMessageBox::warning(this, tr("Wrong Seed"), 
             tr("Please try again") + "\n" ,
             QMessageBox::Ok);
+        form.birthday->setVisible(true);
+        form.txtSeed->setVisible(true);
         return false;
         this->validatePage();
     }

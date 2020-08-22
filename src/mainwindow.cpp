@@ -636,7 +636,7 @@ void MainWindow::removeWalletEncryptionStartUp() {
 
      QObject::connect(ed.new_restore, &QPushButton::clicked, [&] {
 
-    d.close();
+     d.close();
      QFile wallet(dirwallet);
      QFile walletenc(dirwalletenc);
 
@@ -644,9 +644,7 @@ void MainWindow::removeWalletEncryptionStartUp() {
      walletenc.remove();
 
        auto cl = new ConnectionLoader(this, rpc);
-       cl->loadConnection();
-
-       
+       cl->loadConnection();       
    });
   
     if (d.exec() == QDialog::Accepted) 
