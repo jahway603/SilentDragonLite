@@ -1550,7 +1550,6 @@ QObject::connect(openlink, &QAction::triggered, [=] {
 
 QModelIndex index = ui->listChat->currentIndex();
 QString memo_chat = index.data(Qt::DisplayRole).toString();
-QClipboard *clipboard = QGuiApplication::clipboard();
 QRegExp rx("((?:https?|ftp)://\\S+)");
 int pos = rx.indexIn(memo_chat, 0);
 if (-1 != pos)
@@ -1662,16 +1661,11 @@ if (-1 != pos)
 
 ///////// Add contextmenu 
      QMenu* contextMenu;
-     QAction* requestAction;
      QAction* editAction;
      QAction* HushAction;
-     QAction* requestHushAction;
-     QAction* subatomicAction;
      contextMenu = new QMenu(ui->listContactWidget);
      HushAction = new QAction("Send or Request Hush ",contextMenu);
      editAction = new QAction("Delete this contact",contextMenu);
-     subatomicAction = new QAction("Make a subatomic swap with a friend- coming soon",contextMenu);
-
 
 ///////// Set selected Zaddr for Chat with click
 
@@ -1680,7 +1674,6 @@ if (-1 != pos)
      ui->listContactWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
      ui->listContactWidget->addAction(HushAction);
      ui->listContactWidget->addAction(editAction); 
-     ui->listContactWidget->addAction(subatomicAction);
 
      ui->memoTxtChat->setEnabled(false);
      ui->emojiButton->setEnabled(false);
@@ -1706,8 +1699,6 @@ if (-1 != pos)
         QDialog transactionDialog(this);
         transaction.setupUi(&transactionDialog);
         Settings::saveRestore(&transactionDialog);
-       // transaction.requestHush->setEnabled(false);
-       // transaction.requestHush->setVisible(false);
         transaction.amountChat->setValidator(this->getAmountValidator());
         QString icon = ":icons/res/hush-money-white.png";
         QPixmap hush(icon);
