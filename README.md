@@ -18,7 +18,7 @@
             alt="MyHushTeam's Reddit"></a>
 </p>
 
-SilentDragonLite is a lightwallet for HUSH ($HUSH) which runs on Linux, Windows, and Mac OSX. This does not require you to download the full blockchain. This is experimental software under active development!
+SilentDragonLite is a lightwallet for HUSH ($HUSH) which runs on Linux, Windows, and macOS. This does not require you to download the full blockchain. This is experimental software under active development!
 
 <img src="https://raw.githubusercontent.com/MyHush/SilentDragonLite/master/hushchat-screenshot.png">
 
@@ -60,13 +60,17 @@ SilentDragonLite does automatic note and utxo management, which means it doesn't
 * It also depends on Qt5, which you can get from [here](https://www.qt.io/download). 
 * You'll need Rust v1.41 +
 
-## Building on Linux
+### Building on Linux
 
 ```
-git clone https://github.com/MyHush/SilenDragonLite.git
-cd silentdragonlite
+git clone https://github.com/MyHush/SilentDragonLite.git
+cd SilentDragonLite
 ./build.sh
-./Silentdragonlite
+./SilentDragonLite
 
 ```
+
+## Support
+
+For support or other questions, join us on [Discord](https://myhush.org/discord), or tweet at [@MyHushTeam](https://twitter.com/MyHushTeam), or toot at our [Mastodon](https://fosstodon.org/@myhushteam), or join [Telegram](http://myhush.org/telegram) or [file an issue](https://github.com/MyHush/SilentDragonLite/issues).
 
