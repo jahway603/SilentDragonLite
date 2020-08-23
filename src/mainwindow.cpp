@@ -1525,6 +1525,47 @@ void MainWindow::setupchatTab() {
 
  });
 
+QObject::connect(copylink, &QAction::triggered, [=] {
+
+QModelIndex index = ui->listChat->currentIndex();
+QString memo_chat = index.data(Qt::DisplayRole).toString();
+QClipboard *clipboard = QGuiApplication::clipboard();
+QRegExp rx("((?:https?|ftp)://\\S+)");
+int pos = rx.indexIn(memo_chat, 0);
+if (-1 != pos)
+{
+    QString cap = rx.cap(0);
+    cap = cap.left(cap.indexOf('\''));
+    int startPos = cap.indexOf("<p>");
+    int endPos = cap.indexOf("</p>");
+    int length = endPos - startPos;
+    QString hyperlink = cap.mid(startPos, length);
+    clipboard->setText(hyperlink);
+    ui->statusBar->showMessage(tr("Copied Hyperlink to clipboard"), 3 * 1000); 
+
+}
+});
+
+QObject::connect(openlink, &QAction::triggered, [=] {
+
+QModelIndex index = ui->listChat->currentIndex();
+QString memo_chat = index.data(Qt::DisplayRole).toString();
+QClipboard *clipboard = QGuiApplication::clipboard();
+QRegExp rx("((?:https?|ftp)://\\S+)");
+int pos = rx.indexIn(memo_chat, 0);
+if (-1 != pos)
+{
+    QString cap = rx.cap(0);
+    cap = cap.left(cap.indexOf('\''));
+    int startPos = cap.indexOf("<p>");
+    int endPos = cap.indexOf("</p>");
+    int length = endPos - startPos;
+    QString hyperlink = cap.mid(startPos, length);
+    QDesktopServices::openUrl(QUrl(hyperlink));
+
+}
+});
+
      QObject::connect(copymessage, &QAction::triggered, [=] {
 
     
