@@ -18,7 +18,7 @@
             alt="MyHushTeam's Reddit"></a>
 </p>
 
-SilentDragonLite is a lightwallet for HUSH ($HUSH) which runs on Linux, Windows, and macOS. This does not require you to download the full blockchain. This is experimental software under active development!
+SilentDragonLite is a lightwallet for HUSH ($HUSH) which runs on Linux and Windows. This does not require you to download the full blockchain. This is experimental software under active development!
 
 <img src="https://raw.githubusercontent.com/MyHush/SilentDragonLite/master/hushchat-screenshot.png">
 
@@ -35,7 +35,7 @@ This means your IP address is known to these servers. Enable Tor setting in Sile
 
 ## Installation
 
-Go to the [releases page](https://github.com/MyHush/SilentDragonLite/releases) and grab the latest installers or binary.
+Go to the [releases page](https://github.com/MyHush/SilentDragonLite/releases) and grab the latest installers or binary. For any Arch Linux users, we also have packages on [AUR](https://aur.archlinux.org/) which can be installed with **[yay -S silentdragonlite](https://aur.archlinux.org/packages/silentdragonlite/)** or with **[yay -S silentdragonlite-appimage](https://aur.archlinux.org/packages/silentdragonlite-appimage/)** for the AppImage package.
 
 ## Install Torsocks (or any other Socks service for TOR) on Ubuntu 18.04
 ```
