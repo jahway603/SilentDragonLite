@@ -1499,21 +1499,71 @@ void MainWindow::setupchatTab() {
 
      QMenu* contextMenuChat;
      QAction* copymessage;
+     
      QAction* viewexplorer;
      QAction* copytxid;
+     QAction* copylink;
+     QAction* openlink;
      contextMenuChat = new QMenu(ui->listChat);
+     ui->listChat->setContextMenuPolicy(Qt::ActionsContextMenu); 
      copymessage = new QAction("Copy message to clipboard",contextMenuChat);
      viewexplorer = new QAction("View on block explorer",contextMenuChat);
      copytxid = new QAction("Copy txid to clipboard ",contextMenuChat);
+     copylink = new QAction("Copy Hyperlink from memo ",contextMenuChat);
+     openlink = new QAction("Open Hyperlink in your browser",contextMenuChat);
     
  QObject::connect(ui->listContactWidget, &QTableView::clicked, [=] () {
 
-     ui->listChat->setContextMenuPolicy(Qt::ActionsContextMenu);
+     
+    
+     //contextMenuChat->autoFillBackground(false);
      ui->listChat->addAction(copymessage);
      ui->listChat->addAction(viewexplorer);
      ui->listChat->addAction(copytxid);
+     ui->listChat->addAction(copylink);
+     ui->listChat->addAction(openlink);
 
  });
+
+QObject::connect(copylink, &QAction::triggered, [=] {
+
+QModelIndex index = ui->listChat->currentIndex();
+QString memo_chat = index.data(Qt::DisplayRole).toString();
+QClipboard *clipboard = QGuiApplication::clipboard();
+QRegExp rx("((?:https?|ftp)://\\S+)");
+int pos = rx.indexIn(memo_chat, 0);
+if (-1 != pos)
+{
+    QString cap = rx.cap(0);
+    cap = cap.left(cap.indexOf('\''));
+    int startPos = cap.indexOf("<p>");
+    int endPos = cap.indexOf("</p>");
+    int length = endPos - startPos;
+    QString hyperlink = cap.mid(startPos, length);
+    clipboard->setText(hyperlink);
+    ui->statusBar->showMessage(tr("Copied Hyperlink to clipboard"), 3 * 1000); 
+
+}
+});
+
+QObject::connect(openlink, &QAction::triggered, [=] {
+
+QModelIndex index = ui->listChat->currentIndex();
+QString memo_chat = index.data(Qt::DisplayRole).toString();
+QRegExp rx("((?:https?|ftp)://\\S+)");
+int pos = rx.indexIn(memo_chat, 0);
+if (-1 != pos)
+{
+    QString cap = rx.cap(0);
+    cap = cap.left(cap.indexOf('\''));
+    int startPos = cap.indexOf("<p>");
+    int endPos = cap.indexOf("</p>");
+    int length = endPos - startPos;
+    QString hyperlink = cap.mid(startPos, length);
+    QDesktopServices::openUrl(QUrl(hyperlink));
+
+}
+});
 
      QObject::connect(copymessage, &QAction::triggered, [=] {
 
@@ -1611,16 +1661,11 @@ void MainWindow::setupchatTab() {
 
 ///////// Add contextmenu 
      QMenu* contextMenu;
-     QAction* requestAction;
      QAction* editAction;
      QAction* HushAction;
-     QAction* requestHushAction;
-     QAction* subatomicAction;
      contextMenu = new QMenu(ui->listContactWidget);
      HushAction = new QAction("Send or Request Hush ",contextMenu);
      editAction = new QAction("Delete this contact",contextMenu);
-     subatomicAction = new QAction("Make a subatomic swap with a friend- coming soon",contextMenu);
-
 
 ///////// Set selected Zaddr for Chat with click
 
@@ -1629,7 +1674,6 @@ void MainWindow::setupchatTab() {
      ui->listContactWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
      ui->listContactWidget->addAction(HushAction);
      ui->listContactWidget->addAction(editAction); 
-     ui->listContactWidget->addAction(subatomicAction);
 
      ui->memoTxtChat->setEnabled(false);
      ui->emojiButton->setEnabled(false);
@@ -1655,8 +1699,6 @@ void MainWindow::setupchatTab() {
         QDialog transactionDialog(this);
         transaction.setupUi(&transactionDialog);
         Settings::saveRestore(&transactionDialog);
-       // transaction.requestHush->setEnabled(false);
-       // transaction.requestHush->setVisible(false);
         transaction.amountChat->setValidator(this->getAmountValidator());
         QString icon = ":icons/res/hush-money-white.png";
         QPixmap hush(icon);
@@ -2764,111 +2806,111 @@ void MainWindow::on_emojiButton_clicked()
         Settings::saveRestore(&emojiDialog);
 
 QObject::connect(emoji.smiley, &QPushButton::clicked, [&] () {
-   ui->memoTxtChat->insertHtml(":smiley:");
+   ui->memoTxtChat->insertHtml(":a1");
 
-        emojiDialog.close();
+        
 });
 
 QObject::connect(emoji.money, &QPushButton::clicked, [&] () {
-   ui->memoTxtChat->insertHtml(":money_mouth:");
+   ui->memoTxtChat->insertHtml(":a2");
 
-        emojiDialog.close();
+        
 });
 
 QObject::connect(emoji.laughing, &QPushButton::clicked, [&] () {
-   ui->memoTxtChat->insertHtml(":laughing:");
+   ui->memoTxtChat->insertHtml(":a3");
 
-        emojiDialog.close();
+        
 });
 
 QObject::connect(emoji.sweet_smile, &QPushButton::clicked, [&] () {
-   ui->memoTxtChat->insertHtml(":sweet_smile:");
+   ui->memoTxtChat->insertHtml(":a4");
 
-        emojiDialog.close();
+        
 });
 
 QObject::connect(emoji.joy, &QPushButton::clicked, [&] () {
-   ui->memoTxtChat->insertHtml(":joy:");
+   ui->memoTxtChat->insertHtml(":a5");
 
-        emojiDialog.close();
+        
 });
 
 QObject::connect(emoji.innocent, &QPushButton::clicked, [&] () {
-   ui->memoTxtChat->insertHtml(":innocent:");
+   ui->memoTxtChat->insertHtml(":a6");
 
-        emojiDialog.close();
+        
 });
 
 QObject::connect(emoji.partying_face, &QPushButton::clicked, [&] () {
-   ui->memoTxtChat->insertHtml(":partying_face:");
+   ui->memoTxtChat->insertHtml(":a7");
 
-        emojiDialog.close();
+        
 });
 
 QObject::connect(emoji.rolling_eyes, &QPushButton::clicked, [&] () {
-   ui->memoTxtChat->insertHtml(":rolling_eyes:");
+   ui->memoTxtChat->insertHtml(":a8");
 
-        emojiDialog.close();
+        
 });
 
 QObject::connect(emoji.tongue, &QPushButton::clicked, [&] () {
-   ui->memoTxtChat->insertHtml(":stuck_out_tongue:");
+   ui->memoTxtChat->insertHtml(":a9");
 
-        emojiDialog.close();
+        
 });
 
 QObject::connect(emoji.hearts3, &QPushButton::clicked, [&] () {
-   ui->memoTxtChat->insertHtml(":face_with_3hearts:");
+   ui->memoTxtChat->insertHtml(":b1");
 
-        emojiDialog.close();
+        
 });
 
 QObject::connect(emoji.heart_eyes, &QPushButton::clicked, [&] () {
-   ui->memoTxtChat->insertHtml(":heart_eyes:");
+   ui->memoTxtChat->insertHtml(":b2");
 
-        emojiDialog.close();
+        
 });
 
 QObject::connect(emoji.nauseated, &QPushButton::clicked, [&] () {
-   ui->memoTxtChat->insertHtml(":nauseated:");
+   ui->memoTxtChat->insertHtml(":b3");
 
-        emojiDialog.close();
+        
 });
 
 QObject::connect(emoji.poop, &QPushButton::clicked, [&] () {
-   ui->memoTxtChat->insertHtml(":poop:");
+   ui->memoTxtChat->insertHtml(":b4");
 
-        emojiDialog.close();
+        
 });
 
 QObject::connect(emoji.symbols_mouth, &QPushButton::clicked, [&] () {
-   ui->memoTxtChat->insertHtml(":symbols_mouth:");
+   ui->memoTxtChat->insertHtml(":b5");
 
-        emojiDialog.close();
+        
 });
 
 QObject::connect(emoji.sunglass, &QPushButton::clicked, [&] () {
-   ui->memoTxtChat->insertHtml(":sunglass:");
+   ui->memoTxtChat->insertHtml(":b6");
 
-        emojiDialog.close();
+        
 });
 
 QObject::connect(emoji.stuck_out, &QPushButton::clicked, [&] () {
-   ui->memoTxtChat->insertHtml(":stuck_out:");
+   ui->memoTxtChat->insertHtml(":b7");
 
-        emojiDialog.close();
+        
 });
 
 QObject::connect(emoji.hush_white, &QPushButton::clicked, [&] () {
-   ui->memoTxtChat->insertHtml(":hush_white:");
+   ui->memoTxtChat->insertHtml(":b8");
 
-        emojiDialog.close();
+        
 });
 
 QObject::connect(emoji.sd, &QPushButton::clicked, [&] () {
-   ui->memoTxtChat->insertHtml(":sd:");
+   ui->memoTxtChat->insertHtml(":b9");
 
-        emojiDialog.close();
+        
 });
 
 
