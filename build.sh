@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright 2019 The Hush Developers
+# Copyright 2019-2020 The Hush Developers
 
 UNAME=$(uname)
 
