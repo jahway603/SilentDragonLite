@@ -1334,12 +1334,13 @@ void MainWindow::setupTransactionsTab() {
     });
 
     // Set up context menu on transactions tab
+    ui->listChat->setContextMenuPolicy(Qt::ActionsContextMenu); 
+    contextMenuChat->setObjectName("contextMenuChat");
+    QString style = "QMenu{background-color: rgb(0, 0, 255);}";   
     auto theme = Settings::getInstance()->get_theme_name();
     if (theme == "Dark" || theme == "Midnight") {
-    ui->listChat->setStyleSheet("background-image: url(:/icons/res/SDLogo.png) ;background-attachment: fixed ;background-position: center center ;background-repeat: no-repeat");
-     }
-    if (theme == "Default") {ui->listChat->setStyleSheet("background-image: url(:/icons/res/sdlogo2.png) ;background-attachment: fixed ;background-position: center center ;background-repeat: no-repeat");}
-   
+    ui->listChat->setStyleSheet("QListView{background-image: url(:/icons/res/SDLogo.png) ;background-position: center center ;background-repeat: no-repeat;} QMenu::item:selected { border-color: darkblue; background: rgba(100, 100, 100, 150);}");}
+    if (theme == "Default") {ui->listChat->setStyleSheet("QListView{background-image: url(:/icons/res/sdlogo2.png) ;background-attachment: fixed ;background-position: center center ;background-repeat: no-repeat;} QMenu::item:selected { border-color: darkblue; background: rgba(100, 100, 100, 150);}");}
     ui->listChat->setResizeMode(QListView::Adjust);
     ui->listChat->setWordWrap(true);
     ui->listChat->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
@@ -1495,17 +1496,14 @@ void MainWindow::setupchatTab() {
 
     ui->contactNameMemo->setText("");   
 
-    /////Copy Chatmessages
+    /////Setup Actions
 
-     QMenu* contextMenuChat;
-     QAction* copymessage;
-     
+     QAction* copymessage;   
      QAction* viewexplorer;
      QAction* copytxid;
      QAction* copylink;
      QAction* openlink;
-     contextMenuChat = new QMenu(ui->listChat);
-     ui->listChat->setContextMenuPolicy(Qt::ActionsContextMenu); 
+     
      copymessage = new QAction("Copy message to clipboard",contextMenuChat);
      viewexplorer = new QAction("View on block explorer",contextMenuChat);
      copytxid = new QAction("Copy txid to clipboard ",contextMenuChat);
@@ -1514,14 +1512,12 @@ void MainWindow::setupchatTab() {
     
  QObject::connect(ui->listContactWidget, &QTableView::clicked, [=] () {
 
-     
-    
-     //contextMenuChat->autoFillBackground(false);
      ui->listChat->addAction(copymessage);
      ui->listChat->addAction(viewexplorer);
      ui->listChat->addAction(copytxid);
      ui->listChat->addAction(copylink);
      ui->listChat->addAction(openlink);
+    
 
  });
 
