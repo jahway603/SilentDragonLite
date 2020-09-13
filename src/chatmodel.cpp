@@ -91,7 +91,7 @@ QString ChatModel::Addressbylabel(QString address)
 
     return QString("0xdeadbeef");
 }
-     
+  
 void MainWindow::renderContactRequest(){
 
         Ui_requestDialog requestContact;
@@ -109,47 +109,56 @@ void MainWindow::renderContactRequest(){
 
          QPixmap unknownWhite(icon);
          QIcon addnewAddrIcon(unknownWhite);
-       
+
+               
+
+         ///////// Tableview for incoming contact request
+        int requestsize = DataStore::getChatDataStore()->getAllNewContactRequests().size();  
+        requestContact.requestContact->setRowCount(requestsize);    
+        requestContact.requestContact->setColumnCount(2);
+        QStringList request_TableHeader;
+        request_TableHeader<<"Address"<<"Date";
+        requestContact.requestContact->setHorizontalHeaderLabels(request_TableHeader);
+        requestContact.requestContact->setShowGrid(false);
+        requestContact.requestContact->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        requestContact.requestContact->setSelectionBehavior(QAbstractItemView::SelectRows);
+        requestContact.requestContact->setSelectionMode(QAbstractItemView::SingleSelection);
+        requestContact.requestContact->setColumnWidth(0,205);
         
-       
 
-       QStandardItemModel* contactRequest = new QStandardItemModel();
-
+        int i=0;
         
+        for (auto &c : DataStore::getChatDataStore()->getAllNewContactRequests())
+            
+        {
 
-            for (auto &c : DataStore::getChatDataStore()->getAllNewContactRequests())
+        int timestamp =  c.second.getTimestamp();
+        QDateTime myDateTime;
+        myDateTime.setTime_t(timestamp);
+        QString timestamphtml = myDateTime.toString("yyyy-MM-dd");
 
-            {
-
-                QStandardItem* Items = new QStandardItem(QString(c.second.getRequestZaddr()));
-                contactRequest->appendRow(Items);
-                requestContact.requestContact->setModel(contactRequest);  
-                Items->setData(QIcon(addnewAddrIcon),Qt::DecorationRole);
-                requestContact.requestContact->setIconSize(QSize(40,50));
-                requestContact.requestContact->setUniformItemSizes(true);
-                requestContact.requestContact->show();
-                requestContact.zaddrnew->setVisible(false);
-                requestContact.zaddrnew->setText(c.second.getRequestZaddr());
+        requestContact.requestContact->setItem(i, 0, new QTableWidgetItem(c.second.getRequestZaddr()));
+        requestContact.requestContact->setItem(i, 1, new QTableWidgetItem(timestamphtml));
+        requestContact.zaddrnew->setVisible(false);
+        requestContact.zaddrnew->setText(c.second.getRequestZaddr());
+        requestContact.requestContact->sortByColumn(1, Qt::DescendingOrder);
               
+        i++;
+         
+        }
 
-           
-            }
 
+        QStandardItemModel* contactRequestOld = new QStandardItemModel();
 
-            QStandardItemModel* contactRequestOld = new QStandardItemModel();
-
-              for (auto &c : DataStore::getChatDataStore()->getAllOldContactRequests())
+            for (auto &c : DataStore::getChatDataStore()->getAllOldContactRequests())
             {
                 QStandardItem* Items = new QStandardItem(c.second.getContact());
                 contactRequestOld->appendRow(Items);
                 requestContact.requestContactOld->setModel(contactRequestOld);
                 requestContact.zaddrold->setVisible(false);
                 requestContact.zaddrold->setText(c.second.getRequestZaddr());
-                
-      
+                    
             }
-
-       
 
         QObject::connect(requestContact.requestContact, &QTableView::clicked, [&] () {
 
@@ -157,10 +166,6 @@ void MainWindow::renderContactRequest(){
         QModelIndex index = requestContact.requestContact->currentIndex();
         QString label_contact = index.data(Qt::DisplayRole).toString();
         QStandardItemModel* contactMemo = new QStandardItemModel();
-
-
-
-    
            
         if  ((c.second.isOutgoing() == false) && (label_contact == c.second.getRequestZaddr() && (c.second.getMemo().startsWith("{") == false)))
         
@@ -183,8 +188,6 @@ void MainWindow::renderContactRequest(){
     }
             
    });
-
-  
 
    QObject::connect(requestContact.requestContactOld, &QTableView::clicked, [&] () {
 
@@ -210,9 +213,7 @@ void MainWindow::renderContactRequest(){
             }else{
 
             }
-        }
-    
-    
+        }  
             
    });
    
@@ -247,8 +248,6 @@ void MainWindow::renderContactRequest(){
             );
             return;
         } 
-
-
                 AddressBook::getInstance()->addAddressLabel(newLabel, addr, myAddr, cid, avatar);
                   rpc->refreshContacts(
                   ui->listContactWidget);

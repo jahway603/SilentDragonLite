@@ -108,22 +108,6 @@ void Controller::setConnection(Connection* c)
         ui->listChat->verticalScrollBar()->maximum());
 }
 
-std::string Controller::encryptDecrypt(std::string toEncrypt) 
-{ 
-
-    int radomInteger = rand() % 1000000000 +100000;
-    
-     
-    char key = radomInteger;
-    std::string output = toEncrypt;
-    
-    for (int i = 0; i < toEncrypt.size(); i++)
-        output[i] = toEncrypt[i] ^ key;
-    
-    return output;
-
-}
-
 // Build the RPC JSON Parameters for this tx
 void Controller::fillTxJsonParams(json& allRecepients, Tx tx)
 {   
@@ -153,43 +137,28 @@ void Controller::fillTxJsonParams(json& allRecepients, Tx tx)
     }
 
     DataStore::getSietchDataStore()->clear(); // clears the datastore
-
-    const QString possibleCharacters("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
-
-    int sizerandomString = rand() % 120 +10;
+    
+    const QString possibleCharacters("0123456789abcdef");
+    int sizerandomString = 512;
     const int randomStringLength = sizerandomString;
 
-    QString randomString;
-    QRandomGenerator *gen = QRandomGenerator::system();
+      for(uint8_t i = 0; i < 8; i++)
+    {
+
+        QString randomString;
+
+        QRandomGenerator *gen = QRandomGenerator::system();
+
     for(int i=0; i<randomStringLength; ++i)
     {
-       // int index = qrand() % possibleCharacters.length();
+
        int index = gen->bounded(0, possibleCharacters.length() - 1);
        QChar nextChar = possibleCharacters.at(index);
        randomString.append(nextChar);
     }
-  
-   for(uint8_t i = 0; i < 8; i++)
-    {
-        int length = randomString.length(); 
-        int randomSize = rand() % 120 +10;
-        char *randomHash = NULL;
-        randomHash = new char[length+1];
-        strncpy(randomHash, randomString.toLocal8Bit(), length +1);  
-        #define MESSAGE ((const unsigned char *) randomHash)
-        #define MESSAGE_LEN length
-        #define MESSAGE_LEN1 length + randomSize
-    
-        unsigned char hash[crypto_secretstream_xchacha20poly1305_ABYTES];
 
-        crypto_generichash(hash, sizeof hash,
-                   MESSAGE, MESSAGE_LEN1,
-                   NULL, 0);
+    dust.at(i)["memo"] = randomString.toStdString();
 
-        std::string decryptedMemo(reinterpret_cast<char*>(hash),MESSAGE_LEN1);
-        std::string encrypt = this->encryptDecrypt(decryptedMemo);
-        QString randomHashafter1 = QByteArray(reinterpret_cast<const char*>(encrypt.c_str()),encrypt.size()).toHex();
-        dust.at(i)["memo"] = randomHashafter1.toStdString();
     }
 
     for(auto &it: dust)

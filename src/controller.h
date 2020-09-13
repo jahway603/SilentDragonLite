@@ -45,8 +45,7 @@ public:
     int getLag();   
     void setLag(int lag);
     int _lag;
-    std::string encryptDecrypt(std::string);
-    
+   
     void checkForUpdate(bool silent = true);
     void refreshZECPrice();
     void refreshEURPrice();
