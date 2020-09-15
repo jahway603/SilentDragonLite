@@ -468,9 +468,7 @@ void AddressBook::readFromStorage()
 
 void AddressBook::writeToStorage() 
 {
-    //FileSystem::getInstance()->writeContacts(AddressBook::writeableFile(), DataStore::getContactDataStore()->dump());
-    
-   // FileSystem::getInstance()->writeContactsOldFormat(AddressBook::writeableFile(), allLabels);
+
 
         QString passphraseHash = DataStore::getChatDataStore()->getPassword();
         int length = passphraseHash.length();
@@ -497,7 +495,18 @@ void AddressBook::writeToStorage()
         FileEncryption::decrypt(target_decaddr_file, target_encaddr_file, pwHash);
 
     QFile file(target_decaddr_file);
+    try {
     file.open(QIODevice::ReadWrite | QIODevice::Truncate);
+
+    } catch(...) {
+
+      QMessageBox msgWarning;
+    msgWarning.setText("WARNING!\n Could not open Addressbook.");
+    msgWarning.setIcon(QMessageBox::Warning);
+    msgWarning.setWindowTitle("Caution");
+    msgWarning.exec();
+        }
+
     QDataStream out(&file);   // we will serialize the data into the file
     QList<QList<QString>> contacts;
 
@@ -513,19 +522,53 @@ void AddressBook::writeToStorage()
         
     }
     out << QString("v2") << contacts;
+
+try {
+
     file.close();
 
+} catch(...) {
 
+     QMessageBox msgWarning;
+    msgWarning.setText("WARNING!\nCould not close Addressbook.");
+    msgWarning.setIcon(QMessageBox::Warning);
+    msgWarning.setWindowTitle("Caution");
+    msgWarning.exec();
+
+}
+
+ try {
         FileEncryption::encrypt(target_encaddr_file, target_decaddr_file , pwHash);
+ }
+
+        catch(...) {
+
+    QMessageBox msgWarning;
+    msgWarning.setText("WARNING!\nCould not encrypt Addressbook.");
+    msgWarning.setIcon(QMessageBox::Warning);
+    msgWarning.setWindowTitle("Caution");
+    msgWarning.exec();
+        }
         QFile file1(target_decaddr_file);
+        try {
         file1.remove();   
-    
+
+        } catch(...) {
+
+    QMessageBox msgWarning;
+    msgWarning.setText("WARNING!\nCould not remove Addressbook.");
+    msgWarning.setIcon(QMessageBox::Warning);
+    msgWarning.setWindowTitle("Caution");
+    msgWarning.exec();   
+                    }
 }
 
 QString AddressBook::writeableFile() 
 {
     auto filename = QStringLiteral("addresslabels.dat");
     auto dir = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+
+    try {
     if (!dir.exists())
         QDir().mkpath(dir.absolutePath());
 
@@ -534,6 +577,15 @@ QString AddressBook::writeableFile()
 
     else
         return dir.filePath(filename);
+
+       } catch(...) {
+    QMessageBox msgWarning;
+    msgWarning.setText("WARNING!\nCould not write Addressbook.");
+    msgWarning.setIcon(QMessageBox::Warning);
+    msgWarning.setWindowTitle("Caution");
+    msgWarning.exec();
+
+                    }
 }
 
 
