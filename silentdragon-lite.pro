@@ -143,6 +143,7 @@ FORMS += \
     src/viewalladdresses.ui \
     src/connection.ui \
     src/addressbook.ui \
+    src/memodialog.ui \
     src/mobileappconnector.ui \
     src/createhushconfdialog.ui \
     src/recurringdialog.ui \
