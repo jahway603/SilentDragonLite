@@ -1672,13 +1672,21 @@ if (-1 != pos)
 
     QObject::connect(ui->listContactWidget, &QTableView::clicked, [=] () {
 
-     ui->listContactWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
-     ui->listContactWidget->addAction(HushAction);
-     ui->listContactWidget->addAction(editAction); 
+    ui->listContactWidget->setContextMenuPolicy(Qt::ActionsContextMenu);
+    ui->listContactWidget->addAction(HushAction);
+    ui->listContactWidget->addAction(editAction); 
+    int requestsize = DataStore::getChatDataStore()->getAllNewContactRequests().size(); 
 
-     ui->memoTxtChat->setEnabled(false);
-     ui->emojiButton->setEnabled(false);
-     ui->sendChatButton->setEnabled(false);
+    if (requestsize > 0)
+    {
+    ui->newRequest->setStyleSheet("color: red;");
+    }else{}
+    
+    ui->newRequest->setNum(requestsize);
+
+    ui->memoTxtChat->setEnabled(false);
+    ui->emojiButton->setEnabled(false);
+    ui->sendChatButton->setEnabled(false);
 
         QModelIndex index = ui->listContactWidget->currentIndex();
         QString label_contact = index.data(Qt::DisplayRole).toString();
@@ -1778,6 +1786,19 @@ if (-1 != pos)
    
    
 ui->memoTxtChat->setLenDisplayLabelChat(ui->memoSizeChat);
+ui->newRequest->setStyleSheet("color: red;");
+
+
+////get amount of new contact request as intervall
+
+QTimer* timer = new QTimer();
+timer->setInterval(30000); 
+
+connect(timer, &QTimer::timeout, this, [=](){
+    int requestsize = DataStore::getChatDataStore()->getAllNewContactRequests().size();    
+    ui->newRequest->setNum(requestsize);
+});
+timer->start();
 
 }
 
