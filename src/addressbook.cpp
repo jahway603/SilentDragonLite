@@ -565,27 +565,17 @@ try {
 
 QString AddressBook::writeableFile() 
 {
-    auto filename = QStringLiteral("addresslabels.dat");
-    auto dir = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+      auto filename = QStringLiteral("addresslabels.dat");
 
-    try {
+    auto dir = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
     if (!dir.exists())
         QDir().mkpath(dir.absolutePath());
 
-    if (Settings::getInstance()->isTestnet())
+    if (Settings::getInstance()->isTestnet()) {
         return dir.filePath("testnet-" % filename);
-
-    else
+    } else {
         return dir.filePath(filename);
-
-       } catch(...) {
-    QMessageBox msgWarning;
-    msgWarning.setText("WARNING!\nCould not write Addressbook.");
-    msgWarning.setIcon(QMessageBox::Warning);
-    msgWarning.setWindowTitle("Caution");
-    msgWarning.exec();
-
-                    }
+    }
 }
 
 

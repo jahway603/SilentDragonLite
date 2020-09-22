@@ -81,6 +81,11 @@ MainWindow::MainWindow(QWidget *parent) :
  
     ui->setupUi(this);
 
+    auto dir = QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    if (!dir.exists()){
+        QDir().mkpath(dir.absolutePath());
+    }else{}
+
     logger = new Logger(this, QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("silentdragonlite-wallet.log"));
       // Check for encryption
  
