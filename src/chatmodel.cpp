@@ -237,6 +237,20 @@ void MainWindow::renderContactRequest(){
             return;
         }
 
+         // Don't allow duplicate address labels.      
+                  
+        if (!AddressBook::getInstance()->getAddressForLabel(newLabel).isEmpty()) 
+        {
+            QMessageBox::critical(
+                this, 
+                QObject::tr("Label Error"), 
+                QObject::tr("The label '%1' already exists. Please remove the existing label.").arg(newLabel), 
+                QMessageBox::Ok
+            );
+            qDebug()<<"Doppelter Name";
+            return;
+        }
+
         // Test if address is valid.
         if (!Settings::isValidAddress(addr)) 
         {
@@ -248,12 +262,15 @@ void MainWindow::renderContactRequest(){
             );
             return;
         } 
-                AddressBook::getInstance()->addAddressLabel(newLabel, addr, myAddr, cid, avatar);
-                  rpc->refreshContacts(
-                  ui->listContactWidget);
 
-                  QMessageBox::information(this, "Added Contact","successfully added your new contact. You can now Chat with this contact");  
-            dialog.close();
+       
+        
+        AddressBook::getInstance()->addAddressLabel(newLabel, addr, myAddr, cid, avatar);
+        rpc->refreshContacts(
+        ui->listContactWidget);
+
+        QMessageBox::information(this, "Added Contact","successfully added your new contact. You can now Chat with this contact");  
+        dialog.close();
     });
 
  dialog.exec();
@@ -684,7 +701,7 @@ QString MainWindow::doSendChatTxValidations(Tx tx) {
             return QString(tr("Recipient Address ")) % addr % tr(" is Invalid");
             ui->memoTxtChat->setEnabled(true);
         }
-
+    
         // This technically shouldn't be possible, but issue #62 seems to have discovered a bug
         // somewhere, so just add a check to make sure. 
         if (toAddr.amount.toqint64() < 0) {
@@ -828,6 +845,19 @@ void MainWindow::ContactRequest() {
         msg.exec();
         return;
     }
+    
+    QString newLabel = contactRequest.getLabel();
+
+        if (!AddressBook::getInstance()->getAddressForLabel(newLabel).isEmpty()) 
+        {
+            QMessageBox::critical(
+                this, 
+                QObject::tr("Label Error"), 
+                QObject::tr("The label '%1' already exists. Please remove the existing label.").arg(newLabel), 
+                QMessageBox::Ok
+            );
+            return;
+        }
 
     int max = 512;
     QString chattext = contactRequest.getMemo();;
@@ -916,6 +946,17 @@ void MainWindow::ContactRequest() {
             return;
         }
 
+         if (!AddressBook::getInstance()->getAddressForLabel(newLabel).isEmpty()) 
+        {
+            QMessageBox::critical(
+                this, 
+                QObject::tr("Label Error"), 
+                QObject::tr("The label '%1' already exists. Please remove the existing label.").arg(newLabel), 
+                QMessageBox::Ok
+            );
+            return;
+        }
+
         // Test if address is valid.
         if (!Settings::isValidAddress(addr)) 
         {
@@ -927,8 +968,6 @@ void MainWindow::ContactRequest() {
             );
             return;
         } 
-
-        ///////Todo: Test if label allready exist!
 
         ////// Success, so show it
         AddressBook::getInstance()->addAddressLabel(newLabel, addr, myAddr, cid, avatar);
